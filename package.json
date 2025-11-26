@@ -1,5 +1,5 @@
 {
-  "name": "potenup-ground",
+  "name": "potenup-community-fe",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,17 +9,28 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tanstack/react-query": "5.90.10",
+    "clsx": "2.1.1",
+    "ky": "1.14.0",
     "next": "16.0.3",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "react-hook-form": "7.66.1",
+    "zustand": "5.0.8"
   },
   "devDependencies": {
+    "@hookform/devtools": "4.4.0",
     "@tailwindcss/postcss": "^4",
+    "@tanstack/react-query-devtools": "5.90.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
+    "eslint-config-prettier": "9.1.2",
+    "eslint-plugin-tailwindcss": "3.18.2",
+    "prettier": "3.6.2",
+    "prettier-plugin-tailwindcss": "0.7.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
