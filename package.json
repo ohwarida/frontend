@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "5.90.10",
+    "@uiw/react-markdown-preview": "^5.1.5",
+    "@uiw/react-md-editor": "^4.0.8",
     "clsx": "2.1.1",
     "ky": "1.14.0",
     "next": "16.0.3",
