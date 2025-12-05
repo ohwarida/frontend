@@ -1,0 +1,70 @@
+import React from 'react'
+import PageCard from "@/components/PageCard";
+
+export default async function JobTipsPage() {
+  return <div className='space-y-5'>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+    <PageCard/>
+  </div>
+}
