@@ -43,6 +43,8 @@ const MarkdownEditor = ({ name, defaultValue = '' }: MarkdownEditorProps) => {
       />
 
       <MDEditor
+        preview="edit"
+        height="100%"
         value={value}
         onChange={(val) => setValue(val ?? '')}
         textareaProps={{ name }}
