@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import React from 'react'
 import '@/app/globals.css'
 import ReactQueryProvider from '@/app/_providers/ReactQueryProvider'
+import { suit } from '@/font/suit/font'
 
 export const metadata: Metadata = {
   title: '포텐업 커뮤니티',
@@ -14,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={suit.className}>
       <body>
         <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
