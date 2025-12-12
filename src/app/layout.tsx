@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import React from 'react'
 import '@/app/globals.css'
-import ReactQueryProvider from '@/app/_providers/ReactQueryProvider'
+import { ReactQueryProvider, ReactGoogleProvider } from '@/app/_providers/_index'
 
 export const metadata: Metadata = {
   title: '포텐업 커뮤니티',
@@ -16,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <ReactGoogleProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </ReactGoogleProvider>
       </body>
     </html>
   )

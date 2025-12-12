@@ -1,13 +1,9 @@
 import type { ApiClient } from './types'
 import { createFetchApiClient } from '@/lib/api/fetchHttp'
 
-let client: ApiClient | null = null
-// 나중에 ky 구현이 생기면 여기 수정 부탁요
-export function getApiClient(): ApiClient {
-  if (!client) {
-    client = createFetchApiClient() // 나중에 ky로
-  }
-  return client
-}
+const externalBaseUrl = process.env.NEXT_PUBLIC_API_BASE
 
-export const api = getApiClient()
+if (!externalBaseUrl) throw new Error('NEXT_PUBLIC_API_BASE를 .env에 정의해주세요.')
+
+export const api: ApiClient = createFetchApiClient(externalBaseUrl) // 외부 서버용
+export const nextApi: ApiClient = createFetchApiClient('') // Nest API 라우트용

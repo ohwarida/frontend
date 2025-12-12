@@ -2,7 +2,7 @@ import React from 'react'
 
 export default async function Background() {
   return (
-    <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="absolute inset-0 -z-50 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* Animated blur circles */}
       <div className="absolute top-20 left-10 h-96 w-96 animate-pulse rounded-full bg-blue-200/40 blur-3xl" />
       <div

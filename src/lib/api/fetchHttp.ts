@@ -1,10 +1,5 @@
 import type { ApiClient, FetchOptions } from './types'
-
-const baseUrl = process.env.NEXT_PUBLIC_API_URL
-
-if (!baseUrl) {
-  throw new Error('이거 정의 해주세요.')
-}
+import { handleResponse } from '@/lib/api/handleResponse'
 
 async function fetchWithAuth(
   url: string,
@@ -25,7 +20,7 @@ async function fetchWithAuth(
   }
 
   // refresh 요청
-  const refreshRes = await fetch(`${baseUrl}/api/v1/auth/refresh`, {
+  const refreshRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/v1/auth/refresh`, {
     method: 'POST',
     credentials: 'include',
   })
@@ -41,14 +36,25 @@ async function fetchWithAuth(
   })
 }
 
-export function createFetchApiClient(): ApiClient {
+export function createFetchApiClient(baseUrl: string = ''): ApiClient {
+  const createHeaders = (custom: Record<string, string> = {}) => {
+    const headers: Record<string, string> = { ...custom }
+
+    // if (accessToken) {
+    //   headers['Authorization'] = `Bearer ${accessToken}`
+    // }
+
+    return headers
+  }
+
   const get = async <T = unknown>(endpoint = '', options?: FetchOptions): Promise<T> => {
     const res = await fetchWithAuth(`${baseUrl}${endpoint}`, {
+      headers: createHeaders(),
       cache: options?.cache, // 브라우저/서버 캐시
       next: options?.revalidate ? { revalidate: options.revalidate } : undefined,
     })
-    if (!res.ok) throw new Error(`GET failed: ${res.status}`)
-    return res.json()
+
+    return handleResponse<T>(res, 'GET', endpoint)
   }
 
   const post = async <T = unknown>(
@@ -58,13 +64,13 @@ export function createFetchApiClient(): ApiClient {
   ): Promise<T> => {
     const res = await fetchWithAuth(`${baseUrl}${endpoint}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders({ 'Content-Type': 'application/json' }),
       cache: options?.cache ?? 'no-store',
       next: options?.revalidate ? { revalidate: options.revalidate } : undefined,
       body: JSON.stringify(data || {}),
     })
-    if (!res.ok) throw new Error(`POST failed: ${res.status}`)
-    return res.json()
+
+    return handleResponse<T>(res, 'POST', endpoint)
   }
 
   const patch = async <T = unknown>(
@@ -74,23 +80,24 @@ export function createFetchApiClient(): ApiClient {
   ): Promise<T> => {
     const res = await fetchWithAuth(`${baseUrl}${endpoint}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: createHeaders({ 'Content-Type': 'application/json' }),
       cache: options?.cache ?? 'no-store',
       next: options?.revalidate ? { revalidate: options.revalidate } : undefined,
       body: JSON.stringify(data || {}),
     })
-    if (!res.ok) throw new Error(`PATCH failed: ${res.status}`)
-    return res.json()
+
+    return handleResponse<T>(res, 'PATCH', endpoint)
   }
 
   const del = async <T = unknown>(endpoint = '', options?: FetchOptions): Promise<T> => {
     const res = await fetchWithAuth(`${baseUrl}${endpoint}`, {
       method: 'DELETE',
+      headers: createHeaders({ 'Content-Type': 'application/json' }),
       cache: options?.cache ?? 'no-store',
       next: options?.revalidate ? { revalidate: options.revalidate } : undefined,
     })
-    if (!res.ok) throw new Error(`DELETE failed: ${res.status}`)
-    return res.json()
+
+    return handleResponse<T>(res, 'DELETE', endpoint)
   }
 
   return { get, post, patch, delete: del }
