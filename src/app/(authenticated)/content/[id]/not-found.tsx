@@ -1,11 +1,7 @@
 'use client'
 
-import React from 'react';
+import React from 'react'
 
-export default async function NotFound() {
-  return (
-    <div>
-
-    </div>
-  )
+export default function NotFound() {
+  return <div></div>
 }

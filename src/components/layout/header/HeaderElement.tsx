@@ -14,7 +14,7 @@ export default function HeaderElement({ location }: { location: locationTypes })
       <div className="flex items-center gap-3">
         {isHome && (
           <>
-            <Link href="/content/create">
+            <Link href="/content">
               <Button icon="df">글쓰기</Button>
             </Link>
             <AvatarButton />

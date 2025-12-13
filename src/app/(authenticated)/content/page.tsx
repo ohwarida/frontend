@@ -1,10 +1,12 @@
-import React from 'react';
+import React from 'react'
+import ContentCreateForm from '@/features/(authenticated)/content/create/components/ContentCreateForm'
+import type { Metadata } from 'next'
 
-// todo 이 페이지로 경로가 들어오면 create 로 강제 리다이렉트
-export default async function Page() {
-  return (
-    <div>
+export const metadata: Metadata = {
+  title: '게시글 작성 | Wanted Ground PotenUp',
+  description: '새 게시글을 작성하는 페이지입니다.',
+}
 
-    </div>
-  )
+export default async function CreateContentPage() {
+  return <ContentCreateForm />
 }

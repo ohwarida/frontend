@@ -2,6 +2,16 @@ import React from 'react'
 import BookMarkButton from '@/features/(authenticated)/content/[id]/components/BookMarkButton'
 import Reaction from '@/features/(authenticated)/content/[id]/components/Reaction'
 import Replies from '@/features/(authenticated)/content/[id]/components/Replies'
+import { Metadata } from 'next'
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  // const post = await server<{ title: string }>(`/api/v1/posts/${params.id}`, { method: 'GET', cache: 'no-store' })
+
+  return {
+    title: `title적기 | 게시글 상세 | Wanted Ground PotenUp`,
+    description: '게시글 상세 내용을 확인할 수 있는 페이지입니다.',
+  }
+}
 
 export default async function ContentDetailPage() {
   return (
