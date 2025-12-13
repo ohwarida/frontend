@@ -1,4 +1,4 @@
-import SignupForm from '@/features/(public)/sign/components/SignupForm'
+import SignupForm from '@/features/(public)/signup/components/SignupForm'
 import { redirect } from 'next/navigation'
 import jwt from 'jsonwebtoken'
 

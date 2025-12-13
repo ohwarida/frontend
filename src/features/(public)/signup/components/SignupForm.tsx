@@ -1,12 +1,11 @@
 'use client'
 
 import React, { useActionState } from 'react'
-import { signupAction } from '@/features/(public)/sign/signupAction'
+import { signupAction } from '@/features/(public)/signup/signupAction'
 import FormInput from '@/components/form/FormInput'
-import { FormState } from '@/types/FormState'
-import { SignupFormType } from '@/features/(public)/sign/types/signupFormType'
+import { SignupFormTypes } from '@/features/(public)/signup/types/SignupForm.types'
 
-export const initialState: FormState<SignupFormType> = {
+export const initialState: FormStateTypes<SignupFormTypes> = {
   values: {
     name: '',
     phoneNumber: '',
@@ -18,7 +17,7 @@ export const initialState: FormState<SignupFormType> = {
 }
 
 export default function SignupForm({ token, provider }: { token: string; provider: string }) {
-  const [state, formAction, isPending] = useActionState<FormState<SignupFormType>, FormData>(
+  const [state, formAction, isPending] = useActionState<FormStateTypes<SignupFormTypes>, FormData>(
     signupAction,
     initialState,
   )

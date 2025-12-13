@@ -2,29 +2,42 @@
 
 import { useGoogleLogin } from '@react-oauth/google'
 import { useMutation } from '@tanstack/react-query'
-import { nextApi } from '@/lib/api/_index'
-import { SigninType } from '@/features/(public)/sign/types/signinType'
+import { SigninTypes } from '@/features/(public)/sign/types/Signin.types'
 import { useRouter } from 'next/navigation'
 import { isHttpError } from '@/utils/isHttpError'
 import { usePendingStore } from '@/store/pendingStore'
+import { client } from '@/lib/api/client'
+import { USER_ERROR_CODE } from '@/constants/error-code/user'
+import { SigninErrorTypes } from '@/features/(public)/sign/types/SigninError.types'
 
 export function useGoogleSignin() {
   const router = useRouter()
   const signinMutation = useMutation({
     mutationFn: async (code: string) => {
-      const res = await nextApi.post<SigninType>('/api/signin', { code })
+      const res = await client<SigninTypes, { code: string }>('/api/signin', {
+        method: 'POST',
+        body: { code },
+        cache: 'no-store',
+      })
       return res
     },
+    onSuccess: () => router.push('/'),
     onError: (error) => {
-      if (isHttpError(error)) {
-        if (error.status === 404) {
-          const token = (error.body as { message: string; idToken: string }).idToken as string
+      if (!isHttpError(error)) return
+
+      if ((error.body as SigninErrorTypes).code === USER_ERROR_CODE.USER_NOT_FOUND) {
+        const token = (error.body as SigninErrorTypes)?.idToken
+        if (token) {
           router.push(`/signup?token=${encodeURIComponent(token)}`)
-        } else if ((error.body as { code: string }).code === 'U-0008') {
-          const setPendingCode = usePendingStore.getState().setPendingCode
-          setPendingCode((error.body as { code: string }).code)
-          router.push('/pending')
+        } else {
+          // todo 나중에 로직 생각 ㄱ
         }
+        return
+      }
+
+      if ((error.body as SigninErrorTypes).code === USER_ERROR_CODE.INACTIVE_USER) {
+        usePendingStore.getState().setPendingCode((error.body as SigninErrorTypes).code)
+        router.push('/pending')
       }
     },
   })

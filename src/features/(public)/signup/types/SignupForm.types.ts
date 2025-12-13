@@ -1,4 +1,4 @@
-export type SignupFormType = {
+export type SignupFormTypes = {
   name: string
   phoneNumber: string
   token: string

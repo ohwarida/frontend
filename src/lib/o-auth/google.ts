@@ -12,7 +12,7 @@ export async function exchangeGoogleAuthCode(code: string) {
   params.append('code', code)
   params.append('client_id', clientId)
   params.append('client_secret', clientSecret)
-  params.append('redirect_uri', 'postmessage') // 지금 구조 유지
+  params.append('redirect_uri', 'postmessage')
   params.append('grant_type', 'authorization_code')
 
   const tokenRes = await fetch(GOOGLE_TOKEN_URL, {

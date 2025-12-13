@@ -1,0 +1,49 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { IS_PROD } from '@/constants/env'
+import { ACCESS_TOKEN_MAX_AGE, ACCESS_TOKEN_PATH, ACCESS_TOKEN_SAME_SITE } from '@/constants/token'
+
+type RefreshResponse = {
+  accessToken: string
+  refreshToken?: string
+}
+
+export async function GET(req: NextRequest) {
+  const next = req.nextUrl.searchParams.get('next') ?? '/'
+  const refreshToken = req.cookies.get('refresh_token')?.value
+
+  if (!refreshToken) {
+    return redirectToSigninAndClearCookies(req, next)
+  }
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE!}/api/v1/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+    cache: 'no-store',
+  })
+
+  if (!response.ok) {
+    return NextResponse.redirect(new URL(`/signin?next=${encodeURIComponent(next)}`, req.url))
+  }
+
+  const data = (await response.json()) as RefreshResponse
+
+  const res = NextResponse.redirect(new URL(next, req.url))
+
+  res.cookies.set('access_token', data.accessToken, {
+    httpOnly: true,
+    secure: IS_PROD,
+    sameSite: ACCESS_TOKEN_SAME_SITE,
+    path: ACCESS_TOKEN_PATH,
+    maxAge: ACCESS_TOKEN_MAX_AGE,
+  })
+
+  return res
+}
+
+const redirectToSigninAndClearCookies = (req: NextRequest, next: string) => {
+  const res = NextResponse.redirect(new URL(`/signin?next=${encodeURIComponent(next)}`, req.url))
+  res.cookies.delete('access_token')
+  res.cookies.delete('refresh_token')
+  return res
+}

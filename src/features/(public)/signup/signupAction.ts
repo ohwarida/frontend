@@ -1,20 +1,19 @@
 'use server'
 
-import { api } from '@/lib/api/_index'
-import { FormState } from '@/types/FormState'
-import { SignupFormType } from '@/features/(public)/sign/types/signupFormType'
+import { SignupFormTypes } from '@/features/(public)/signup/types/SignupForm.types'
 import { redirect } from 'next/navigation'
+import { server } from '@/lib/api/server'
 
 export async function signupAction(
-  prevState: FormState<SignupFormType>,
+  prevState: FormStateTypes<SignupFormTypes>,
   formData: FormData,
-): Promise<FormState<SignupFormType>> {
+): Promise<FormStateTypes<SignupFormTypes>> {
   const name = formData.get('name')
   const phoneNumber = formData.get('phoneNumber')
   const token = formData.get('token')
   const provider = (formData.get('provider') ?? 'GOOGLE') as string
 
-  const fieldErrors: FormState<SignupFormType>['fieldErrors'] = {}
+  const fieldErrors: FormStateTypes<SignupFormTypes>['fieldErrors'] = {}
 
   if (!name || typeof name !== 'string') fieldErrors.name = ['이름을 입력해주세요.']
   if (!phoneNumber || typeof phoneNumber !== 'string')
@@ -35,11 +34,15 @@ export async function signupAction(
   }
 
   try {
-    await api.post('/api/v1/users/signup', {
-      idToken: token,
-      name,
-      phoneNumber,
-      provider,
+    await server('/api/v1/users/signup', {
+      method: 'POST',
+      body: {
+        idToken: token,
+        name,
+        phoneNumber,
+        provider,
+      },
+      cache: 'no-store',
     })
   } catch (err) {
     console.log(err)

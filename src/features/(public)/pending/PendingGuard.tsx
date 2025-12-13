@@ -16,5 +16,5 @@ export default function PendingGuard({ children }: { children: React.ReactNode }
 
   if (!pendingCode) return null
 
-  return <>{children}</>
+  return children
 }
