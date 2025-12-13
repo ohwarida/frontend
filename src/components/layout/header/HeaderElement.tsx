@@ -1,16 +1,12 @@
-'use client'
 import React from 'react'
 import Input from '@/components/ui/Input'
 import Link from 'next/link'
 import Button from '@/components/ui/button/Button'
 import AvatarButton from '@/components/layout/header/AvatarButton'
-import { usePathname } from 'next/navigation'
 
-export default function HeaderElement() {
-  const pathname = usePathname()
-
-  const isContentCreatePage = pathname === '/content/create'
-  const isHome = pathname === '/'
+export default function HeaderElement({ location }: { location: locationTypes }) {
+  const isHome = location === 'board'
+  const isContentCreatePage = location === 'content'
 
   return (
     <div className="flex w-full items-center justify-between gap-4">
@@ -29,7 +25,9 @@ export default function HeaderElement() {
             <Link href="/">
               <Button variant="cancel">취소</Button>
             </Link>
-            <Button variant="add">발행하기</Button>
+            <Button variant="add" type="submit" form="postFormId">
+              발행하기
+            </Button>
           </>
         )}
       </div>

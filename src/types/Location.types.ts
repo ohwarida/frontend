@@ -1,0 +1,1 @@
+type locationTypes = 'board' | 'content'

@@ -3,48 +3,51 @@
 import React, { useActionState, useState } from 'react'
 import Input from '@/components/ui/Input'
 import MarkdownEditor from '@/components/markdown/MarkdownEditor'
-import { createContentAction } from '@/features/(authenticated)/content/create/actions'
+import { createContentAction } from '@/features/(authenticated)/content/create/contentCreateActions'
 import Form from 'next/form'
-import { ContentCreateState } from '@/features/(authenticated)/content/create/formTypes'
-import ErrorMessage from '@/components/ui/ErrorMessage'
 import MarkdownViewer from '@/components/markdown/MarkdownViewer'
+import ErrorMessage from '@/components/ui/ErrorMessage'
+import { ContentFormValues } from '@/features/(authenticated)/content/create/types/ContentCreateForm.types'
+import {
+  TOPIC_LABEL,
+  TOPIC_TYPE,
+  TopicType,
+} from '@/features/(authenticated)/content/create/types/Topic.types'
+import Select from '@/components/ui/Select'
 
-const initialContentCreateState: ContentCreateState = {
-  message: null,
-  fieldErrors: {},
+export const initialState: FormStateTypes<ContentFormValues> = {
   values: {
-    category: '',
+    topic: 'NOTICE',
     title: '',
     content: '',
   },
+  fieldErrors: {},
+  success: false,
 }
 
 export default function ContentCreateForm() {
-  const [state, formAction, isPending] = useActionState(
-    createContentAction,
-    initialContentCreateState,
-  )
+  const [state, formAction, isPending] = useActionState(createContentAction, initialState)
 
   const [previewContent, setPreviewContent] = useState<string>(state.values?.content ?? '')
 
   return (
-    <Form action={formAction} className="mx-auto flex h-[50rem] w-full max-w-7xl gap-4 p-5">
+    <Form
+      id="postFormId"
+      action={formAction}
+      className="mx-auto flex h-[50rem] w-full max-w-7xl gap-4 p-5"
+    >
       {/* 왼쪽: 작성 폼 */}
       <section className="h-full w-2/3 space-y-6 rounded-md border border-gray-300 bg-white p-[33px]">
-        {/* 카테고리 */}
         <div className="space-y-1">
-          <h3 className="text-xs">카테고리</h3>
-          <select
-            name="category"
-            defaultValue={state.values?.category ?? ''}
-            className="h-10 w-full rounded-md bg-gray-200 px-3 focus:ring-1 focus:ring-gray-300"
-          >
-            <option value="">선택하세요</option>
-            <option value="job-tips">취업 팁</option>
-            <option value="notice">공지사항</option>
-            <option value="qna">Q&amp;A</option>
-          </select>
-          {state.fieldErrors?.category && <ErrorMessage message={state.fieldErrors.category} />}
+          <Select<TopicType>
+            name="topic"
+            defaultValue={(state.values?.topic as TopicType) ?? ''}
+            options={Object.values(TOPIC_TYPE).map((v) => ({
+              value: v,
+              label: TOPIC_LABEL[v],
+            }))}
+          />
+          {state.fieldErrors.topic && <ErrorMessage errorMessage={state.fieldErrors?.topic?.[0]} />}
         </div>
 
         {/* 제목 */}
@@ -54,7 +57,7 @@ export default function ContentCreateForm() {
             placeholder="제목을 입력하세요."
             defaultValue={state.values?.title ?? ''}
           />
-          {state.fieldErrors?.title && <ErrorMessage message={state.fieldErrors.title} />}
+          {state.fieldErrors.title && <ErrorMessage errorMessage={state.fieldErrors.title?.[0]} />}
         </div>
 
         {/* 내용 (Markdown) */}
@@ -64,10 +67,12 @@ export default function ContentCreateForm() {
             defaultValue={state.values?.content ?? ''}
             onChange={setPreviewContent}
           />
-          {state.fieldErrors?.content && <ErrorMessage message={state.fieldErrors.content} />}
+          {state.fieldErrors.content && (
+            <ErrorMessage errorMessage={state.fieldErrors.content?.[0]} />
+          )}
         </div>
 
-        {state.message && <ErrorMessage message={state.message} />}
+        {state.message && <ErrorMessage errorMessage={state.message} />}
       </section>
 
       {/* 오른쪽: 미리보기 */}
