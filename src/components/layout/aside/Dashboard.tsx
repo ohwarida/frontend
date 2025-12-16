@@ -1,10 +1,8 @@
-'use client'
-
 import { Activity, MessageSquare, Users } from 'lucide-react'
 import StatCard from './StatCard'
 
 export default function Dashboard() {
-  // 조회 API 연동
+  // TODO: 조회 API 연동
   const posts = 1234
   const members = 456
   const views = 658
