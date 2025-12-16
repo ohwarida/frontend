@@ -1,8 +1,8 @@
 'use client'
 
-import React from 'react'
 import clsx from 'clsx'
-import {getInitial} from "@/utils/getInitial";
+import Image from 'next/image'
+import { User } from 'lucide-react'
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg'
 type AvatarProps = {
@@ -19,13 +19,7 @@ const sizeClasses: Record<AvatarSize, string> = {
   lg: 'h-12 w-12 text-base',
 }
 
-export const Avatar = ({
-                         src,
-                         alt,
-                         name,
-                         size = 'md',
-                         className,
-                       }: AvatarProps) => {
+export function Avatar({ src, alt, name, size = 'md', className }: AvatarProps) {
   return (
     <div
       className={clsx(
@@ -36,13 +30,16 @@ export const Avatar = ({
       )}
     >
       {src ? (
-        <img
+        <Image
           src={src ?? ''}
           alt={alt ?? name ?? 'Avatar'}
           className="h-full w-full object-cover"
         />
       ) : (
-        <span className="font-medium">{getInitial(name)}</span>
+        <span className="font-medium">
+          {/* TODO: 아이콘 수정 필요 */}
+          <User size={20} />
+        </span>
       )}
     </div>
   )

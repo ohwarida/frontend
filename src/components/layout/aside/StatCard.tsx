@@ -1,12 +1,8 @@
-import React from 'react';
-import clsx from "clsx";
+import clsx from 'clsx'
 
 type StatVariant = 'blue' | 'green' | 'orange'
 
-const STAT_VARIANTS: Record<
-  StatVariant,
-  { container: string; icon: string }
-> = {
+const STAT_VARIANTS: Record<StatVariant, { container: string; icon: string }> = {
   blue: {
     container: 'from-blue-50 to-indigo-50 border-blue-100',
     icon: 'bg-blue-500/10 text-blue-500',
@@ -24,11 +20,11 @@ const STAT_VARIANTS: Record<
 type StatCardProps = {
   label: string
   value: string
-  icon: string
+  icon: React.ReactNode
   variant: StatVariant
 }
 
-const StatCard = ({label, value, icon, variant}: StatCardProps) => {
+const StatCard = ({ label, value, icon, variant }: StatCardProps) => {
   const styles = STAT_VARIANTS[variant]
 
   return (
@@ -40,16 +36,11 @@ const StatCard = ({label, value, icon, variant}: StatCardProps) => {
     >
       <div className="flex flex-col">
         <span className="text-xs font-medium text-gray-500">{label}</span>
-        <span className="mt-1 text-2xl text-gray-900">
-          {value}
-        </span>
+        <span className="mt-1 text-2xl text-gray-900">{value}</span>
       </div>
 
       <div
-        className={clsx(
-          'flex size-7 items-center justify-center rounded-md text-xs',
-          styles.icon,
-        )}
+        className={clsx('flex size-7 items-center justify-center rounded-md text-xs', styles.icon)}
       >
         {icon}
       </div>
@@ -57,4 +48,4 @@ const StatCard = ({label, value, icon, variant}: StatCardProps) => {
   )
 }
 
-export default StatCard;
+export default StatCard

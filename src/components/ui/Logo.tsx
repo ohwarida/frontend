@@ -1,12 +1,10 @@
-import React from 'react';
-import Link from "next/link";
+import Image from 'next/image'
+import Link from 'next/link'
 
 export default async function Logo() {
   return (
     <Link href="/">
-      <div className="mr-5 flex shrink-0 items-center">
-        <p className="text-2xl font-bold">Depth</p>
-      </div>
+      <Image src="/assets/logo.svg" alt="뎁스 로고" width={85} height={36} />
     </Link>
   )
 }
