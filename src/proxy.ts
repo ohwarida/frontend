@@ -41,7 +41,7 @@ export async function proxy(request: NextRequest) {
     if (hasRefresh) {
       const u = new URL(REFRESH_ROUTE, request.url)
       u.searchParams.set('next', DEFAULT_AFTER_LOGIN)
-      return NextResponse.redirect(u)
+      return NextResponse.rewrite(u)
     }
 
     return NextResponse.next()
@@ -64,11 +64,11 @@ export async function proxy(request: NextRequest) {
   if (hasRefresh) {
     const u = new URL(REFRESH_ROUTE, request.url)
     u.searchParams.set('next', currentPath)
-    return NextResponse.redirect(u)
+    return NextResponse.rewrite(u)
   }
 
   const loginUrl = new URL('/signin', request.url)
-  loginUrl.searchParams.set('redirect', currentPath)
+  loginUrl.searchParams.set('next', currentPath)
   return NextResponse.redirect(loginUrl)
 }
 
