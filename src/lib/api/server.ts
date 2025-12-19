@@ -1,15 +1,6 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { IS_PROD } from '@/constants/env'
-import {
-  ACCESS_TOKEN_MAX_AGE,
-  ACCESS_TOKEN_PATH,
-  ACCESS_TOKEN_SAME_SITE,
-  REFRESH_TOKEN_MAX_AGE,
-  REFRESH_TOKEN_PATH,
-  REFRESH_TOKEN_SAME_SITE,
-} from '@/constants/token'
 import { Token } from '@/types/Token.types'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE!
