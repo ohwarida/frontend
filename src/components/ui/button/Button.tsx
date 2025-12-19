@@ -4,7 +4,7 @@ import React from 'react'
 import './Button.css'
 import clsx from 'clsx'
 
-type ButtonVariant = 'add' | 'cancel'
+export type ButtonVariant = 'add' | 'cancel' | 'warning'
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode
@@ -17,6 +17,7 @@ const Button = (props: ButtonProps) => {
   const variantClass = {
     add: 'btn-add',
     cancel: 'btn-cancel',
+    warning: 'btn-warning',
   }[variant]
 
   return (

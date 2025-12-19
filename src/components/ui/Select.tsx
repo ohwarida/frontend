@@ -29,7 +29,7 @@ export default function Select<T extends string = string>({
       name={name}
       defaultValue={defaultValue}
       className={clsx(
-        'h-10 w-full rounded-md bg-gray-200 px-3 focus:ring-1 focus:ring-gray-300',
+        'min-h-7 w-full rounded-md bg-gray-100 pl-2 focus:ring-1 focus:ring-gray-300',
         className,
       )}
       {...rest}
