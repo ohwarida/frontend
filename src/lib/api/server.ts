@@ -1,78 +1,102 @@
-import 'server-only'
+'use server'
+
 import { cookies } from 'next/headers'
-import { HttpErrorTypes } from '@/types/HttpError.types'
 import { IS_PROD } from '@/constants/env'
-import { ACCESS_TOKEN_MAX_AGE, ACCESS_TOKEN_PATH, ACCESS_TOKEN_SAME_SITE } from '@/constants/token'
+import {
+  ACCESS_TOKEN_MAX_AGE,
+  ACCESS_TOKEN_PATH,
+  ACCESS_TOKEN_SAME_SITE,
+  REFRESH_TOKEN_MAX_AGE,
+  REFRESH_TOKEN_PATH,
+  REFRESH_TOKEN_SAME_SITE,
+} from '@/constants/token'
+import { Token } from '@/types/Token.types'
 
-export async function server<TRes, TBody = unknown>(
-  path: string,
-  opts: {
-    method: MethodTypes
-    body?: TBody
-    cache?: RequestCache
-    revalidate?: number | false
-    tags?: string[]
-    retryAuth?: boolean
-  },
-) {
-  const { method, body, cache, revalidate, tags, retryAuth = true } = opts
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE!
 
-  const doFetch = async (accessToken?: string) => {
-    return fetch(`${process.env.NEXT_PUBLIC_API_BASE!}${path}`, {
-      method,
-      headers: {
-        ...(body ? { 'Content-Type': 'application/json' } : {}),
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      },
-      body: body ? JSON.stringify(body) : undefined,
-      cache,
-      next: revalidate !== undefined || tags ? { revalidate, tags } : undefined,
+export async function server(endpoint: string, options: RequestInit = {}): Promise<Response> {
+  const cookieStore = await cookies()
+  const accessToken = cookieStore.get('access_token')?.value
+
+  const headers = new Headers(options.headers)
+  if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
+  if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+
+  const doFetch = (overrideAccessToken?: string) => {
+    const h = new Headers(headers)
+    if (overrideAccessToken) h.set('Authorization', `Bearer ${overrideAccessToken}`)
+
+    return fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      method: options.method ?? 'GET',
+      headers: h,
+      body: options.body ?? undefined,
+      cache: options.cache ?? 'no-store',
     })
   }
 
-  // 1) 첫 시도
-  const jar = await cookies()
-  let token = jar.get('access_token')?.value
-  let res = await doFetch(token)
+  const res = await doFetch()
 
-  // 2) 401이면 refresh 후 1회 재시도
-  if (res.status === 401 && retryAuth) {
-    const ok = await refreshAccessToken()
-    if (ok) {
-      token = (await cookies()).get('access_token')?.value
-      res = await doFetch(token)
-    }
+  // 401이면 refresh 후 재시도 (로직 그대로 유지)
+  if (res.status === 401) {
+    const token = (await refreshAccessToken()) as Token | null
+    if (!token?.accessToken) return res // refresh 실패면 원래 응답 반환
+    return doFetch(token.accessToken)
   }
 
-  if (res.status === 204) return null as TRes
-
-  const data = await res.json().catch(() => null)
-  if (!res.ok) throw new HttpErrorTypes(res.status, data?.message ?? `HTTP ${res.status}`, data)
-  return data as TRes
+  return res
 }
 
-async function refreshAccessToken(): Promise<string | null> {
-  const jar = await cookies()
-  const refreshToken = jar.get('refresh_token')?.value
+// 액션에서 res.json() 대신 쓸 안전 파서(204이면 성공이지만 빈 값)
+export async function safeJson<T>(res: Response): Promise<T | null> {
+  if (res.status === 204) return null
+  const text = await res.text()
+  if (!text.trim()) return null
+  return JSON.parse(text) as T
+}
+
+async function refreshAccessToken(): Promise<{ accessToken: string; refreshToken: string } | null> {
+  const cookieStore = await cookies()
+
+  const refreshToken = cookieStore.get('refresh_token')?.value
   if (!refreshToken) return null
 
-  const r = await fetch(`${process.env.NEXT_PUBLIC_API_BASE!}/api/v1/auth/refresh`, {
+  const res = await fetch(`${API_BASE}/api/v1/auth/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken }),
     cache: 'no-store',
   })
 
-  if (!r.ok) return null
+  if (!res.ok) return null
 
-  const data = (await r.json()) as RefreshResponse
+  const setCookies: string[] = res.headers.getSetCookie?.() ?? []
+  const newAccessToken = setCookies
+    .find((sc) => sc.startsWith('accessToken='))
+    ?.slice('accessToken='.length)
+    .split(';', 1)[0]
+  const newRefreshToken = setCookies
+    .find((sc) => sc.startsWith('refreshToken='))
+    ?.slice('refreshToken='.length)
+    .split(';', 1)[0]
 
-  jar.set('access_token', data.accessToken, {
+  if (!newAccessToken || !newRefreshToken) return null
+
+  cookieStore.set('access_token', newAccessToken, {
     httpOnly: true,
     secure: IS_PROD,
     sameSite: ACCESS_TOKEN_SAME_SITE,
-    path: ACCESS_TOKEN_PATH, // 보통 '/'
+    path: ACCESS_TOKEN_PATH,
     maxAge: ACCESS_TOKEN_MAX_AGE,
   })
-  return data.accessToken
+
+  cookieStore.set('refresh_token', newRefreshToken, {
+    httpOnly: true,
+    secure: IS_PROD,
+    sameSite: REFRESH_TOKEN_SAME_SITE,
+    path: REFRESH_TOKEN_PATH,
+    maxAge: REFRESH_TOKEN_MAX_AGE,
+  })
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken }
 }
