@@ -1,24 +1,15 @@
 'use client'
-import React from 'react'
+import { Bookmark } from 'lucide-react'
 
-export default function BookMarkButton() {
+export function BookMarkButton({ pressed = false }: { pressed?: boolean }) {
   return (
     <button
       type="button"
-      className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-400 hover:bg-gray-50"
       aria-label="북마크"
+      aria-pressed={pressed}
+      className="h-7 w-7 rounded-md p-1 focus:ring-1 focus:ring-[#155DFC]/30 focus:outline-none"
     >
-      <svg
-        className="h-4 w-4"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
-      </svg>
+      <Bookmark size={20} stroke="rgba(55,56,60,0.61)" aria-hidden />
     </button>
   )
 }
