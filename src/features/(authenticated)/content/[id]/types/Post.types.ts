@@ -19,6 +19,8 @@ export type GetPostDetailResponse = Post
 export type GetPostsResponse = {
   contents: Post[]
   // TODO: 무한스크롤 적용시 프로퍼티 추가 예정
+  hasNext: boolean
+  nextCursorId: number | null
 }
 
 export type CreatePostRequest = {
