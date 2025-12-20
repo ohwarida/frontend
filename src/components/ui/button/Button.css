@@ -26,4 +26,11 @@
     @apply text-gray-700
     border border-gray-300
   }
+
+  .btn-warning {
+    @apply text-red-600
+    bg-white
+    hover:bg-red-400
+    border border-red-400
+  }
 }

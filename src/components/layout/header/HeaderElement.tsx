@@ -3,7 +3,7 @@ import Input from '@/components/ui/Input'
 import Link from 'next/link'
 import Button from '@/components/ui/button/Button'
 import ProfileMenu from '@/components/layout/header/ProfileMenu'
-import { Search, SquarePen } from 'lucide-react'
+import { Search, Shield, SquarePen } from 'lucide-react'
 
 export default function HeaderElement({ location }: { location: locationTypes }) {
   const isHome = location === 'board'
@@ -15,6 +15,16 @@ export default function HeaderElement({ location }: { location: locationTypes })
         <Input icon={<Search size={16} color="#99A1AF" />} type="search" />
       </div>
       <div className="flex items-center gap-3">
+        <>
+          <Link href="/">
+            <Button variant="cancel">관리자 모드 종료</Button>
+          </Link>
+          <Link href="/admin">
+            <Button variant="warning" icon={<Shield size={16} />}>
+              관리자 모드
+            </Button>
+          </Link>
+        </>
         {isHome && (
           <>
             <Link href="/content">
