@@ -4,6 +4,8 @@ import React, { useActionState } from 'react'
 import { signupAction } from '@/features/(public)/signup/signupAction'
 import FieldInput from '@/components/form/FieldInput'
 import { SignupFormTypes } from '@/features/(public)/signup/types/SignupForm.types'
+import FieldSelect from '@/components/form/FieldSelect'
+import { Loader2 } from 'lucide-react'
 
 export const initialState: FormStateTypes<SignupFormTypes> = {
   values: {
@@ -46,11 +48,18 @@ export default function SignupForm({ token, provider }: { token: string; provide
         errorMessage={state.fieldErrors?.phoneNumber?.[0]}
       />
 
+      <FieldSelect
+        label="과정 선택"
+        name="track"
+        placeholder="현재 과정을 선택해주세요"
+        inputClassName="h-10"
+      />
+
       <button
         type="submit"
         className="mt-4 flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
       >
-        {isPending && <span className="mr-2 animate-spin">⏳</span>}
+        {isPending && <Loader2 className="mr-2 animate-spin" />}
         회원가입 완료
       </button>
     </form>
