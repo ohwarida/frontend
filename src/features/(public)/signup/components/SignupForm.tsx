@@ -4,7 +4,7 @@ import React, { useActionState } from 'react'
 import { signupAction } from '@/features/(public)/signup/signupAction'
 import FieldInput from '@/components/form/FieldInput'
 import { SignupFormTypes } from '@/features/(public)/signup/types/SignupForm.types'
-import FieldSelect from '@/components/form/FiledSelect'
+import FieldSelect from '@/components/form/FieldSelect'
 import { Loader2 } from 'lucide-react'
 
 export const initialState: FormStateTypes<SignupFormTypes> = {

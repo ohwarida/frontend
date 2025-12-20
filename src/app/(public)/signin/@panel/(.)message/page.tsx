@@ -1,7 +1,6 @@
 'use client'
 
 import { FileQuestionMark } from 'lucide-react'
-import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function PanelMessagePage() {
@@ -11,14 +10,12 @@ export default function PanelMessagePage() {
   const title = searchParams.get('title') ?? '안내'
   const message =
     searchParams.get('message') ?? '관리자의 승인을 완료해야 서비스를 이용하실 수 있습니다.'
-  const returnTo = searchParams.get('returnTo') ?? '/signin'
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      <Link
+      <button
         aria-label="close overlay"
-        href={`${returnTo}`}
-        replace
+        onClick={() => router.back()}
         className="absolute inset-0 bg-black/40"
       />
 
@@ -32,13 +29,12 @@ export default function PanelMessagePage() {
         <p className="mt-3 text-center text-sm leading-6 text-gray-500">{message}</p>
 
         <div className="mt-8 flex justify-center">
-          <Link
-            href={`${returnTo}`}
-            replace
+          <button
+            onClick={() => router.back()}
             className="rounded-md border border-gray-300 px-6 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             홈으로 이동
-          </Link>
+          </button>
         </div>
 
         <div className="my-8 h-[1px] w-full bg-gray-200" />

@@ -51,7 +51,6 @@ export async function signupAction(
   const sp = new URLSearchParams({
     title: '가입이 완료되었습니다.',
     message: '관리자가 승인을 완료하면 서비스를 이용가능합니다.',
-    returnTo: '..',
   })
-  redirect(`/signin?${sp.toString()}`)
+  redirect(`/signin/message?${sp.toString()}`)
 }
