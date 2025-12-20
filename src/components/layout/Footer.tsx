@@ -1,6 +1,12 @@
-import React from 'react'
+'use client'
 
-export default async function Footer() {
+import React from 'react'
+import { usePathname } from 'next/navigation'
+
+export default function Footer() {
+  const pathname = usePathname()
+
+  if (pathname === '/signup') return null
   return (
     <footer className="py-6 text-center text-sm text-gray-500">
       © 2024 DevCommunity. All rights reserved.

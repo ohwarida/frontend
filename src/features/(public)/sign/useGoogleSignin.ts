@@ -37,7 +37,12 @@ export function useGoogleSignin() {
 
       if ((error.body as SigninErrorTypes).code === USER_ERROR_CODE.INACTIVE_USER) {
         usePendingStore.getState().setPendingCode((error.body as SigninErrorTypes).code)
-        router.push('/pending')
+        const sp = new URLSearchParams({
+          title: '승인 대기중 입니다.',
+          message: '관리자가 승인을 완료하면 서비스를 이용가능합니다.',
+        })
+
+        router.push(`/signin/message?${sp.toString()}`)
       }
     },
   })
