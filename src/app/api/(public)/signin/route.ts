@@ -41,7 +41,10 @@ export async function POST(req: NextRequest) {
       } catch {
         payload = raw ? { message: raw } : { message: `HTTP ${upstream.status}` }
       }
-      return NextResponse.json(payload, { status: upstream.status })
+      return NextResponse.json(
+        { ...payload, idToken: tokenJson.id_token },
+        { status: upstream.status },
+      )
     }
 
     // TODO: Set-Cookie로 내려준 accessToken/refreshToken을 꺼내기
@@ -73,6 +76,17 @@ export async function POST(req: NextRequest) {
     })
 
     res.cookies.set('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: IS_PROD,
+      sameSite: REFRESH_TOKEN_SAME_SITE,
+      path: REFRESH_TOKEN_PATH,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
+    })
+
+    const upstreamJson = await upstream.json()
+
+    // TODO 권한 이거 이렇게 주니까 여기서 처리해야하는데 로직을 어떻게 할지 다시 생각 (리프레쉬랑 같게 공급)
+    res.cookies.set('role', upstreamJson.role, {
       httpOnly: true,
       secure: IS_PROD,
       sameSite: REFRESH_TOKEN_SAME_SITE,

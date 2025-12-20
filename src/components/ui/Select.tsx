@@ -13,7 +13,6 @@ type SelectProps<T extends string = string> = React.SelectHTMLAttributes<HTMLSel
   name: string
   options: ReadonlyArray<SelectOption<T>>
   placeholder?: string
-  defaultValue?: T | ''
 }
 
 export default function Select<T extends string = string>({
@@ -27,9 +26,9 @@ export default function Select<T extends string = string>({
   return (
     <select
       name={name}
-      defaultValue={defaultValue}
+      defaultValue={defaultValue ?? ''}
       className={clsx(
-        'h-10 w-full rounded-md bg-gray-200 px-3 focus:ring-1 focus:ring-gray-300',
+        'min-h-7 w-full rounded-md border border-gray-200 bg-white pl-2 text-xs text-gray-500 focus:ring-1 focus:ring-gray-300',
         className,
       )}
       {...rest}

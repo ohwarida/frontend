@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useGoogleSignin } from '@/features/(public)/sign/useGoogleSignin'
+import { Loader2 } from 'lucide-react'
 
 type SocialButtonProps = {
   children: React.ReactNode
@@ -18,9 +19,13 @@ export default function SocialButton({ children, socialIcon, disabled }: SocialB
       type="button"
       onClick={signWithGoogle}
       disabled={disabled}
-      className="flex items-center gap-6 rounded-2xl bg-white px-6 py-3 shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+      className="flex items-center gap-6 rounded-2xl border border-gray-200 bg-white px-20 py-2.5 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {socialIcon && <div className="shrink-0">{socialIcon}</div>}
+      {socialIcon && (
+        <div className="shrink-0">
+          {isLoading ? <Loader2 className="animate-spin" /> : socialIcon}
+        </div>
+      )}
       <span className="text-sm font-medium text-gray-900">{children}</span>
     </button>
   )
