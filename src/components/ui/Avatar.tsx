@@ -1,8 +1,9 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import clsx from 'clsx'
 import Image from 'next/image'
-import { User } from 'lucide-react'
+import { CircleUserRound } from 'lucide-react'
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg'
 type AvatarProps = {
@@ -19,27 +20,40 @@ const sizeClasses: Record<AvatarSize, string> = {
   lg: 'h-12 w-12 text-base',
 }
 
+const sizePx: Record<AvatarSize, number> = {
+  xs: 24,
+  sm: 32,
+  md: 40,
+  lg: 48,
+}
+
 export function Avatar({ src, alt, name, size = 'md', className }: AvatarProps) {
+  const [imgError, setImgError] = useState(false)
+
+  const normalizedSrc = useMemo(() => (src ?? '').trim(), [src])
+  const hasImage = normalizedSrc.length > 0 && !imgError
+  const px = sizePx[size]
+
   return (
     <div
       className={clsx(
-        'relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gray-200 text-gray-600',
-        'border border-gray-200',
+        'relative inline-flex items-center justify-center overflow-hidden rounded-full',
+        'bg-transparent',
         sizeClasses[size],
         className,
       )}
     >
-      {src ? (
+      {hasImage ? (
         <Image
-          src={src ?? ''}
+          src={normalizedSrc}
           alt={alt ?? name ?? 'Avatar'}
-          className="h-full w-full object-cover"
+          fill
+          sizes={`${px}px`}
+          className="object-cover"
+          onError={() => setImgError(true)}
         />
       ) : (
-        <span className="font-medium">
-          {/* TODO: 아이콘 수정 필요 */}
-          <User size={20} />
-        </span>
+        <CircleUserRound size={px} strokeWidth={1} className="text-black" />
       )}
     </div>
   )
