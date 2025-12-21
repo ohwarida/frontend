@@ -14,13 +14,15 @@ import { useCommentSectionState } from '../hooks/useCommentSectionState'
 
 export function CommentSection({
   postId,
+  userId,
   commentsCount,
 }: {
   postId: number
+  userId: number
   commentsCount?: number
 }) {
-  // TODO: 유저 정보 조회 API 연동
-  const currentUserId = 1
+  const currentUserId = userId
+
   const { data: comments = [] } = useGetCommentsQuery(postId)
 
   const totalCount = useMemo(() => countAll(comments), [comments])

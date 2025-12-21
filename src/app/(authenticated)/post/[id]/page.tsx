@@ -6,14 +6,15 @@ import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
 import { getPostDetail } from '@/features/(authenticated)/post/[id]/apis/post.api'
 import { Pencil, Trash2 } from 'lucide-react'
 import { TOPIC_LABEL } from '@/features/(authenticated)/post/create/types/Topic.types'
+import { getUser } from '@/features/(authenticated)/users/apis/user.api'
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params
 
   const post = await getPostDetail(id).catch(() => mockPost)
-  // TODO: 유저 정보 조회 API 연동
-  const currentUserId = 1
-  const isOwner = post && currentUserId === post.writerId
+  const user = await getUser()
+
+  const isOwner = post && user?.userId === post.writerId
 
   return (
     post && (
@@ -76,7 +77,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
           <MarkdownViewer content={post?.content} />
           {/* TODO: 추후 리액션 조회 API 생성에 따라 props 추가 필요 */}
           <Reaction />
-          <CommentSection postId={id} />
+          <CommentSection postId={id} userId={user.userId} />
         </div>
       </section>
     )
