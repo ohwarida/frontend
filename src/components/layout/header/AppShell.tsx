@@ -1,14 +1,14 @@
 import React from 'react'
 import Logo from '@/components/ui/Logo'
 import HeaderElement from '@/components/layout/header/HeaderElement'
-import { locationType } from '@/types/Location.types'
+import { LocationType } from '@/types/Location.types'
 
 export default async function AppShell({
   children,
   location,
 }: {
   children: React.ReactNode
-  location: locationType
+  location: LocationType
 }) {
   return (
     <>

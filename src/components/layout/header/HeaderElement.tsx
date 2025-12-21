@@ -1,13 +1,13 @@
-import React from 'react'
-import Input from '@/components/ui/Input'
+'use client'
+
 import Link from 'next/link'
 import Button from '@/components/ui/button/Button'
 import ProfileMenu from '@/components/layout/header/ProfileMenu'
 import { Search, Shield, SquarePen } from 'lucide-react'
 import { useAuthState } from '@/app/hooks/useAuthState'
-import { locationType } from '@/types/Location.types'
+import { LocationType } from '@/types/Location.types'
 
-export default function HeaderElement({ location }: { location: locationType }) {
+export default function HeaderElement({ location }: { location: LocationType }) {
   const isHome = location === 'board'
   const isContentCreatePage = location === 'content/create'
 
