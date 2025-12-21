@@ -19,11 +19,13 @@ export default function SocialButton({ children, socialIcon, disabled }: SocialB
       type="button"
       onClick={signWithGoogle}
       disabled={disabled}
-      className="flex items-center gap-6 rounded-2xl border border-gray-200 bg-white px-20 py-2.5 disabled:cursor-not-allowed disabled:opacity-60"
+      className="flex h-10 max-h-10 min-h-10 w-[320px] max-w-[320px] min-w-[320px] items-center gap-6 rounded-2xl border border-gray-200 bg-white px-20 py-2.5 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {socialIcon && (
-        <div className="shrink-0">
-          {isLoading ? <Loader2 className="animate-spin" /> : socialIcon}
+        <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+          <span className="inline-flex h-5 w-5 items-center justify-center">
+            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : socialIcon}
+          </span>
         </div>
       )}
       <span className="text-sm font-medium text-gray-900">{children}</span>

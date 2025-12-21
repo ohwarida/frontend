@@ -13,7 +13,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 }
 
 const Button = (props: ButtonProps) => {
-  const { children, className, variant = 'add', icon, ...rest } = props
+  const { children, className, type = 'button', variant = 'add', icon, ...rest } = props
   const variantClass = {
     add: 'btn-add',
     cancel: 'btn-cancel',
@@ -21,7 +21,7 @@ const Button = (props: ButtonProps) => {
   }[variant]
 
   return (
-    <button {...rest} className={clsx('btn-basic', variantClass, className)}>
+    <button {...rest} type={type} className={clsx('btn-basic', variantClass, className)}>
       {icon && <div>{icon}</div>}
       <span>{children}</span>
     </button>

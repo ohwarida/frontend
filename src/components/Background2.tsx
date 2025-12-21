@@ -3,39 +3,85 @@
 import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 
-// TODO: Unicorn Studio 배경 컴포넌트 최적화 하기
+const SCRIPT_ID = 'unicorn-studio-script'
+const SCRIPT_SRC =
+  'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.5.3/dist/unicornStudio.umd.js'
+
+//TODO logout시 UnicornStudio reset 기능 필요
 export default function Background2() {
-  const [ready, setReady] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (window.UnicornStudio?.isInitialized) {
-      setReady(true)
-      return
+    let cancelled = false
+
+    const fadeIn = () => {
+      requestAnimationFrame(() => {
+        if (!cancelled) setVisible(true)
+      })
     }
 
-    if (!window.UnicornStudio) {
-      window.UnicornStudio = { isInitialized: false }
-
-      const script = document.createElement('script')
-      script.src =
-        'https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.5.3/dist/unicornStudio.umd.js'
-
-      script.onload = () => {
-        // 🔑 DOM이 이미 있으므로 이제 init
+    const initAndShow = () => {
+      try {
         window.UnicornStudio?.init?.()
-        window.UnicornStudio!.isInitialized = true
-        setReady(true)
+        if (window.UnicornStudio) window.UnicornStudio.isInitialized = true
+      } finally {
+        fadeIn()
+      }
+    }
+
+    if (window.UnicornStudio?.isInitialized) {
+      initAndShow()
+      return () => {
+        cancelled = true
+      }
+    }
+
+    window.UnicornStudio = window.UnicornStudio ?? { isInitialized: false }
+
+    // 스크립트 중복 삽입 방지
+    const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null
+    if (existing) {
+      // 이미 로드된 스크립트면 바로 init
+      if (existing.dataset.loaded === 'true') {
+        initAndShow()
+      } else {
+        existing.addEventListener(
+          'load',
+          () => {
+            existing.dataset.loaded = 'true'
+            initAndShow()
+          },
+          { once: true },
+        )
       }
 
-      document.head.appendChild(script)
+      return () => {
+        cancelled = true
+      }
     }
-  }, [])
+
+    const script = document.createElement('script')
+    script.id = SCRIPT_ID
+    script.src = SCRIPT_SRC
+    script.async = true
+
+    script.onload = () => {
+      script.dataset.loaded = 'true'
+      initAndShow()
+    }
+
+    document.head.appendChild(script)
+
+    return () => {
+      cancelled = true
+    }
+  })
 
   return (
     <div
       className={clsx(
-        `absolute inset-0 transition-opacity duration-500`,
-        ready ? 'opacity-100' : 'opacity-0',
+        'will-change-opacity absolute inset-0 transition-opacity duration-2000',
+        visible ? 'opacity-100' : 'opacity-0',
       )}
     >
       <div data-us-project="1nCWzmjSoyYtyrWcBsMi" className="absolute inset-0" />
