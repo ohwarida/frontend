@@ -1,25 +1,24 @@
 'use client'
 
-import React from 'react'
-import Input from '@/components/ui/Input'
 import Link from 'next/link'
 import Button from '@/components/ui/button/Button'
 import ProfileMenu from '@/components/layout/header/ProfileMenu'
 import { Search, Shield, SquarePen } from 'lucide-react'
 import { useAuthState } from '@/app/hooks/useAuthState'
+import { LocationType } from '@/types/Location.types'
 
-export default function HeaderElement({ location }: { location: locationTypes }) {
+export default function HeaderElement({ location }: { location: LocationType }) {
   const isHome = location === 'board'
-  const isContentCreatePage = location === 'content'
+  const isContentCreatePage = location === 'post/create'
 
   const { user } = useAuthState()
   const isAdmin = user?.role === 'ADMIN'
 
   return (
-    <div className="flex w-full items-center justify-between gap-4">
-      <div className="w-[400px]">
+    <div className="flex items-center gap-3">
+      {/* <div className="mr-2 w-[400px]">
         <Input icon={<Search size={16} color="#99A1AF" />} type="search" />
-      </div>
+      </div> */}
       <div className="flex items-center gap-3">
         {isAdmin && (
           <>
@@ -35,7 +34,7 @@ export default function HeaderElement({ location }: { location: locationTypes })
         )}
         {isHome && (
           <>
-            <Link href="/content">
+            <Link href="/post">
               <Button icon={<SquarePen size={16} />}>글쓰기</Button>
             </Link>
             <ProfileMenu />

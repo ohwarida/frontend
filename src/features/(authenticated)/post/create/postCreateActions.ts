@@ -2,20 +2,20 @@
 
 import { redirect } from 'next/navigation'
 import { server } from '@/lib/api/server'
-import { ContentFormValues } from '@/features/(authenticated)/content/create/types/ContentCreateForm.types'
-import { TopicType } from '@/features/(authenticated)/content/create/types/Topic.types'
+import { PostFormValues } from '@/features/(authenticated)/post/create/types/PostCreateForm.types'
+import { TopicType } from '@/features/(authenticated)/post/create/types/Topic.types'
 
 export async function createContentAction(
-  prevState: FormStateTypes<ContentFormValues>,
+  prevState: FormStateTypes<PostFormValues>,
   formData: FormData,
-): Promise<FormStateTypes<ContentFormValues>> {
-  const raw: ContentFormValues = {
+): Promise<FormStateTypes<PostFormValues>> {
+  const raw: PostFormValues = {
     topic: String(formData.get('topic') ?? '') as TopicType,
     title: String(formData.get('title') ?? ''),
     content: String(formData.get('content') ?? ''),
   }
 
-  const fieldErrors: FormStateTypes<ContentFormValues>['fieldErrors'] = {}
+  const fieldErrors: FormStateTypes<PostFormValues>['fieldErrors'] = {}
 
   if (!raw.topic.trim()) fieldErrors.topic = ['카테고리를 선택해 주세요.']
   if (!raw.title.trim()) fieldErrors.title = ['제목을 입력해 주세요.']
@@ -38,9 +38,9 @@ export async function createContentAction(
   }
 
   try {
-    await server<{ id: number }, typeof payload>('/api/v1/posts', {
+    await server('/api/v1/posts', {
       method: 'POST',
-      body: payload,
+      body: JSON.stringify(payload),
       cache: 'no-store',
     })
   } catch (e) {

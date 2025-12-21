@@ -1,25 +1,33 @@
 import React from 'react'
 import Logo from '@/components/ui/Logo'
 import HeaderElement from '@/components/layout/header/HeaderElement'
+import { LocationType } from '@/types/Location.types'
 
 export default async function AppShell({
   children,
   location,
 }: {
   children: React.ReactNode
-  location: locationTypes
+  location: LocationType
 }) {
   return (
     <>
-      <header className="fixed inset-x-0 z-20 flex h-20 max-h-20 min-h-20 items-center border-b border-gray-200 bg-white">
-        <div className="mx-auto flex size-full max-w-7xl items-center gap-4 px-5">
-          <Logo />
+      <header className="fixed inset-x-0 top-0 z-20 h-(--header-h) border-b border-[#E5E7EB] bg-white">
+        <div className="mx-auto flex h-full w-full max-w-(--container-max) items-center px-5">
+          <div className="shrink-0">
+            <Logo />
+          </div>
 
-          <HeaderElement location={location} />
+          {/* 오른쪽 영역 */}
+          <div className="ml-auto flex items-center">
+            <HeaderElement location={location} />
+          </div>
         </div>
       </header>
 
-      <div className="min-h-full w-full pt-[80px]">{children}</div>
+      <main className="min-h-dvh w-full bg-(--app-bg) pt-(--header-h)">
+        <div className="mx-auto w-full max-w-(--container-max) px-5 pt-6">{children}</div>
+      </main>
     </>
   )
 }

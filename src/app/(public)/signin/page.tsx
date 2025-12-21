@@ -1,5 +1,5 @@
 import React from 'react'
-import SocialButton from '@/features/(public)/sign/components/SocialButton'
+import SocialButton from '@/features/(public)/signin/components/SocialButton'
 import { MessageSquare, TrendingUp, Users } from 'lucide-react'
 
 export default async function SignPage() {

@@ -1,1 +1,1 @@
-type locationTypes = 'board' | 'content'
+export type LocationType = 'board' | 'post' | 'post/create'

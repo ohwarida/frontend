@@ -2,13 +2,13 @@
 
 import { useGoogleLogin } from '@react-oauth/google'
 import { useMutation } from '@tanstack/react-query'
-import { SigninTypes } from '@/features/(public)/sign/types/Signin.types'
+import { SigninTypes } from '@/features/(public)/signin/types/Signin.types'
 import { useRouter } from 'next/navigation'
 import { isHttpError } from '@/utils/isHttpError'
 import { usePendingStore } from '@/store/pendingStore'
 import { client } from '@/lib/api/client'
 import { USER_ERROR_CODE } from '@/constants/error-code/user'
-import { SigninErrorTypes } from '@/features/(public)/sign/types/SigninError.types'
+import { SigninErrorTypes } from '@/features/(public)/signin/types/SigninError.types'
 
 export function useGoogleSignin() {
   const router = useRouter()

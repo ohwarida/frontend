@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useGoogleSignin } from '@/features/(public)/sign/useGoogleSignin'
+import { useGoogleSignin } from '@/features/(public)/signin/useGoogleSignin'
 import { Loader2 } from 'lucide-react'
 
 type SocialButtonProps = {

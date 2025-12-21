@@ -5,27 +5,17 @@ import dynamic from 'next/dynamic'
 
 const MarkdownPreview = dynamic(() => import('@uiw/react-markdown-preview'), { ssr: false })
 
-/**
- * 저장된 Markdown 문자열을 렌더링하는 뷰어 컴포넌트.
- *
- * - `@uiw/react-markdown-preview`를 사용해서 HTML로 렌더링
- * - 다크 모드에서는 `data-color-mode="dark"` + `prose` 클래스로 보기 좋게 표시
- *
- * 사용 예시:
- *
- * ```tsx
- * // 강의 상세 페이지 같은 곳에서
- * const lecture = await getLecture(params.id)
- *
- * return (
- *   <MarkdownViewer content={lecture.description} />
- * )
- * ```
- */
+// TODO: !important 제거
 const MarkdownViewer = ({ content }: { content: string }) => {
   return (
-    <article data-color-mode="light" className="prose max-w-none">
-      <MarkdownPreview source={content} className="mt-0 rounded-md" />
+    <article
+      data-color-mode="light"
+      className="max-w-none text-[16px] leading-[28px] text-black [&_.wmde-markdown]:bg-transparent [&_.wmde-markdown]:shadow-none [&_.wmde-markdown_h1]:[padding-bottom:0!important] [&_.wmde-markdown_h1]:[border-bottom:none!important] [&_.wmde-markdown_h2]:[padding-bottom:0!important] [&_.wmde-markdown_h2]:[border-bottom:none!important]"
+    >
+      <MarkdownPreview
+        source={content}
+        className="mt-0 rounded-md [&_li]:my-0 [&_li]:marker:text-[rgba(46,47,51,0.88)] [&_ol]:my-0 [&_ol]:list-outside [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:marker:text-[rgba(46,47,51,0.88)] [&_p]:my-0 [&_p+_p]:mt-5 [&_ul]:my-0 [&_ul]:list-outside [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:marker:text-[rgba(46,47,51,0.88)]"
+      />
     </article>
   )
 }
