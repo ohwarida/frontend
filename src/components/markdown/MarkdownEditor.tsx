@@ -71,7 +71,6 @@ const MarkdownEditor = ({ name, defaultValue = '', onChange }: MarkdownEditorPro
       <div data-color-mode="light" className="h-full w-full rounded">
         <MDEditor
           preview="edit"
-          height={320}
           visibleDragbar={false}
           value={value}
           onChange={(val) => syncValue(val ?? '')}
@@ -82,9 +81,7 @@ const MarkdownEditor = ({ name, defaultValue = '', onChange }: MarkdownEditorPro
             onBlur: () => setFocused(false),
           }}
           className={clsx(
-            focused
-              ? 'ring-blue-500/10 ring-offset-1 [&_.w-md-editor-content]:!ring-2 [&_.w-md-editor-content]:!ring-offset-gray-100/50'
-              : 'ring-1 ring-transparent',
+            focused ? 'ring-0 outline-none' : 'ring-0 outline-none',
             '!h-full !border-0 !shadow-none',
             '[&_.w-md-editor-content]:!bg-gray-200/40 [&_.w-md-editor-toolbar]:!border-0',
             '[&_.w-md-editor-content]:!rounded-md',
@@ -96,18 +93,16 @@ const MarkdownEditor = ({ name, defaultValue = '', onChange }: MarkdownEditorPro
             '[&_.w-md-editor-toolbar]:!py-2.5',
             '[&_.w-md-editor-toolbar]:!mb-2.5',
             '[&_.w-md-editor-text-input]:!h-full',
-            '[&_.w-md-editor-toolbar]:!border-b-2',
+            '[&_.w-md-editor-toolbar]:!border-b',
 
             '[&_.w-md-editor-area]:!min-h-full',
             '[&_.w-md-editor-input]:!min-h-full',
 
-            // ★ textarea 높이 100% + 리사이즈 막기
             '[&_.w-md-editor-text-input]:!h-full',
             '[&_.w-md-editor-text]:!h-full',
             '[&_.w-md-editor-text-input]:!resize-none',
           )}
           commandsFilter={(cmd) => {
-            // 툴바에 남길 명령만 선택 (Bold, Italic, Quote, Code, Image, Link)
             const allowed = ['bold', 'italic', 'quote', 'code', 'image', 'link']
             if (!cmd.name) return false
             if (!allowed.includes(cmd.name)) return false
