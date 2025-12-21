@@ -14,9 +14,10 @@ import {
   TOPIC_TYPE,
   type TopicType,
 } from '@/features/(authenticated)/post/create/types/Topic.types'
+import { useAuthState } from '@/app/hooks/useAuthState'
 
 export const initialState: FormStateTypes<PostFormValues> = {
-  values: { topic: 'NOTICE', title: '', content: '' },
+  values: { topic: 'EMPLOYMENT_TIP', title: '', content: '' },
   fieldErrors: {},
   success: false,
 }
@@ -27,12 +28,16 @@ export default function PostCreateForm() {
 
   const [previewContent, setPreviewContent] = useState<string>(state.values?.content ?? '')
 
+  const { user } = useAuthState()
+  const isAdmin = user?.role === 'ADMIN'
+
   const topicOptions = useMemo(
     () =>
       Object.values(TOPIC_TYPE)
         .filter((v) => v !== TOPIC_TYPE.ALL)
+        .filter((v) => (isAdmin ? true : v !== TOPIC_TYPE.NOTICE)) // ✅ 관리자 아니면 NOTICE 제거
         .map((v) => ({ value: v, label: TOPIC_LABEL[v] })),
-    [],
+    [isAdmin],
   )
 
   return (
@@ -51,7 +56,7 @@ export default function PostCreateForm() {
               <p className="text-[16px] leading-[24px] font-normal text-black">카테고리</p>
               <Select<TopicType>
                 name="topic"
-                defaultValue={(state.values?.topic as TopicType) ?? 'NOTICE'}
+                defaultValue={topicOptions[0]?.value}
                 options={topicOptions}
                 className="h-[36px] w-full rounded-[8px] border-none !bg-[#F4F4F5] px-[12px] text-[14px] text-[#0A0A0A]"
               />
