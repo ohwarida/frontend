@@ -3,10 +3,7 @@ import Aside from '@/components/layout/aside/Aside'
 import PageButton from '@/components/layout/PageButton'
 import Main from '@/components/layout/Main'
 import AppShell from '@/components/layout/header/AppShell'
-import {
-  TOPIC_LABEL,
-  TOPIC_TYPE,
-} from '@/features/(authenticated)/content/create/types/Topic.types'
+import { TOPIC_LABEL, TOPIC_TYPE } from '@/features/(authenticated)/post/create/types/Topic.types'
 
 const TABS = [
   { id: TOPIC_TYPE.ALL, label: TOPIC_LABEL.ALL, href: '/' },

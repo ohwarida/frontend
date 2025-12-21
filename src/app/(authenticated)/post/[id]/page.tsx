@@ -1,13 +1,13 @@
 import MarkdownViewer from '@/components/markdown/MarkdownViewer'
 import { Avatar } from '@/components/ui/Avatar'
-import { Reaction } from '@/features/(authenticated)/content/[id]/components/Reaction'
-import { CommentSection } from '@/features/(authenticated)/content/[id]/components/CommentSection'
+import { Reaction } from '@/features/(authenticated)/post/[id]/components/Reaction'
+import { CommentSection } from '@/features/(authenticated)/post/[id]/components/CommentSection'
 import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
-import { getPostDetail } from '@/features/(authenticated)/content/[id]/apis/post.api'
+import { getPostDetail } from '@/features/(authenticated)/post/[id]/apis/post.api'
 import { Pencil, Trash2 } from 'lucide-react'
-import { TOPIC_LABEL } from '@/features/(authenticated)/content/create/types/Topic.types'
+import { TOPIC_LABEL } from '@/features/(authenticated)/post/create/types/Topic.types'
 
-export default async function ContentDetailPage({ params }: { params: Promise<{ id: number }> }) {
+export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params
 
   const post = await getPostDetail(id).catch(() => mockPost)
@@ -86,7 +86,7 @@ export default async function ContentDetailPage({ params }: { params: Promise<{ 
 export const mockPost = {
   writerId: 1,
   writerName: '김개발',
-  topic: '취업 팁',
+  topic: 'EMPLOYMENT_TIP',
   title: '주니어 개발자를 위한 포트폴리오 작성 가이드',
   tags: ['취업', '포트폴리오', '주니어'],
   wroteAt: '2025-12-18T00:00:00.000Z',

@@ -9,7 +9,7 @@ import { LocationType } from '@/types/Location.types'
 
 export default function HeaderElement({ location }: { location: LocationType }) {
   const isHome = location === 'board'
-  const isContentCreatePage = location === 'content/create'
+  const isContentCreatePage = location === 'post/create'
 
   const { user } = useAuthState()
   const isAdmin = user?.role === 'ADMIN'
@@ -34,7 +34,7 @@ export default function HeaderElement({ location }: { location: LocationType }) 
         )}
         {isHome && (
           <>
-            <Link href="/content">
+            <Link href="/post">
               <Button icon={<SquarePen size={16} />}>글쓰기</Button>
             </Link>
             <ProfileMenu />
