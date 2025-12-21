@@ -44,7 +44,8 @@ export async function createPost(input: CreatePostRequest) {
     body: JSON.stringify(input),
   })
   if (!res.ok) throw new Error('게시글 생성 실패')
-  return await safeJson(res)
+
+  return res.headers.get('Location')
 }
 
 export async function updatePost(input: UpdatePostRequest) {
