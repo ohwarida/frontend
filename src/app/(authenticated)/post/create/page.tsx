@@ -1,5 +1,5 @@
-import React from 'react'
-import ContentCreateForm from '@/features/(authenticated)/post/create/components/PostCreateForm'
+import { createPostAction } from '@/features/(authenticated)/post/create/actions/postCreateAction'
+import PostForm from '@/features/(authenticated)/post/create/components/PostForm'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -10,7 +10,11 @@ export const metadata: Metadata = {
 export default function PostCreatePage() {
   return (
     <main className="min-h-screen w-full bg-[#F9FAFB]">
-      <ContentCreateForm />
+      <PostForm
+        mode="create"
+        action={createPostAction}
+        initialValues={{ topic: 'EMPLOYMENT_TIP', title: '', content: '' }}
+      />
     </main>
   )
 }
