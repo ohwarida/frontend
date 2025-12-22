@@ -3,8 +3,7 @@
 import clsx from 'clsx'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type React from 'react'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 export default function PageButton({
   TABS,
@@ -18,46 +17,47 @@ export default function PageButton({
   }, [pathname])
 
   return (
-    <nav className="sticky top-20 flex h-12 items-start gap-2">
-      {TABS.map((tab) => {
-        const hasHref = !!tab.href
+    <div className="sticky top-(--header-h) z-30 -mx-5 -mt-6 bg-(--app-bg) px-5 pt-6 pb-4">
+      <nav className="flex h-12 items-center gap-2 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {TABS.map((tab) => {
+          const hasHref = !!tab.href
+          const isActive = hasHref
+            ? tab.href === '/'
+              ? pathname === '/'
+              : pathname.startsWith(tab.href!)
+            : false
 
-        const isActive = hasHref
-          ? tab.href === '/'
-            ? pathname === '/'
-            : pathname.startsWith(tab.href!)
-          : false
+          const baseClass = clsx(
+            'inline-flex h-12 shrink-0 items-center justify-center gap-3 rounded-[8px] border px-4 text-[16px] leading-6 transition-colors',
+            isActive
+              ? 'border-[#155DFC] bg-[#EFF6FF] font-semibold text-[#155DFC]'
+              : 'border-[#EAEBEC] bg-white font-normal text-[#101828] hover:bg-gray-50',
+          )
 
-        const baseClass = clsx(
-          'inline-flex h-12 items-center justify-center gap-3 rounded-lg border px-4 text-base leading-6 transition-colors',
-          isActive
-            ? 'border-[#155DFC] bg-[#EFF6FF] font-semibold text-[#155DFC]'
-            : 'border-[#EAEBEC] bg-white font-normal text-[#101828] hover:bg-gray-50',
-        )
+          const iconClass = isActive ? 'text-[#155DFC]' : 'text-[#4A5565]'
 
-        const iconClass = isActive ? 'text-[#155DFC]' : 'text-[#4A5565]'
+          const content = (
+            <>
+              {tab.icon ? (
+                <span className={clsx('inline-flex size-4 items-center justify-center', iconClass)}>
+                  {tab.icon}
+                </span>
+              ) : null}
+              {tab.label}
+            </>
+          )
 
-        const content = (
-          <>
-            {tab.icon ? (
-              <span className={clsx('inline-flex size-4 items-center justify-center', iconClass)}>
-                {tab.icon}
-              </span>
-            ) : null}
-            {tab.label}
-          </>
-        )
-
-        return hasHref ? (
-          <Link key={tab.id} href={tab.href!} className={baseClass}>
-            {content}
-          </Link>
-        ) : (
-          <button key={tab.id} type="button" className={baseClass} onClick={tab.onClick}>
-            {content}
-          </button>
-        )
-      })}
-    </nav>
+          return hasHref ? (
+            <Link key={tab.id} href={tab.href!} className={baseClass}>
+              {content}
+            </Link>
+          ) : (
+            <button key={tab.id} type="button" className={baseClass} onClick={tab.onClick}>
+              {content}
+            </button>
+          )
+        })}
+      </nav>
+    </div>
   )
 }
