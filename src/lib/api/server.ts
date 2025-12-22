@@ -45,7 +45,7 @@ export async function safeJson<T>(res: Response): Promise<T | null> {
   return JSON.parse(text) as T
 }
 
-async function refreshAccessToken(): Promise<{ accessToken: string } | null> {
+async function refreshAccessToken(): Promise<{ accessToken: string; refreshToken: string } | null> {
   const cookieStore = await cookies()
 
   const refreshToken = cookieStore.get('refresh_token')?.value
@@ -66,10 +66,16 @@ async function refreshAccessToken(): Promise<{ accessToken: string } | null> {
     .find((sc) => sc.startsWith('accessToken='))
     ?.slice('accessToken='.length)
     .split(';', 1)[0]
+  const newRefreshToken = setCookies
+    .find((sc) => sc.startsWith('refreshToken='))
+    ?.slice('refreshToken='.length)
+    .split(';', 1)[0]
 
-  if (!newAccessToken) return null
+  if (!newAccessToken || !newRefreshToken) return null
 
   cookieStore.set('access_token', newAccessToken)
 
-  return { accessToken: newAccessToken }
+  cookieStore.set('refresh_token', newRefreshToken)
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken }
 }

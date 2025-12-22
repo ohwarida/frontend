@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { i_want_change_this } from '@/features/(authenticated)/users/apis/i_want_change_this'
+import { getUser } from '@/features/(authenticated)/users/apis/user.api'
 
 // 로그인 없이 접근 허용할 경로들
 const PUBLIC_PATHS = ['/signin', '/signup']
@@ -21,7 +21,12 @@ export async function proxy(request: NextRequest) {
   const isAuthPage = pathname.startsWith('/signin') || pathname.startsWith('/signup')
 
   const refreshToken = request.cookies.get('refresh_token')?.value
-  const user = refreshToken ? await i_want_change_this() : null
+  let user
+  try {
+    user = refreshToken ? await getUser() : null
+  } catch (e) {
+    user = null
+  }
   const isAuthed = !!user
 
   // 로그인 상태에서 /signin, /signup 접근하면 기본 페이지로 보내기 (이것도 인식 맞지?)
