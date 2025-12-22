@@ -6,7 +6,7 @@ import AppShell from '@/components/layout/header/AppShell'
 import { TOPIC_LABEL, TOPIC_TYPE } from '@/features/(authenticated)/post/create/types/Topic.types'
 import { Briefcase, TrendingUp, House, FileText, MessageCircle } from 'lucide-react'
 
-const TABS = [
+export const TABS = [
   { id: TOPIC_TYPE.ALL, label: TOPIC_LABEL.ALL, href: '/', icon: <House /> },
   { id: TOPIC_TYPE.NOTICE, label: TOPIC_LABEL.NOTICE, href: '/notice', icon: <FileText /> },
   {
@@ -15,7 +15,7 @@ const TABS = [
     href: '/job-tips',
     icon: <Briefcase />,
   },
-  { id: TOPIC_TYPE.TREND, label: TOPIC_LABEL.TREND, href: '/trend', icon: <TrendingUp /> },
+  // { id: TOPIC_TYPE.TREND, label: TOPIC_LABEL.TREND, href: '/trend', icon: <TrendingUp /> },
   {
     id: TOPIC_TYPE.KNOWLEDGE,
     label: TOPIC_LABEL.KNOWLEDGE,
