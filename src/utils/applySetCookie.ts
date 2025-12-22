@@ -18,18 +18,25 @@ function parseSetCookie(
   const options: CookieSetOptions = {}
 
   for (const a of attrs) {
-    const [kRaw, vRaw] = a.split('=')
-    const k = kRaw.toLowerCase()
-    const v = vRaw
+    const i = a.indexOf('=')
+    const k = (i >= 0 ? a.slice(0, i) : a).trim().toLowerCase()
+    const v = (i >= 0 ? a.slice(i + 1) : undefined)?.trim()
 
     if (k === 'path') options.path = v ?? '/'
-    else if (k === 'max-age') options.maxAge = Number(v)
-    else if (k === 'expires') options.expires = new Date(v!)
-    else if (k === 'httponly') options.httpOnly = true
+    else if (k === 'domain') options.domain = v
+    else if (k === 'max-age') {
+      const n = Number(v)
+      if (!Number.isNaN(n)) options.maxAge = n
+    } else if (k === 'expires') {
+      const d = v ? new Date(v) : null
+      if (d && !Number.isNaN(d.getTime())) options.expires = d
+    } else if (k === 'httponly') options.httpOnly = true
     else if (k === 'secure') options.secure = true
     else if (k === 'samesite') {
       const vv = (v ?? '').toLowerCase()
       options.sameSite = vv === 'lax' ? 'lax' : vv === 'strict' ? 'strict' : 'none'
+    } else if (k === 'partitioned') {
+      options.partitioned = true
     }
   }
 
