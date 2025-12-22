@@ -1,13 +1,8 @@
 'use client'
 
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createPost, deletePost, getPostDetail, getPosts, updatePost } from '../apis/post.api'
-import type {
-  CreatePostRequest,
-  GetPostDetailResponse,
-  GetPostsResponse,
-  UpdatePostRequest,
-} from '../types/Post.types'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { deletePost, getPosts, updatePost } from '../apis/post.api'
+import type { GetPostsResponse, UpdatePostRequest } from '../types/Post.types'
 
 export const postKeys = {
   all: ['post'] as const,
@@ -30,28 +25,6 @@ export function useGetPostsQuery(size = DEFAULT_POSTS_PAGE_SIZE) {
     getNextPageParam: (lastPage) => {
       if (!lastPage.hasNext) return undefined
       return lastPage.nextCursorId ?? lastPage.contents.at(-1)?.postId ?? undefined
-    },
-  })
-}
-
-// 게시글 상세 조회
-export function useGetPostDetailMutation(postId: number) {
-  return useQuery<GetPostDetailResponse>({
-    queryKey: postKeys.detail(postId),
-    queryFn: () => getPostDetail(postId),
-    enabled: !!postId,
-  })
-}
-
-// 게시글 생성
-export function useCreatePostMutation() {
-  const qc = useQueryClient()
-
-  return useMutation<Awaited<ReturnType<typeof createPost>>, Error, CreatePostRequest>({
-    mutationFn: (payload) => createPost(payload),
-    onSuccess: () => {
-      // 목록 갱신
-      qc.invalidateQueries({ queryKey: postKeys.list() })
     },
   })
 }

@@ -8,9 +8,9 @@ const TABS = [
   { id: 'UNREAL_GAME', label: '언리얼 게임 개발' },
 ]
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppShell location="post">
+    <AppShell location="admin">
       <Main>
         <section className="w-full">
           <PageButton TABS={TABS} />

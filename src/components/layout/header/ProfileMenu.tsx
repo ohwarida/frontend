@@ -10,7 +10,6 @@ export default function ProfileMenu() {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
-  const menuId = useId()
   const router = useRouter()
 
   // 바깥 클릭 닫기
@@ -74,7 +73,7 @@ export default function ProfileMenu() {
         className="rounded-full"
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-controls={menuId}
+        aria-controls="profile-menu"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={(e) => {
           if (e.key === 'ArrowDown') {
@@ -88,7 +87,7 @@ export default function ProfileMenu() {
 
       {open && (
         <div
-          id={menuId}
+          id="profile-menu"
           ref={menuRef}
           role="menu"
           className={[

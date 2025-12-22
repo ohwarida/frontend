@@ -4,4 +4,5 @@ export type PostFormValues = {
   topic: TopicType
   title: string
   content: string
+  draftId: string // uuid
 }
