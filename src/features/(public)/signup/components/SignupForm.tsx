@@ -49,7 +49,6 @@ export default function SignupForm({ token, provider }: { token: string; provide
       />
 
       <FieldSelect
-        options={[]}
         label="과정 선택"
         name="track"
         placeholder="현재 과정을 선택해주세요"
