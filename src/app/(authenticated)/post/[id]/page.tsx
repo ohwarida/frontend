@@ -9,6 +9,7 @@ import { TOPIC_LABEL } from '@/features/(authenticated)/post/create/types/Topic.
 import { getUser } from '@/features/(authenticated)/users/apis/user.api'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import Link from 'next/link'
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params
@@ -55,13 +56,13 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
             {/* <BookMarkButton /> */}
             {isOwner && (
               <div className="flex h-7 w-[72px] items-center gap-4">
-                <button
-                  type="button"
+                <Link
+                  href={`/post/${id}/edit`}
                   aria-label="수정"
                   className="h-7 w-7 rounded-md px-1 pt-1 pb-0 focus:ring-1 focus:ring-[#155DFC]/30 focus:outline-none"
                 >
                   <Pencil size={20} stroke="rgba(55,56,60,0.61)" aria-hidden />
-                </button>
+                </Link>
 
                 <form action={deletePostAction}>
                   <button
