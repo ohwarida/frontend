@@ -1,5 +1,6 @@
-import React from 'react'
-import PageCard from '@/components/PageCard'
+import PostCard from '@/components/PostCard'
+import { getPosts } from '@/features/(authenticated)/post/[id]/apis/post.api'
+import { TOPIC_TYPE } from '@/features/(authenticated)/post/create/types/Topic.types'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -8,9 +9,15 @@ export const metadata: Metadata = {
 }
 
 export default async function NoticePage() {
+  // TODO: getPosts가 topic/cursor/size 등을 쿼리로 받을 수 있게 되면, 전체 조회 후 프론트 필터링을 제거하고 서버에서 topic 필터링된 결과만 받아오도록 변경.
+  const posts = await getPosts()
+  const filtered = posts.contents.filter((p) => p.topic === TOPIC_TYPE.NOTICE)
+
   return (
-    <div>
-      <PageCard />
-    </div>
+    <>
+      {filtered.map((post) => (
+        <PostCard key={post.postId} post={post} />
+      ))}
+    </>
   )
 }
