@@ -43,4 +43,4 @@ export type CreatePostRequest = {
   highlightType: HighlightType
 }
 
-export type UpdatePostRequest = CreatePostRequest & { postId: number }
+export type UpdatePostRequest = Omit<CreatePostRequest, 'draftId'> & { postId: number }
