@@ -1,5 +1,4 @@
 import React from 'react'
-import PageCard from '@/components/PageCard'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -8,9 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default async function QnAPage() {
-  return (
-    <div>
-      <PageCard />
-    </div>
-  )
+  return <></>
 }
