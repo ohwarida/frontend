@@ -21,7 +21,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
         <section className="w-full">
           <PageButton TABS={TABS} />
-          <div className="pt-4">{children}</div>
+          <div className="flex flex-col gap-4 pt-4">{children}</div>
         </section>
       </Main>
     </AppShell>
