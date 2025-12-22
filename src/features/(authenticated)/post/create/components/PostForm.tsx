@@ -7,27 +7,26 @@ import MarkdownEditor from '@/components/markdown/MarkdownEditor'
 import MarkdownViewer from '@/components/markdown/MarkdownViewer'
 import ErrorMessage from '@/components/ui/ErrorMessage'
 import Select from '@/components/ui/Select'
-import { createPostAction } from '@/features/(authenticated)/post/create/actions/postCreateAction'
-import type { PostFormValues } from '@/features/(authenticated)/post/create/types/PostCreateForm.types'
-import {
-  TOPIC_LABEL,
-  TOPIC_TYPE,
-  type TopicType,
-} from '@/features/(authenticated)/post/create/types/Topic.types'
+import { TOPIC_LABEL, TOPIC_TYPE, type TopicType } from '@/types/Topic.types'
 import { useAuthState } from '@/app/hooks/useAuthState'
+import { PostFormValues } from '../../types/Post.types'
 
-export const initialState: FormStateTypes<PostFormValues> = {
-  values: { topic: 'EMPLOYMENT_TIP', title: '', content: '' },
-  fieldErrors: {},
-  success: false,
+export type PostFormMode = 'create' | 'edit'
+
+type ActionFn = (
+  prevState: FormStateTypes<PostFormValues>,
+  formData: FormData,
+) => Promise<FormStateTypes<PostFormValues>>
+
+type PostFormProps = {
+  mode: PostFormMode
+  action: ActionFn
+  initialValues: PostFormValues
+  postId?: number
+  formKey?: string | number
 }
 
-export default function PostCreateForm() {
-  const [state, formAction, isPending] = useActionState(createPostAction, initialState)
-  const [draftId] = useState(() => crypto.randomUUID())
-
-  const [previewContent, setPreviewContent] = useState<string>(state.values?.content ?? '')
-
+export default function PostForm({ mode, action, initialValues, postId, formKey }: PostFormProps) {
   const { user } = useAuthState()
   const isAdmin = user?.role === 'ADMIN'
 
@@ -35,28 +34,45 @@ export default function PostCreateForm() {
     () =>
       Object.values(TOPIC_TYPE)
         .filter((v) => v !== TOPIC_TYPE.ALL)
-        .filter((v) => (isAdmin ? true : v !== TOPIC_TYPE.NOTICE)) // ✅ 관리자 아니면 NOTICE 제거
+        .filter((v) => (isAdmin ? true : v !== TOPIC_TYPE.NOTICE))
         .map((v) => ({ value: v, label: TOPIC_LABEL[v] })),
     [isAdmin],
   )
 
+  const initialState = useMemo<FormStateTypes<PostFormValues>>(
+    () => ({
+      values: initialValues,
+      fieldErrors: {},
+      success: false,
+    }),
+    [initialValues],
+  )
+
+  const [state, formAction, isPending] = useActionState(action, initialState)
+  const [draftId] = useState(() => crypto.randomUUID())
+
+  const [previewContent, setPreviewContent] = useState<string>(initialValues.content ?? '')
+
   return (
-    <div className="w-full">
-      <div className="mx-auto w-full max-w-[1400px] pt-[24px]">
+    <div className="w-full" key={formKey}>
+      <div className="mx-auto w-full max-w-[1400px]">
         <Form
           id="postFormId"
           action={formAction}
           aria-busy={isPending}
           className="flex w-full flex-col gap-[24px] lg:flex-row"
         >
-          <input type="hidden" name="draftId" value={draftId} />
-
+          {mode === 'create' ? (
+            <input type="hidden" name="draftId" value={draftId} />
+          ) : (
+            <input type="hidden" name="postId" value={postId} />
+          )}
           <section className="box-border flex w-full flex-col items-start gap-[24px] rounded-[10px] border border-[#E5E7EB] bg-white p-[33px] lg:w-[808px]">
             <div className="flex w-full flex-col gap-[8px]">
               <p className="text-[16px] leading-[24px] font-normal text-black">카테고리</p>
               <Select<TopicType>
                 name="topic"
-                defaultValue={topicOptions[0]?.value}
+                defaultValue={(state.values?.topic ?? initialValues.topic) as TopicType}
                 options={topicOptions}
                 className="h-[36px] w-full rounded-[8px] border-none !bg-[#F4F4F5] px-[12px] text-[14px] text-[#0A0A0A]"
               />
@@ -69,7 +85,7 @@ export default function PostCreateForm() {
               <Input
                 name="title"
                 placeholder="제목을 입력하세요"
-                defaultValue={state.values?.title ?? ''}
+                defaultValue={state.values?.title ?? initialValues.title ?? ''}
                 disabled={isPending}
                 className="h-[36px] w-full rounded-[8px] border-none !bg-[#F4F4F5] px-[16px] text-[14px] text-[#0A0A0A] placeholder:text-[#717182]"
               />
@@ -77,7 +93,8 @@ export default function PostCreateForm() {
                 <ErrorMessage errorMessage={state.fieldErrors.title?.[0]} />
               )}
             </div>
-            {/* TODO: highlighType 설정폼 추가 */}
+
+            {/* TODO: highlightType 설정폼 추가 */}
             <div className="flex h-full w-full flex-col gap-[8px]">
               <div
                 className={[
@@ -87,7 +104,7 @@ export default function PostCreateForm() {
               >
                 <MarkdownEditor
                   name="content"
-                  defaultValue={state.values?.content ?? ''}
+                  defaultValue={state.values?.content ?? initialValues.content ?? ''}
                   onChange={setPreviewContent}
                 />
               </div>
@@ -100,6 +117,7 @@ export default function PostCreateForm() {
             {state.message && <ErrorMessage errorMessage={state.message} />}
           </section>
 
+          {/* 오른쪽: 미리보기 */}
           <section className="box-border flex w-full flex-col items-start gap-[24px] rounded-[10px] border border-[#E5E7EB] bg-white px-[33px] pt-[33px] pb-[1px] lg:w-[569px]">
             <p className="text-[16px] leading-[24px] font-normal text-black">미리보기</p>
 

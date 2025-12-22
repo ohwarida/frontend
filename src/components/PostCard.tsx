@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import type { PostCard } from '@/features/(authenticated)/post/[id]/types/Post.types'
+import type { PostCard } from '@/features/(authenticated)/post/types/Post.types'
 import { Avatar } from './ui/Avatar'
 import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
 import { MessageCircle } from 'lucide-react'
-import { Reaction } from '@/features/(authenticated)/post/[id]/components/Reaction'
+import { Reaction } from '@/features/(authenticated)/post/components/Reaction'
 
 type PostCardProps = {
   post: PostCard

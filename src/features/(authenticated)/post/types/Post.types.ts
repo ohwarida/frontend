@@ -1,4 +1,4 @@
-import { TopicType } from '../../create/types/Topic.types'
+import { TopicType } from '../../../../types/Topic.types'
 
 export type Post = {
   writerId: number
@@ -43,4 +43,11 @@ export type CreatePostRequest = {
   highlightType: HighlightType
 }
 
-export type UpdatePostRequest = CreatePostRequest & { postId: number }
+export type UpdatePostRequest = Omit<CreatePostRequest, 'draftId'> & { postId: number }
+
+export type PostFormValues = {
+  topic: TopicType
+  title: string
+  content: string
+  draftId?: string // uuid
+}

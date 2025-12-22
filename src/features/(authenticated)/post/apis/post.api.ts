@@ -1,13 +1,13 @@
 'use server'
 
 import { server, safeJson } from '@/lib/api/server'
-import type {
-  CreatePostRequest,
-  GetPostDetailResponse,
+import { TopicType } from '@/types/Topic.types'
+import {
   GetPostsResponse,
+  GetPostDetailResponse,
+  CreatePostRequest,
   UpdatePostRequest,
 } from '../types/Post.types'
-import { TopicType } from '../../create/types/Topic.types'
 
 type GetPostsParams = {
   cursorId?: number

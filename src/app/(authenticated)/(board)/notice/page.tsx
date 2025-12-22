@@ -1,6 +1,6 @@
 import PostCard from '@/components/PostCard'
-import { getPosts } from '@/features/(authenticated)/post/[id]/apis/post.api'
-import { TOPIC_TYPE } from '@/features/(authenticated)/post/create/types/Topic.types'
+import { getPosts } from '@/features/(authenticated)/post/apis/post.api'
+import { TOPIC_TYPE } from '@/types/Topic.types'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

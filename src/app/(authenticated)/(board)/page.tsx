@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import { getPosts } from '@/features/(authenticated)/post/[id]/apis/post.api'
 import PostCard from '@/components/PostCard'
-import { GetPostsResponse } from '@/features/(authenticated)/post/[id]/types/Post.types'
+import { GetPostsResponse } from '@/features/(authenticated)/post/types/Post.types'
+import { getPosts } from '@/features/(authenticated)/post/apis/post.api'
 
 export const metadata: Metadata = {
   title: '게시판 | Wanted Ground PotenUp',

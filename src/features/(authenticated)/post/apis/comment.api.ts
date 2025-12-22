@@ -1,11 +1,11 @@
 'use server'
 
-import type {
-  CreateCommentRequest,
+import { server, safeJson } from '@/lib/api/server'
+import {
   GetCommentsResponse,
+  CreateCommentRequest,
   UpdateCommentRequest,
 } from '../types/Comment.types'
-import { server, safeJson } from '@/lib/api/server'
 
 export async function getComments(postId: number): Promise<GetCommentsResponse> {
   const res = await server(`/api/v1/comments/${postId}`, { method: 'GET' })
