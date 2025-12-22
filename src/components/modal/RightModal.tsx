@@ -1,7 +1,7 @@
 import React from 'react'
 import { ModalShell } from '@/components/modal/shell/ModalShell'
 
-export default async function RightModal({
+export default function RightModal({
   returnTo,
   children,
   backdropClassName,
