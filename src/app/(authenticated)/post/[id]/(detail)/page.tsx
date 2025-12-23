@@ -10,6 +10,9 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import Link from 'next/link'
 import { getPostDetail, deletePost } from '@/features/(authenticated)/post/apis/post.api'
+import type { ReactionType } from '@/features/(authenticated)/post/types/Post.types'
+import { GetPostDetailReaction } from '@/features/(authenticated)/post/apis/reaction.api'
+import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReactionAction'
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params
@@ -19,12 +22,33 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
 
   const isOwner = post && user?.userId === post.writerId
 
+  const reactionSummary = await GetPostDetailReaction(id)
+  const reactions = (
+    Object.entries(reactionSummary?.summaries ?? {}) as Array<
+      [ReactionType, { count: number; reactedByMe: boolean }]
+    >
+  ).map(([reactionType, v]) => ({
+    reactionType,
+    count: v?.count ?? 0,
+    reactedByMe: v?.reactedByMe ?? false,
+  }))
+
   async function deletePostAction() {
     'use server'
     await deletePost(id)
-    // TODO: 게시글 삭제 이후 어디로 리다이렉트 할 지 논의 필요
     revalidatePath('/')
     redirect('/')
+  }
+
+  async function handleToggleReaction(reactionType: ReactionType, reactedByMe: boolean) {
+    'use server'
+    await toggleReactionAction({
+      targetType: 'POST',
+      targetId: id,
+      reactionType,
+      reactedByMe,
+      revalidatePathname: `/post/${id}`,
+    })
   }
 
   return (
@@ -53,7 +77,6 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
                 {TOPIC_LABEL[post?.topic]}
               </span>
             </div>
-            {/* <BookMarkButton /> */}
             {isOwner && (
               <div className="flex h-7 w-[72px] items-center gap-4">
                 <Link
@@ -80,7 +103,6 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
             {post.title}
           </h1>
           <ul className="flex flex-wrap gap-3" aria-label="태그">
-            {/* TODO: 추후 # 제거 요청 */}
             {post?.tags?.map((t) => (
               <li key={t} className="text-[16px] leading-[24px] text-[rgba(46,47,51,0.88)]">
                 #{t}
@@ -88,8 +110,8 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
             ))}
           </ul>
           <MarkdownViewer content={post?.content} />
-          {/* TODO: 추후 리액션 조회 API 생성에 따라 props 추가 필요 */}
-          <Reaction />
+          <Reaction reactions={reactions} onToggle={handleToggleReaction} />
+
           <CommentSection postId={id} userId={user.userId} />
         </div>
       </section>
