@@ -2,15 +2,11 @@
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { TOPIC_TYPE, type TopicType } from '@/types/Topic.types'
-import { TABS } from '@/app/(authenticated)/(board)/layout'
+import { type TopicType } from '@/types/Topic.types'
 import { HighlightType, PostFormValues } from '../types/Post.types'
 import { validatePost } from '../create/utils/validatePost'
 import { createPost } from '../apis/post.api'
-
-const HREF_BY_TOPIC = Object.fromEntries(
-  TABS.filter((t) => t.id !== TOPIC_TYPE.ALL).map((t) => [t.id, t.href]),
-) as Partial<Record<TopicType, string>>
+import { HREF_BY_TOPIC } from '../constants/topic'
 
 export async function createPostAction(
   _prevState: FormStateTypes<PostFormValues>,
