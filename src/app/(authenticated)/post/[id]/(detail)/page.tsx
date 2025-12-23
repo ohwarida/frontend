@@ -11,7 +11,7 @@ import { revalidatePath } from 'next/cache'
 import Link from 'next/link'
 import { getPostDetail, deletePost } from '@/features/(authenticated)/post/apis/post.api'
 import type { ReactionType } from '@/features/(authenticated)/post/types/Post.types'
-import { GetPostDetailReaction } from '@/features/(authenticated)/post/apis/reaction.api'
+import { getPostDetailReaction } from '@/features/(authenticated)/post/apis/reaction.api'
 import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReactionAction'
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
@@ -22,7 +22,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
 
   const isOwner = post && user?.userId === post.writerId
 
-  const reactionSummary = await GetPostDetailReaction(id)
+  const reactionSummary = await getPostDetailReaction(id)
   const reactions = (
     Object.entries(reactionSummary?.summaries ?? {}) as Array<
       [ReactionType, { count: number; reactedByMe: boolean }]

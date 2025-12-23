@@ -26,7 +26,7 @@ export async function deleteReaction(input: DeleteReactionRequest) {
   return { ok: true }
 }
 
-export async function GetPostDetailReaction(
+export async function getPostDetailReaction(
   postId: number,
 ): Promise<GetPostDetailReactionResponse> {
   const res = await server(`/api/v1/reactions/posts/${postId}`, { method: 'GET' })
@@ -36,7 +36,7 @@ export async function GetPostDetailReaction(
   )
 }
 
-export async function GetPostsReaction(
+export async function getPostsReaction(
   input: GetPostsReactionRequest,
 ): Promise<GetPostsReactionResponse> {
   const res = await server(`/api/v1/reactions/posts`, {
@@ -47,7 +47,7 @@ export async function GetPostsReaction(
   return (await safeJson<GetPostsReactionResponse>(res)) ?? {}
 }
 
-export async function GetCommentsReaction(
+export async function getCommentsReaction(
   input: GetCommentsReactionRequest,
 ): Promise<GetCommentsReactionResponse> {
   const res = await server(`/api/v1/reactions/comments`, {
