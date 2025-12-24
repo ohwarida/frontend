@@ -1,3 +1,5 @@
+import { CommentReactionSummary } from './Reaction.types'
+
 export type CommentAuthor = {
   userId: number
   name: string
@@ -9,13 +11,16 @@ export type Comment = {
   content: string
   author: CommentAuthor
   createdAt: string // "2025-12-17T15:33:51.878642"
-  likeCount: number
   isDeleted: boolean
   replies: Comment[]
-  likedByMe?: boolean // TODO
+  commentReactionStats: CommentReactionSummary
 }
 
-export type GetCommentsResponse = Comment[]
+export type GetCommentsResponse = {
+  contents: Comment[]
+  hasNext?: boolean
+  nextPage?: number | null
+}
 
 export type CreateCommentRequest = {
   postId: number
