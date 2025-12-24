@@ -2,24 +2,28 @@
 
 import { useGoogleLogin } from '@react-oauth/google'
 import { useMutation } from '@tanstack/react-query'
-import { SigninTypes } from '@/features/(public)/signin/types/Signin.types'
 import { useRouter } from 'next/navigation'
 import { isHttpError } from '@/utils/isHttpError'
-import { usePendingStore } from '@/store/pendingStore'
-import { client } from '@/lib/api/client'
 import { USER_ERROR_CODE } from '@/constants/error-code/user'
 import { SigninErrorTypes } from '@/features/(public)/signin/types/SigninError.types'
+import { client } from '@/lib/api/client'
+import { USER_ERROR_MESSAGE } from '@/constants/error-message/user'
+import { HttpErrorTypes } from '@/types/HttpError.types'
 
 export function useGoogleSignin() {
   const router = useRouter()
   const signinMutation = useMutation({
     mutationFn: async (code: string) => {
-      const res = await client<SigninTypes, { code: string }>('/api/signin', {
+      const res = await client('/api/signin', {
         method: 'POST',
         body: { code },
         cache: 'no-store',
       })
-      return res
+      if (res.status === 204) return null
+
+      const data = await res.json()
+      if (!res.ok) throw new HttpErrorTypes(res.status, data?.message ?? `HTTP ${res.status}`, data)
+      return data
     },
     onSuccess: () => router.push('/'),
     onError: (error) => {
@@ -30,16 +34,16 @@ export function useGoogleSignin() {
         if (token) {
           router.push(`/signup?token=${encodeURIComponent(token)}`)
         } else {
-          // todo 나중에 로직 생각 ㄱ
+          const sp = new URLSearchParams({
+            title: '유저 알림', //todo 성규님과 상의
+            message: USER_ERROR_MESSAGE[USER_ERROR_CODE.USER_NOT_FOUND],
+          })
+          router.push(`/signin/message?${sp.toString()}`)
         }
-        return
-      }
-
-      if ((error.body as SigninErrorTypes).code === USER_ERROR_CODE.INACTIVE_USER) {
-        usePendingStore.getState().setPendingCode((error.body as SigninErrorTypes).code)
+      } else {
         const sp = new URLSearchParams({
-          title: '승인 대기중 입니다.',
-          message: '관리자가 승인을 완료하면 서비스를 이용가능합니다.',
+          title: '알림',
+          message: USER_ERROR_MESSAGE[(error.body as SigninErrorTypes).code],
         })
 
         router.push(`/signin/message?${sp.toString()}`)
@@ -51,9 +55,7 @@ export function useGoogleSignin() {
     flow: 'auth-code',
     scope: 'openid profile email',
     onSuccess: ({ code }) => signinMutation.mutate(code),
-    onError: (err) => {
-      console.error('Google login failed', err)
-    },
+    onError: (err) => console.error('Google login failed', err),
   })
 
   return {

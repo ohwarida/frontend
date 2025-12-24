@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 export default async function KnowledgePage() {
   // TODO: getPosts가 topic/cursor/size 등을 쿼리로 받을 수 있게 되면, 전체 조회 후 프론트 필터링을 제거하고 서버에서 topic 필터링된 결과만 받아오도록 변경.
   const posts = await getPosts()
-  console.log(posts)
   const filtered = posts.contents.filter((p) => p.topic === TOPIC_TYPE.KNOWLEDGE)
 
   return (

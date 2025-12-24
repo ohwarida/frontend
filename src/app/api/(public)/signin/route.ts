@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     // 에러면 가능한 payload를 그대로 내려줌
     if (!upstream.ok) {
       const raw = await upstream.text()
-      let payload = null
+      let payload
       try {
         payload = raw ? JSON.parse(raw) : null
       } catch {
@@ -38,32 +38,22 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // TODO: Set-Cookie로 내려준 accessToken/refreshToken을 꺼내기
     const setCookies: string[] =
-      upstream.headers.getSetCookie?.() ?? [upstream.headers.get('set-cookie')].filter(Boolean)
+      upstream.headers.getSetCookie?.() ??
+      ([upstream.headers.get('set-cookie')].filter(Boolean) as string[])
 
-    const accessToken = setCookies
-      .find((sc) => sc.startsWith('accessToken='))
-      ?.slice('accessToken='.length)
-      .split(';', 1)[0]
-    const refreshToken = setCookies
-      .find((sc) => sc.startsWith('refreshToken='))
-      ?.slice('refreshToken='.length)
-      .split(';', 1)[0]
+    const hasAccess = setCookies.some((sc) => /^accessToken=/.test(sc))
+    const hasRefresh = setCookies.some((sc) => /^refreshToken=/.test(sc))
 
-    if (!accessToken || !refreshToken) {
-      console.error('Missing tokens in upstream Set-Cookie:', setCookies)
+    if (!hasAccess || !hasRefresh) {
       return NextResponse.json({ message: 'Missing tokens in Set-Cookie' }, { status: 502 })
     }
 
-    const res = NextResponse.json({ success: true })
+    const res = NextResponse.json({ success: true }, { status: upstream.status })
 
-    res.cookies.set('access_token', accessToken)
-    res.cookies.set('refresh_token', refreshToken)
-
-    // TODO 권한 이거 이렇게 주니까 여기서 처리해야하는데 로직을 어떻게 할지 다시 생각 (리프레쉬랑 같게 공급)
-    const upstreamJson = await upstream.json()
-    res.cookies.set('role', upstreamJson.role)
+    for (const sc of setCookies) {
+      res.headers.append('set-cookie', sc)
+    }
 
     return res
   } catch (error) {
@@ -75,7 +65,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(payload, { status: error.status })
     }
 
-    console.error('Unhandled error in /api/signin:', error)
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 })
   }
 }

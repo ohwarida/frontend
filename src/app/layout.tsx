@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import React from 'react'
 import '@/app/globals.css'
-import { ReactQueryProvider, ReactGoogleProvider } from '@/app/_providers/_index'
+import { ReactQueryProvider } from '@/app/_providers/_index'
 import localFont from 'next/font/local'
 
 export const metadata: Metadata = {
@@ -24,9 +24,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable} ${pretendard.className}`}>
       <body>
-        <ReactGoogleProvider>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
-        </ReactGoogleProvider>
+        <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
     </html>
   )

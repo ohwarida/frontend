@@ -1,12 +1,10 @@
 'use client'
 
-import { HttpErrorTypes } from '@/types/HttpError.types'
-
-export async function client<TRes, TBody = unknown>(
+export async function client(
   path: string,
   opts: {
     method: MethodTypes
-    body?: TBody
+    body?: unknown
     cache?: RequestCache
     baseUrl?: string
     credentials?: RequestCredentials
@@ -24,9 +22,5 @@ export async function client<TRes, TBody = unknown>(
     credentials,
   })
 
-  if (res.status === 204) return null as TRes
-
-  const data = await res.json()
-  if (!res.ok) throw new HttpErrorTypes(res.status, data?.message ?? `HTTP ${res.status}`, data)
-  return data as TRes
+  return res
 }

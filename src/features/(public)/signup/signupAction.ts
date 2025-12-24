@@ -44,9 +44,7 @@ export async function signupAction(
       }),
       cache: 'no-store',
     })
-  } catch (err) {
-    console.log(err)
-  }
+  } catch (_) {}
 
   const sp = new URLSearchParams({
     title: '가입이 완료되었습니다.',

@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getUser } from '@/features/(authenticated)/users/apis/user.api'
+import { REFRESH_TOKEN } from '@/constants/token'
 
 // 로그인 없이 접근 허용할 경로들
 const PUBLIC_PATHS = ['/signin', '/signup']
-const DEFAULT_AFTER_LOGIN = '/job-tips'
+const DEFAULT_AFTER_LOGIN = '/'
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
@@ -20,7 +21,7 @@ export async function proxy(request: NextRequest) {
   const isPublicPath = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))
   const isAuthPage = pathname.startsWith('/signin') || pathname.startsWith('/signup')
 
-  const refreshToken = request.cookies.get('refresh_token')?.value
+  const refreshToken = request.cookies.get(REFRESH_TOKEN)?.value
   let user
   try {
     user = refreshToken ? await getUser() : null
