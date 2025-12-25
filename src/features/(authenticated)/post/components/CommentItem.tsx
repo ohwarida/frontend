@@ -1,10 +1,9 @@
-'use client'
-
 import { Avatar } from '@/components/ui/Avatar'
 import { Heart } from 'lucide-react'
 import type { Comment } from '../types/Comment.types'
 import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
 import { useCommentItemState } from '../hooks/useCommentItemState'
+import { useToggleCommentReactionMutation } from '../queries/useReaction'
 
 export function CommentItem({
   postId,
@@ -15,6 +14,8 @@ export function CommentItem({
   comment: Comment
   depth: number
 }) {
+  const toggleReaction = useToggleCommentReactionMutation(postId)
+
   const {
     actions,
     replyOpen,
@@ -140,10 +141,27 @@ export function CommentItem({
               <button
                 type="button"
                 className="inline-flex items-center gap-1"
-                aria-label={`좋아요 ${comment.likeCount}개`}
+                aria-label={`좋아요 ${comment.commentReactionStats.totalCount}개`}
+                disabled={toggleReaction.isPending}
+                onClick={() =>
+                  toggleReaction.mutate({
+                    commentId: comment.commentId,
+                    prevReacted: comment.commentReactionStats.summaries.LIKE?.reactedByMe ?? false,
+                  })
+                }
               >
-                <Heart size={16} stroke="currentColor" />
-                <span>{comment.likeCount}</span>
+                <Heart
+                  size={16}
+                  stroke={
+                    comment.commentReactionStats.summaries.LIKE?.reactedByMe
+                      ? '#E7000B'
+                      : 'currentColor'
+                  }
+                  fill={
+                    comment.commentReactionStats.summaries.LIKE?.reactedByMe ? '#E7000B' : 'none'
+                  }
+                />
+                <span>{comment.commentReactionStats.summaries.LIKE?.count ?? 0}</span>
               </button>
 
               {/* 답글은 댓글(=depth 0)에만 보이게 */}

@@ -1,15 +1,31 @@
 import Link from 'next/link'
-import type { PostCard } from '@/features/(authenticated)/post/types/Post.types'
+import type { PostCard, ReactionType } from '@/features/(authenticated)/post/types/Post.types'
 import { Avatar } from './ui/Avatar'
 import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
 import { MessageCircle } from 'lucide-react'
 import { Reaction } from '@/features/(authenticated)/post/components/Reaction'
+import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReactionAction'
+import { TopicType } from '@/types/Topic.types'
+import { HREF_BY_TOPIC } from '@/features/(authenticated)/post/constants/topic'
 
 type PostCardProps = {
   post: PostCard
 }
 
 export default function PostCard({ post }: PostCardProps) {
+  const revalidatePathname = HREF_BY_TOPIC[post.topic as TopicType] ?? '/'
+
+  async function handleToggleReaction(reactionType: ReactionType, reactedByMe: boolean) {
+    'use server'
+    await toggleReactionAction({
+      targetType: 'POST',
+      targetId: post.postId,
+      reactionType,
+      reactedByMe,
+      revalidatePathname,
+    })
+  }
+
   return (
     <Link
       href={`/post/${post.postId}`}
@@ -56,7 +72,7 @@ export default function PostCard({ post }: PostCardProps) {
         </div>
 
         <div className="flex h-[38px] w-full items-center justify-between gap-3">
-          <Reaction reactions={post.reactions} />
+          <Reaction reactions={post.reactions} onToggle={handleToggleReaction} />
           <div className="flex items-center gap-4 text-[14px] leading-5 text-[rgba(55,56,60,0.61)]">
             <span className="inline-flex items-center gap-1.5">
               <MessageCircle className="translate-y-[0.5px]" size={16} />

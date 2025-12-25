@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactionType, Reaction } from '../types/Post.types'
+import type { ReactionType, Reaction } from '../types/Reaction.types'
 import { ReactionChip } from './ReactionChip'
 
 export function Reaction({
@@ -8,7 +8,7 @@ export function Reaction({
   onToggle,
 }: {
   reactions?: Reaction[]
-  onToggle?: (reactionType: ReactionType) => void
+  onToggle?: (reactionType: ReactionType, reactedByMe: boolean) => Promise<void> | void
 }) {
   const chips = REACTION_META.map((m) => {
     const found = reactions.find((r) => r.reactionType === m.reactionType)
@@ -30,7 +30,7 @@ export function Reaction({
               emoji={c.emoji}
               count={c.count}
               pressed={c.reactedByMe}
-              onClick={onToggle && (() => onToggle(c.reactionType))}
+              onClick={() => onToggle?.(c.reactionType, c.reactedByMe)}
             />
           </li>
         ))}

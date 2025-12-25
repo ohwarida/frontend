@@ -23,9 +23,10 @@ export function CommentSection({
 }) {
   const currentUserId = userId
 
-  const { data: comments = [] } = useGetCommentsQuery(postId)
+  const { data: comments = { contents: [], hasNext: false, nexPage: null } } =
+    useGetCommentsQuery(postId)
 
-  const totalCount = useMemo(() => countAll(comments), [comments])
+  const totalCount = useMemo(() => countAll(comments.contents), [comments])
 
   const createMut = useCreateCommentMutation(postId)
   const updateMut = useUpdateCommentMutation(postId)
@@ -58,7 +59,7 @@ export function CommentSection({
       <h2 className="text-[24px] leading-[36px] font-normal text-[#101828]">댓글 {totalCount}</h2>
 
       <ol className="flex flex-col gap-6">
-        {comments.map((c) => (
+        {comments.contents.map((c) => (
           <CommentItem key={c.commentId} postId={postId} comment={c} depth={0} />
         ))}
       </ol>

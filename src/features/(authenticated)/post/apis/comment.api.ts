@@ -10,7 +10,7 @@ import {
 export async function getComments(postId: number): Promise<GetCommentsResponse> {
   const res = await server(`/api/v1/comments/${postId}`, { method: 'GET' })
   if (!res.ok) throw new Error('댓글 조회 실패')
-  return (await safeJson<GetCommentsResponse>(res)) ?? ([] as unknown as GetCommentsResponse)
+  return (await safeJson<GetCommentsResponse>(res)) ?? ({} as unknown as GetCommentsResponse)
 }
 
 export async function createComment(input: CreateCommentRequest) {
