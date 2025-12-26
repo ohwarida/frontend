@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useMemo, useState } from 'react'
+import { useActionState, useEffect, useMemo, useState } from 'react'
 import Form from 'next/form'
 import Input from '@/components/ui/Input'
 import MarkdownEditor from '@/components/markdown/MarkdownEditor'
@@ -9,14 +9,14 @@ import ErrorMessage from '@/components/ui/ErrorMessage'
 import Select from '@/components/ui/Select'
 import { TOPIC_LABEL, TOPIC_TYPE, type TopicType } from '@/types/Topic.types'
 import { useAuthState } from '@/app/hooks/useAuthState'
-import { PostFormValues } from '../../types/Post.types'
+import { PostFormState, PostFormValues } from '../../types/Post.types'
+import { useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'next/navigation'
+import { postKeys } from '../../queries/postQueryOption'
 
 export type PostFormMode = 'create' | 'edit'
 
-type ActionFn = (
-  prevState: FormStateTypes<PostFormValues>,
-  formData: FormData,
-) => Promise<FormStateTypes<PostFormValues>>
+type ActionFn = (prevState: PostFormState, formData: FormData) => Promise<PostFormState>
 
 type PostFormProps = {
   mode: PostFormMode
@@ -39,7 +39,7 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
     [isAdmin],
   )
 
-  const initialState = useMemo<FormStateTypes<PostFormValues>>(
+  const initialState = useMemo<PostFormState>(
     () => ({
       values: initialValues,
       fieldErrors: {},
@@ -53,6 +53,20 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
 
   const [previewContent, setPreviewContent] = useState<string>(initialValues.content ?? '')
 
+  const router = useRouter()
+  const qc = useQueryClient()
+
+  useEffect(() => {
+    // TODO: 생성/수정이 제대로 안되었을 때, 대응 추가
+    if (!state.success) return
+
+    qc.removeQueries({ queryKey: postKeys.listBase() })
+    if (state.postId) {
+      qc.removeQueries({ queryKey: postKeys.detail(state.postId) })
+      router.push(`/post/${state.postId}`)
+    } else router.push('/') // postId 못 받는 비정상 케이스 fallback
+  }, [state.success, state.postId, qc, router])
+
   return (
     <div className="w-full" key={formKey}>
       <div className="mx-auto w-full max-w-[1400px]">
@@ -62,11 +76,9 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
           aria-busy={isPending}
           className="flex w-full flex-col gap-[24px] lg:flex-row"
         >
-          {mode === 'create' ? (
-            <input type="hidden" name="draftId" value={draftId} />
-          ) : (
-            <input type="hidden" name="postId" value={postId} />
-          )}
+          <input type="hidden" name="draftId" value={draftId} />
+          {mode === 'edit' && <input type="hidden" name="postId" value={postId} />}
+
           <section className="box-border flex w-full flex-col items-start gap-[24px] rounded-[10px] border border-[#E5E7EB] bg-white p-[33px] lg:w-[808px]">
             <div className="flex w-full flex-col gap-[8px]">
               <p className="text-[16px] leading-[24px] font-normal text-black">카테고리</p>
