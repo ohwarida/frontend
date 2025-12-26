@@ -27,7 +27,7 @@ const sizePx: Record<AvatarSize, number> = {
   lg: 48,
 }
 
-export function Avatar({ src, alt, name, size = 'md', className }: AvatarProps) {
+export function Avatar({ src, alt, name, size = 'sm', className }: AvatarProps) {
   const [imgError, setImgError] = useState(false)
 
   const normalizedSrc = useMemo(() => (src ?? '').trim(), [src])
@@ -37,8 +37,8 @@ export function Avatar({ src, alt, name, size = 'md', className }: AvatarProps) 
   return (
     <div
       className={clsx(
-        'relative inline-flex items-center justify-center overflow-hidden rounded-full',
-        'bg-transparent',
+        'relative flex items-center justify-center overflow-hidden rounded-full',
+        'shrink-0 bg-transparent',
         sizeClasses[size],
         className,
       )}
@@ -53,7 +53,7 @@ export function Avatar({ src, alt, name, size = 'md', className }: AvatarProps) 
           onError={() => setImgError(true)}
         />
       ) : (
-        <CircleUserRound size={px} strokeWidth={1} className="text-black" />
+        <CircleUserRound size={px} strokeWidth={1} color="#989BA2" />
       )}
     </div>
   )
