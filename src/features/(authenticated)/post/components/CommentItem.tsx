@@ -61,7 +61,7 @@ export function CommentItem({
   return (
     <li>
       <article className={`flex gap-4 ${depth === 0 ? 'pb-6' : 'py-2'}`}>
-        <Avatar size="sm" />
+        <Avatar size="xs" />
 
         <div className="flex w-full flex-col gap-2">
           <header className="flex items-center gap-2">
