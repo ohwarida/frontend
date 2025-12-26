@@ -13,6 +13,7 @@ import { PostFormState, PostFormValues } from '../../types/Post.types'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { postKeys } from '../../queries/postQueryOption'
+import PostWritingGuide from '../../components/PostWritingGuide'
 
 export type PostFormMode = 'create' | 'edit'
 
@@ -82,7 +83,7 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
           <section className="box-border flex w-full flex-col items-start gap-[24px] rounded-[10px] border border-[#E5E7EB] bg-white p-[33px] lg:w-[808px]">
             <div className="flex w-full flex-col gap-[8px]">
               <p className="text-[16px] leading-[24px] font-normal text-black">카테고리</p>
-              <Select<TopicType>
+              <Select
                 name="topic"
                 defaultValue={(state.values?.topic ?? initialValues.topic) as TopicType}
                 options={topicOptions}
@@ -116,6 +117,7 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
               >
                 <MarkdownEditor
                   name="content"
+                  draftId={draftId}
                   defaultValue={state.values?.content ?? initialValues.content ?? ''}
                   onChange={setPreviewContent}
                 />
@@ -130,19 +132,22 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
           </section>
 
           {/* 오른쪽: 미리보기 */}
-          <section className="box-border flex w-full flex-col items-start gap-[24px] rounded-[10px] border border-[#E5E7EB] bg-white px-[33px] pt-[33px] pb-[1px] lg:w-[569px]">
-            <p className="text-[16px] leading-[24px] font-normal text-black">미리보기</p>
+          <aside className="flex w-full flex-col gap-[20px] lg:w-[569px]">
+            <PostWritingGuide />
+            <section className="box-border flex w-full flex-col items-start gap-[24px] rounded-[10px] border border-[#E5E7EB] bg-white p-[33px]">
+              <p className="text-[16px] leading-[24px] font-normal text-black">미리보기</p>
 
-            <div className="w-full overflow-y-auto rounded-[8px] bg-white lg:min-h-[734px]">
-              {previewContent ? (
-                <MarkdownViewer content={previewContent} />
-              ) : (
-                <p className="text-[14px] leading-[20px] text-[#717182]">
-                  왼쪽 에디터에 내용을 입력하면 여기에서 미리 보기가 표시됩니다.
-                </p>
-              )}
-            </div>
-          </section>
+              <div className="w-full overflow-y-auto bg-white lg:min-h-[734px]">
+                {previewContent ? (
+                  <MarkdownViewer content={previewContent} />
+                ) : (
+                  <p className="text-[14px] leading-[20px] text-[#717182]">
+                    왼쪽 에디터에 내용을 입력하면 여기에서 미리 보기가 표시됩니다.
+                  </p>
+                )}
+              </div>
+            </section>
+          </aside>
         </Form>
       </div>
     </div>
