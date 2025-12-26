@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 const MarkdownPreview = dynamic(() => import('@uiw/react-markdown-preview'), { ssr: false })
 
 // TODO: !important 제거
+// TODO: next/image 적용할 수 있으면 적용
 const MarkdownViewer = ({ content }: { content: string }) => {
   return (
     <article
