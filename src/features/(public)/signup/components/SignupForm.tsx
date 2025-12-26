@@ -11,6 +11,7 @@ export const initialState: FormStateTypes<SignupFormTypes> = {
   values: {
     name: '',
     phoneNumber: '',
+    track: '',
     token: '',
     provider: '',
   },
@@ -61,7 +62,7 @@ export default function SignupForm({
         name="track"
         options={selectTrack}
         placeholder="현재 과정을 선택해주세요"
-        inputClassName="h-10"
+        inputClassName="h-10 "
       />
 
       <button
