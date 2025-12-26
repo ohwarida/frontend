@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Avatar } from '@/components/ui/Avatar'
@@ -67,7 +67,7 @@ export default function ProfileMenu() {
   const iconClass = 'text-[#4A5565]'
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} className="relative h-8 w-8">
       <button
         type="button"
         className="rounded-full"
@@ -82,7 +82,7 @@ export default function ProfileMenu() {
           }
         }}
       >
-        <Avatar />
+        <Avatar size="sm" />
       </button>
 
       {open && (
