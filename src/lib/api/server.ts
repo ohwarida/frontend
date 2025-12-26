@@ -6,29 +6,34 @@ import { ACCESS_TOKEN } from '@/constants/token'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE!
 
+function isFormData(body: RequestInit['body']): body is FormData {
+  return typeof FormData !== 'undefined' && body instanceof FormData
+}
+
 export async function server(endpoint: string, options: RequestInit = {}): Promise<Response> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get(ACCESS_TOKEN)?.value
 
+  const body = options.body
   const headers = new Headers(options.headers)
-  if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json')
-  if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
 
-  const doFetch = (overrideAccessToken?: string) => {
-    const h = new Headers(headers)
-    if (overrideAccessToken) h.set('Authorization', `Bearer ${overrideAccessToken}`)
-
-    return fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      method: options.method ?? 'GET',
-      headers: h,
-      body: options.body ?? undefined,
-      cache: options.cache ?? 'no-store',
-      credentials: 'include',
-    })
+  // FormData면 Content-Type을 절대 세팅하지 않기 (+ 혹시 있으면 제거)
+  if (isFormData(body)) {
+    headers.delete('Content-Type')
+  } else if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json')
   }
 
-  const res = await doFetch()
+  if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+
+  const res = await fetch(`${API_BASE}${endpoint}`, {
+    ...options,
+    method: options.method ?? 'GET',
+    headers,
+    body: body ?? undefined,
+    cache: options.cache ?? 'no-store',
+    credentials: 'include',
+  })
 
   const setCookies: string[] =
     res.headers.getSetCookie?.() ??
