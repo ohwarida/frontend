@@ -5,6 +5,7 @@ import Pagination from '@/components/ui/Pagination'
 import { getUserList } from '@/features/(authenticated)/admin/root/services/getUserList'
 import ActionButton from '@/features/(authenticated)/admin/root/components/ActionButton'
 import ActionSelect from '@/features/(authenticated)/admin/root/components/ActionSelect'
+import { RequestStatus } from '@/features/(authenticated)/admin/root/types/AdminPage.types'
 
 export const metadata: Metadata = {
   title: '관리자 모드 | Wanted Ground PotenUp',
@@ -23,7 +24,6 @@ export default async function Page({
 }) {
   const { id: trackIdRaw } = await params
   const sp = await searchParams
-
   const trackId = Math.max(0, Number(trackIdRaw) || 0) // 수염님 /admin/0 => 전체 (트랙 미선택: 관리자로 보면 됨)
   const page = Math.max(0, Number(sp.page ?? '0') || 0)
   const size = Math.min(100, Math.max(1, Number(sp.size ?? '20') || 20))
@@ -44,7 +44,6 @@ export default async function Page({
           <h1 className="text-2xl">관리자 페이지</h1>
           <p>회원 가입 승인 대기 목록 (인원 수)</p>
         </div>
-
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-gray-100 px-6">
@@ -68,8 +67,10 @@ export default async function Page({
                 </tr>
               ) : (
                 rows.map((r, index) => {
-                  const approveDisabled = r.requestStatus === 'ACCEPTED'
-                  const rejectedDisabled = r.requestStatus === 'REJECTED'
+                  const isAdmin = r.role === 'ADMIN'
+
+                  const approveDisabled = normalizeReq(r.requestStatus) === 'ACCEPTED'
+                  const rejectDisabled = normalizeReq(r.requestStatus) === 'REJECTED'
 
                   return (
                     <tr
@@ -88,36 +89,46 @@ export default async function Page({
                       </td>
 
                       <td className="px-6 py-3">
-                        <ActionSelect
-                          initialRole={r.role}
-                          userId={r.userId}
-                          disabled={approveDisabled}
-                        />
-                      </td>
-
-                      <td className="px-6 py-3">
-                        <StatusBadge status={r.requestStatus} />
-                      </td>
-
-                      <td className="px-6 py-3">
-                        <div className="flex items-center gap-2">
-                          <ActionButton
-                            variant="add"
+                        {isAdmin ? (
+                          <p className="text-sm text-gray-700">관리자</p>
+                        ) : (
+                          <ActionSelect
                             initialRole={r.role}
                             userId={r.userId}
-                            status="ACCEPTED"
                             disabled={approveDisabled}
-                            content="승인"
                           />
-                          <ActionButton
-                            variant="cancel"
-                            initialRole={r.role}
-                            userId={r.userId}
-                            status="REJECTED"
-                            disabled={rejectedDisabled}
-                            content="취소"
-                          />
-                        </div>
+                        )}
+                      </td>
+
+                      <td className="px-6 py-3">
+                        {isAdmin ? (
+                          <p className="text-sm text-gray-700">-</p>
+                        ) : (
+                          <StatusBadge status={r.status} />
+                        )}
+                      </td>
+
+                      <td className="px-6 py-3">
+                        {isAdmin ? (
+                          <p className="text-sm text-gray-700">-</p>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <ActionButton
+                              variant="add"
+                              initialRole={r.role}
+                              userId={r.userId}
+                              status="ACCEPTED"
+                              content="승인"
+                            />
+                            <ActionButton
+                              variant="cancel"
+                              initialRole={r.role}
+                              userId={r.userId}
+                              status="REJECTED"
+                              content="거절"
+                            />
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )
@@ -131,4 +142,10 @@ export default async function Page({
       </div>
     </div>
   )
+}
+
+export function normalizeReq(v: string): RequestStatus | 'unknown' {
+  const s = v.trim().toUpperCase()
+  if (s === 'ACCEPTED' || s === 'PENDING' || s === 'REJECTED') return s
+  return 'unknown'
 }

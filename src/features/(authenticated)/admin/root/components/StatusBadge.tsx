@@ -1,11 +1,12 @@
 import clsx from 'clsx'
 
-type Status = 'PENDING' | 'ACCEPTED' | 'REJECTED'
-type NormalizedStatus = 'pending' | 'accepted' | 'rejected'
+type StatusUpper = 'ACTIVE' | 'BLOCKED' | 'EXPIRED'
+type StatusLower = Lowercase<StatusUpper>
+type Status = StatusUpper | StatusLower
 
-function normalizeStatus(status: string): NormalizedStatus | 'unknown' {
-  const s = status.trim().toLowerCase()
-  if (s === 'pending' || s === 'accepted' || s === 'rejected') return s
+function normalizeStatus(status: string): StatusUpper | 'unknown' {
+  const s = status.trim().toUpperCase()
+  if (s === 'ACTIVE' || s === 'BLOCKED' || s === 'EXPIRED') return s
   return 'unknown'
 }
 
@@ -13,12 +14,12 @@ function getStatusBadge(status: string) {
   const s = normalizeStatus(status)
 
   switch (s) {
-    case 'accepted':
-      return { label: '승인 완료', className: 'bg-green-100 text-green-700' }
-    case 'pending':
-      return { label: '승인 대기', className: 'bg-amber-100 text-amber-700' }
-    case 'rejected':
-      return { label: '비활성', className: 'bg-gray-100 text-gray-600' }
+    case 'ACTIVE':
+      return { label: '활성', className: 'bg-green-100 text-green-700' }
+    case 'BLOCKED':
+      return { label: '차단', className: 'bg-red-100 text-red-700' }
+    case 'EXPIRED':
+      return { label: '만료', className: 'bg-gray-100 text-gray-600' }
     default:
       return { label: '알 수 없음', className: 'bg-gray-100 text-gray-600' }
   }

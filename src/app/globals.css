@@ -36,45 +36,28 @@ button {
   @apply cursor-pointer disabled:cursor-default;
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
+@layer utilities {
+  @keyframes dot-bounce {
+    0% {
+      transform: translateY(0);
+      opacity: 0.5;
+    }
+    35% {
+      transform: translateY(-5px);
+      opacity: 1;
+    }
+    70% {
+      transform: translateY(0);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 0.5;
+    }
   }
-  50% {
-    transform: translateY(-20px);
-  }
-}
 
-@keyframes float-delayed {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-@keyframes float-slow {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
+  .animate-dot-bounce {
+    animation: dot-bounce 900ms ease-in-out infinite;
+    will-change: transform, opacity;
   }
 }
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float-delayed 3.5s ease-in-out infinite;
-}
-
-.animate-float-slow {
-  animation: float-slow 4s ease-in-out infinite;
-}
-

@@ -15,7 +15,7 @@ export function ModalShell({
 }) {
   const router = useRouter()
   const close = useCallback(() => {
-    const to = returnTo ?? '/admin/0'
+    const to = returnTo ?? '/admin/operator'
     router.replace(to)
     router.refresh()
   }, [router, returnTo])

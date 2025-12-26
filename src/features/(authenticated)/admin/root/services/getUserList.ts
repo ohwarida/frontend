@@ -22,7 +22,10 @@ export async function getUserList(params: GetUserListParams): Promise<PageRespon
   const sp = new URLSearchParams()
   sp.set('page', String(params.page))
   sp.set('size', String(params.size))
-  if (params.trackId) sp.set('trackId', String(params.trackId))
+  sp.set(
+    params.trackId === 0 ? 'role' : 'trackId',
+    String(params.trackId === 0 ? 'ADMIN' : params.trackId),
+  )
 
   for (const s of params.sort ?? []) sp.append('sort', s)
 
@@ -32,7 +35,7 @@ export async function getUserList(params: GetUserListParams): Promise<PageRespon
     sp.set(k, String(v))
   }
 
-  const res = await server(`/api/v1/admin/users/all?${sp.toString()}`)
+  const res = await server(`/api/v1/admin/users?${sp.toString()}`)
 
   return res.json()
 }

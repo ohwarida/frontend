@@ -1,6 +1,7 @@
 export type UserRole = 'ADMIN' | 'BLOCKED' | 'INSTRUCTOR' | 'MEMBER'
 export type UserStatus = 'ACTIVE' | 'BLOCKED' | 'EXPIRED'
 export type UserRequestStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED'
+export type RequestStatus = UserRequestStatus | Lowercase<UserRequestStatus>
 
 export type UserRow = {
   userId: number
@@ -11,7 +12,7 @@ export type UserRow = {
   role: UserRole
   status: UserStatus
   provider: string
-  requestStatus: UserRequestStatus
+  requestStatus: RequestStatus
   createdAt: string
 }
 

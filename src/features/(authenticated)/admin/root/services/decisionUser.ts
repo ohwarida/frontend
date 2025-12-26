@@ -5,16 +5,19 @@ import {
   UserRole,
 } from '@/features/(authenticated)/admin/root/types/AdminPage.types'
 import { safeJson, server } from '@/lib/api/server'
+import { revalidatePath } from 'next/cache'
 
 type params = {
   id: number
   role: UserRole
   requestStatus: UserRequestStatus
 }
-export async function decisionUser(params: params): Promise<null> {
-  const res = await server('/api/v1/admin/users/decision', {
+export async function decisionUser(params: params): Promise<void> {
+  const { id, ...body } = params
+  const res = await server(`/api/v1/admin/users/${id}/decision`, {
     method: 'PUT',
-    body: JSON.stringify(params),
+    body: JSON.stringify(body),
   })
-  return safeJson(res)
+  console.log(res)
+  revalidatePath('/admin')
 }

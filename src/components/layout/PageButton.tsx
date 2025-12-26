@@ -27,24 +27,14 @@ export default function PageButton({
               : pathname.startsWith(tab.href!)
             : false
 
-          const isCreate = tab.id === 'track-create'
-
           const baseClass = clsx(
             'inline-flex h-12 shrink-0 items-center justify-center gap-3 rounded-[8px] border px-4 text-[16px] leading-6 transition-colors',
             isActive
               ? 'border-[#155DFC] bg-[#EFF6FF] font-semibold text-[#155DFC]'
               : 'border-[#EAEBEC] bg-white font-normal text-[#101828] hover:bg-gray-50',
-
-            !isActive &&
-              isCreate &&
-              'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100',
-            isActive && isCreate && 'border-emerald-600 bg-emerald-50 text-emerald-700',
           )
 
-          const iconClass = clsx(
-            isActive ? 'text-[#155DFC]' : 'text-[#4A5565]',
-            isCreate && 'text-emerald-700',
-          )
+          const iconClass = isActive ? 'text-[#155DFC]' : 'text-[#4A5565]'
 
           const content = (
             <>

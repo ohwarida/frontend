@@ -27,7 +27,6 @@ export default function ActionSelect({
       options={[
         { value: 'MEMBER', label: '학생' },
         { value: 'INSTRUCTOR', label: '강사' },
-        { value: 'ADMIN', label: '관리자' },
         { value: 'BLOCKED', label: '차단' },
       ]}
     />
