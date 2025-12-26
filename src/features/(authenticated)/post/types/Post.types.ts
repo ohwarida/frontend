@@ -19,7 +19,7 @@ export type ReactionType = 'LIKE' | 'HEART' | 'SMILE'
 export type Reaction = {
   reactionType: ReactionType
   count: number
-  reactedByMe?: boolean
+  reactedByMe: boolean
 }
 
 export type HighlightType = 'BY_ADMIN' | 'BY_REACTION' | 'BY_VIEW' | 'NONE'
@@ -30,9 +30,8 @@ export type PostCard = Omit<Post, 'content'>
 
 export type GetPostsResponse = {
   contents: PostCard[]
-  // TODO: 무한스크롤 적용시 프로퍼티 추가 예정
-  hasNext?: boolean
-  nextCursorId?: number | null
+  hasNext: boolean
+  nextPage: number | null
 }
 
 export type CreatePostRequest = {
@@ -43,11 +42,15 @@ export type CreatePostRequest = {
   highlightType: HighlightType
 }
 
-export type UpdatePostRequest = Omit<CreatePostRequest, 'draftId'> & { postId: number }
+export type UpdatePostRequest = CreatePostRequest & { postId: number }
 
 export type PostFormValues = {
   topic: TopicType
   title: string
   content: string
   draftId?: string // uuid
+}
+
+export type PostFormState = FormStateTypes<PostFormValues> & {
+  postId?: number | null
 }
