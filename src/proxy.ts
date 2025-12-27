@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getUser } from '@/features/(authenticated)/users/apis/user.api'
 import { REFRESH_TOKEN } from '@/constants/token'
 
 // 로그인 없이 접근 허용할 경로들
@@ -21,27 +20,17 @@ export async function proxy(request: NextRequest) {
   const isPublicPath = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))
   const isAuthPage = pathname.startsWith('/signin') || pathname.startsWith('/signup')
 
+  // TODO: 토큰 유효성 검사 추가
   const refreshToken = request.cookies.get(REFRESH_TOKEN)?.value
-  let user
-  try {
-    user = refreshToken ? await getUser() : null
-  } catch (e) {
-    user = null
-  }
-  const isAuthed = !!user
-
-  // 로그인 상태에서 /signin, /signup 접근하면 기본 페이지로 보내기 (이것도 인식 맞지?)
-  if (isAuthPage && isAuthed) {
+  if (isAuthPage && refreshToken) {
     return NextResponse.redirect(new URL(DEFAULT_AFTER_LOGIN, request.url))
   }
 
-  // public은 항상 통과 (인식 맞지?)
   if (isPublicPath) {
     return NextResponse.next()
   }
 
-  // 내 생각에 user 있으면 public 이고 만약아닐 시에도 걍 통과 슈연님이 보고 판단 ㄱ
-  if (isAuthed) {
+  if (refreshToken) {
     return NextResponse.next()
   }
 
