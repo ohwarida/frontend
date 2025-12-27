@@ -59,7 +59,6 @@ export async function signupAction(
   }
 
   const phoneDigits = normalizePhoneKR(phoneNumber as string)
-  console.log(phoneDigits)
 
   try {
     await server('/api/v1/users/signup', {
