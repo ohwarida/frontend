@@ -17,7 +17,7 @@ export default function PageButton({
   }, [pathname])
 
   return (
-    <div className="sticky top-(--header-h) z-10 -mx-5 -mt-6 bg-(--app-bg) px-5 pt-6 pb-4">
+    <div className="hidden lg:sticky lg:top-(--header-h) lg:z-10 lg:-mx-5 lg:-mt-6 lg:block lg:bg-(--app-bg) lg:px-5 lg:pt-6 lg:pb-4">
       <nav className="flex h-12 items-center gap-2 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {TABS.map((tab) => {
           const hasHref = !!tab.href
