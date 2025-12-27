@@ -9,6 +9,13 @@
   --page-pb: 120px;
 }
 
+@media (max-width: 1023.98px) {
+  :root {
+    --app-bg: #ffffff; /* = bg-white */
+    --page-pb: 0px;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -77,4 +84,3 @@ button {
 .animate-float-slow {
   animation: float-slow 4s ease-in-out infinite;
 }
-
