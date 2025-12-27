@@ -61,6 +61,12 @@ export default function ProfileMenu() {
     router.refresh()
   }
 
+  const handleMyPageClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    alert('서비스 준비중입니다') // TODO: 토스트 교체
+    setOpen(false)
+  }
+
   const itemBase =
     'flex h-12 w-full items-center justify-start gap-3 pl-4 pr-0 text-[16px] font-normal leading-6 text-[#101828] outline-none transition-colors'
   const itemDefault = 'hover:bg-gray-50 focus-visible:bg-gray-50'
@@ -115,8 +121,8 @@ export default function ProfileMenu() {
             role="menuitem"
             tabIndex={0}
             data-menuitem
-            className={[itemBase, itemDefault].join(' ')}
-            onClick={() => setOpen(false)}
+            className={[itemBase, itemDefault, 'hidden lg:flex'].join(' ')}
+            onClick={handleMyPageClick}
           >
             <CircleUserRound size={16} className={iconClass} color="#4A5565" />
             마이페이지
