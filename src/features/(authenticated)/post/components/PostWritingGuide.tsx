@@ -8,24 +8,17 @@ const GUIDE_ITEMS = [
 
 export default function PostWritingGuide() {
   return (
-    <section className="w-full rounded-[10px] bg-white p-[24px]">
-      <h3 className="text-[18px] leading-[27px] font-normal text-[#101828]">작성 가이드</h3>
+    <section className="w-full rounded-[10px] bg-[#EFF6FF] p-4">
+      <h3 className="text-[18px] leading-[27px] font-medium text-[#1C398E]">✍️ 작성 가이드</h3>
 
-      <ul className="mt-4 flex flex-col gap-3">
+      <ul className="mt-2 flex flex-col gap-1">
         {GUIDE_ITEMS.map((text) => (
           <li key={text} className="flex items-start gap-2">
-            <span className="mt-px text-[16px] leading-[24px] text-[#155DFC]">•</span>
-            <span className="text-[16px] leading-[24px] text-[#364153]">{text}</span>
+            <span className="text-[16px] leading-[24px] text-[#193CB8]">•</span>
+            <span className="text-[16px] leading-[24px] text-[#193CB8]">{text}</span>
           </li>
         ))}
       </ul>
-
-      <div className="mt-4 rounded-[10px] bg-[#EFF6FF] px-4 pt-4 pb-4">
-        <p className="text-[15px] leading-[22px] font-normal text-[#193CB8]">
-          좋은 게시글은 명확한 구조와 읽기 쉬운 문장으로 작성됩니다. 제목과 부제목을 활용해 내용을
-          정리해 보세요.
-        </p>
-      </div>
     </section>
   )
 }
