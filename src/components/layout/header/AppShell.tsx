@@ -31,7 +31,9 @@ export default async function AppShell({
       )}
 
       <main className="min-h-dvh w-full bg-(--app-bg) pt-(--header-h) pb-[calc(var(--page-pb)+env(safe-area-inset-bottom))]">
-        <div className="mx-auto w-full max-w-(--container-max) px-5 pt-6">{children}</div>
+        <div className="mx-auto w-full max-w-(--container-max) px-0 pt-0 lg:px-5 lg:pt-6">
+          {children}
+        </div>
       </main>
     </>
   )
