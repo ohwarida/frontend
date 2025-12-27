@@ -4,7 +4,9 @@ import PageButton from '@/components/layout/PageButton'
 import Main from '@/components/layout/Main'
 import AppShell from '@/components/layout/header/AppShell'
 import { TOPIC_LABEL, TOPIC_TYPE } from '@/types/Topic.types'
-import { Briefcase, TrendingUp, House, FileText, MessageCircle } from 'lucide-react'
+import { Briefcase, House, FileText, MessageCircle } from 'lucide-react'
+import CategoryFilter from '@/components/layout/CategoryFilter'
+import FloatingNav from '@/components/layout/FloatingNav'
 
 export const TABS = [
   { id: TOPIC_TYPE.ALL, label: TOPIC_LABEL.ALL, href: '/', icon: <House /> },
@@ -32,8 +34,11 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
         <section className="w-full">
           <PageButton TABS={TABS} />
-          <div className="flex flex-col gap-4">{children}</div>
+          <CategoryFilter TABS={TABS} />
+          <div className="flex flex-col gap-0 lg:gap-4">{children}</div>
         </section>
+
+        <FloatingNav />
       </Main>
     </AppShell>
   )
