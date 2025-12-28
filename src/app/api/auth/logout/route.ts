@@ -8,6 +8,15 @@ const clearAuthCookies = (res: NextResponse) => {
   res.cookies.delete(REFRESH_TOKEN)
 }
 
+// 세션 만료/리프레시 실패 시 fallback.
+export async function GET(req: NextRequest) {
+  const next = req.nextUrl.searchParams.get('next') || '/signin'
+  const res = NextResponse.redirect(new URL(next, req.url))
+  clearAuthCookies(res)
+  res.headers.set('Cache-Control', 'no-store')
+  return res
+}
+
 export async function DELETE(req: NextRequest) {
   const accessToken = req.cookies.get(ACCESS_TOKEN)?.value
   try {
