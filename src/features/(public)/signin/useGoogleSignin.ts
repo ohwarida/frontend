@@ -25,20 +25,23 @@ export function useGoogleSignin() {
       if (!res.ok) throw new HttpErrorTypes(res.status, data?.message ?? `HTTP ${res.status}`, data)
       return data
     },
-    onSuccess: () => router.push('/'),
+    onSuccess: () => {
+      router.replace('/')
+      router.refresh()
+    },
     onError: (error) => {
       if (!isHttpError(error)) return
 
       if ((error.body as SigninErrorTypes).code === USER_ERROR_CODE.USER_NOT_FOUND) {
         const token = (error.body as SigninErrorTypes)?.idToken
         if (token) {
-          router.push(`/signup?token=${encodeURIComponent(token)}`)
+          router.replace(`/signup?token=${encodeURIComponent(token)}`)
         } else {
           const sp = new URLSearchParams({
-            title: '유저 알림', //todo 성규님과 상의
+            title: '유저 알림', //TODO: 성규님과 상의
             message: USER_ERROR_MESSAGE[USER_ERROR_CODE.USER_NOT_FOUND],
           })
-          router.push(`/signin/message?${sp.toString()}`)
+          router.replace(`/signin/message?${sp.toString()}`)
         }
       } else {
         const sp = new URLSearchParams({
@@ -46,7 +49,7 @@ export function useGoogleSignin() {
           message: USER_ERROR_MESSAGE[(error.body as SigninErrorTypes).code],
         })
 
-        router.push(`/signin/message?${sp.toString()}`)
+        router.replace(`/signin/message?${sp.toString()}`)
       }
     },
   })
