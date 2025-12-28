@@ -8,7 +8,7 @@ export async function getUser(): Promise<GetUserResponse> {
   const res = await server('/api/v1/users/myInfo', { method: 'GET', cache: 'no-store' })
 
   if (res.status === 401 || res.status === 403) {
-    redirect('/signin')
+    redirect('/api/auth/logout?next=/signin')
   }
 
   if (!res.ok) throw new Error(`유저 조회 실패: ${res.status}`)
