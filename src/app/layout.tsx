@@ -5,8 +5,20 @@ import { ReactQueryProvider } from '@/app/_providers/_index'
 import localFont from 'next/font/local'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://potenup-depth.vercel.app'),
   title: '포텐업 커뮤니티',
   description: '포텐업 커뮤니티입니다.',
+  openGraph: {
+    title: '포텐업 커뮤니티',
+    description: '포텐업 커뮤니티입니다.',
+    type: 'website',
+    url: '/',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '포텐업 커뮤니티',
+    description: '포텐업 커뮤니티입니다.',
+  },
 }
 
 const pretendard = localFont({

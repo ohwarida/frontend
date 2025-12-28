@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import clsx from 'clsx'
 import { House, PencilLine, User } from 'lucide-react'
-import { TABS } from '@/app/(authenticated)/(board)/layout'
+import { TABS } from '@/features/(authenticated)/post/constants/tabs'
 
 const HOME_PATHS = TABS.map((t) => t.href).filter(Boolean)
 
