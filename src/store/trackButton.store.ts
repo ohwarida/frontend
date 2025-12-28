@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
-type TrackFields = {
-  trackId: number | undefined
+export type TrackFields = {
+  trackId?: number | string
   trackName?: string
   startDate?: string | Date
   endDate?: string | Date
