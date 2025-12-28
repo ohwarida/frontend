@@ -1,93 +1,29 @@
-'use client'
-
 import React, { useActionState, useEffect } from 'react'
-import { usePathname } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
+import { useTrackButtonStore } from '@/store/trackButton.store'
 import FieldInput from '@/components/form/FieldInput'
 import FieldSelect from '@/components/form/FieldSelect'
 import Button from '@/components/ui/button/Button'
-import { createTrackAction } from '@/features/(authenticated)/admin/track/actions/createTrack'
-import { updateTrackAction } from '@/features/(authenticated)/admin/track/actions/updateTrack'
-import { useTrackButtonStore } from '@/store/trackButton.store'
+import { Loader2 } from 'lucide-react'
 
-export const initialState = (
-  trackName?: string,
-  startDate?: string | Date,
-  endDate?: string | Date,
-  trackStatus?: TrackStatus,
-): FormStateTypes<TrackFormTypes> => ({
-  values: {
-    trackName: trackName ?? '',
-    startDate: startDate ?? '',
-    endDate: endDate ?? '',
-    trackStatus: trackStatus ?? 'GRADUATED',
-  },
-  fieldErrors: {},
-  success: false,
-})
-
-function toDateValue(v?: string | Date) {
-  if (!v) return ''
-  if (v instanceof Date) {
-    const yyyy = v.getFullYear()
-    const mm = String(v.getMonth() + 1).padStart(2, '0')
-    const dd = String(v.getDate()).padStart(2, '0')
-    return `${yyyy}-${mm}-${dd}`
-  }
-  return v.length >= 10 ? v.slice(0, 10) : v
-}
-
-export default function TrackFiled() {
-  const pathname = usePathname()
-  const { trackName, trackStatus, trackId, endDate, startDate } = useTrackButtonStore()
-
-  if (pathname === '/admin/operator') return null
-
-  const formKey = pathname === '/admin/track' ? 'create' : `edit:${trackId ?? ''}`
-
-  return (
-    <TrackFormInner
-      key={formKey}
-      pathname={pathname}
-      trackId={trackId}
-      trackName={trackName}
-      startDate={startDate}
-      endDate={endDate}
-      trackStatus={trackStatus}
-    />
-  )
-}
-
-function TrackFormInner({
-  pathname,
-  trackId,
-  trackName,
-  startDate,
-  endDate,
-  trackStatus,
+export default function TrackFormBase({
+  mode,
+  action,
+  initial,
 }: {
-  pathname: string
-  trackId?: number
-  trackName?: string
-  startDate?: string | Date
-  endDate?: string | Date
-  trackStatus?: TrackStatus
+  mode: 'create' | 'edit'
+  action: (
+    prevState: FormStateTypes<TrackFormTypes>,
+    formData: FormData,
+  ) => Promise<FormStateTypes<TrackFormTypes>>
+  initial: FormStateTypes<TrackFormTypes>
 }) {
-  const trackIdNum = Number(trackId)
   const setField = useTrackButtonStore((s) => s.setField)
   const reset = useTrackButtonStore((s) => s.reset)
 
-  const action =
-    pathname === '/admin/track' || !trackId || Number.isNaN(trackIdNum)
-      ? createTrackAction
-      : updateTrackAction.bind(null, trackIdNum)
-
   const [state, formAction, isPending] = useActionState<FormStateTypes<TrackFormTypes>, FormData>(
     action,
-    initialState(trackName, startDate, endDate, trackStatus),
+    initial,
   )
-
-  const isEdit = pathname !== '/admin/track'
 
   useEffect(() => {
     if (!state.success) return
@@ -97,8 +33,10 @@ function TrackFormInner({
     setField('endDate', state.values?.endDate as string)
     setField('trackStatus', state.values?.trackStatus as TrackStatus)
 
-    if (pathname === '/admin/track') reset()
-  }, [state.success])
+    if (mode === 'create') reset()
+  }, [state.success, mode, reset, setField, state.values])
+
+  const isEdit = mode === 'edit'
 
   return (
     <section className="mt-4 rounded-md border border-gray-200 bg-white p-5">
@@ -165,4 +103,15 @@ function TrackFormInner({
       </form>
     </section>
   )
+}
+
+function toDateValue(v?: string | Date) {
+  if (!v) return ''
+  if (v instanceof Date) {
+    const yyyy = v.getFullYear()
+    const mm = String(v.getMonth() + 1).padStart(2, '0')
+    const dd = String(v.getDate()).padStart(2, '0')
+    return `${yyyy}-${mm}-${dd}`
+  }
+  return v.length >= 10 ? v.slice(0, 10) : v
 }
