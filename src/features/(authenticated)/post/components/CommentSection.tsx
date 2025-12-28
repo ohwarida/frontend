@@ -135,7 +135,7 @@ export function CommentSection({
     composer.mode === 'reply' ? '답글 작성' : composer.mode === 'edit' ? '댓글 수정' : '댓글 작성'
 
   return (
-    <section aria-label="댓글" className={['flex flex-col gap-4'].join(' ')}>
+    <section aria-label="댓글" className="flex flex-col gap-4 pb-[60px]">
       <h2 className="text-[16px] leading-[24px] font-normal text-[#101828] lg:text-[24px] lg:leading-[36px]">
         댓글 {totalCount}
       </h2>
