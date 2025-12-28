@@ -109,7 +109,7 @@ export default function AdminPageButton({ tabs }: { tabs: TrackFields[] }) {
               onClick={() => reset()}
             >
               <Plus />
-              강좌 생성
+              트랙 생성
             </Link>
           )}
         </nav>
