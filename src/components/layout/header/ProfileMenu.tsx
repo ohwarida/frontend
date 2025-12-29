@@ -57,7 +57,7 @@ export default function ProfileMenu() {
   const handleLogout = async () => {
     await fetch(`/api/auth/logout`, { method: 'DELETE', cache: 'no-store' })
     setOpen(false)
-    router.push('/signin')
+    router.replace('/signin')
     router.refresh()
   }
 

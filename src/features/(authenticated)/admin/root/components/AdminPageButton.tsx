@@ -57,7 +57,7 @@ export default function AdminPageButton({ tabs }: { tabs: TrackFields[] }) {
                       startTransition(async () => {
                         try {
                           await deleteTrack(tab.trackId as number)
-                          router.push(`/admin/operator`)
+                          router.replace(`/admin/operator`)
                         } catch (e) {
                           alert(e instanceof Error ? e.message : '삭제 실패')
                         }
