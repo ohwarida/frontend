@@ -12,7 +12,7 @@ export default function PostCreatePage() {
     <PostForm
       mode="create"
       action={createPostAction}
-      initialValues={{ topic: 'EMPLOYMENT_TIP', title: '', content: '' }}
+      initialValues={{ topic: 'KNOWLEDGE', title: '', content: '' }}
     />
   )
 }
