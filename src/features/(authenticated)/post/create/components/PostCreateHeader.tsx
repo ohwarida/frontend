@@ -21,7 +21,7 @@ export function PostCreateHeader({
       router.back()
       return
     }
-    router.push(cancelFallbackHref)
+    router.replace(cancelFallbackHref)
   }
 
   return (

@@ -64,8 +64,8 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
     qc.removeQueries({ queryKey: postKeys.listBase() })
     if (state.postId) {
       qc.removeQueries({ queryKey: postKeys.detail(state.postId) })
-      router.push(`/post/${state.postId}`)
-    } else router.push('/') // postId 못 받는 비정상 케이스 fallback
+      router.replace(`/post/${state.postId}`)
+    } else router.replace('/') // postId 못 받는 비정상 케이스 fallback
   }, [state.success, state.postId, qc, router])
 
   return (

@@ -26,7 +26,7 @@ export function PostDetailHeader({
       router.back()
       return
     }
-    router.push(fallbackHref)
+    router.replace(fallbackHref)
   }
 
   const iconBase = 'text-[rgba(55,56,60,0.61)]'
