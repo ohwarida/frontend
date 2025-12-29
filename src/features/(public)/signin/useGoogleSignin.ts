@@ -35,13 +35,13 @@ export function useGoogleSignin() {
       if ((error.body as SigninErrorTypes).code === USER_ERROR_CODE.USER_NOT_FOUND) {
         const token = (error.body as SigninErrorTypes)?.idToken
         if (token) {
-          router.replace(`/signup?token=${encodeURIComponent(token)}`)
+          router.push(`/signup?token=${encodeURIComponent(token)}`)
         } else {
           const sp = new URLSearchParams({
             title: '유저 알림', //TODO: 성규님과 상의
             message: USER_ERROR_MESSAGE[USER_ERROR_CODE.USER_NOT_FOUND],
           })
-          router.replace(`/signin/message?${sp.toString()}`)
+          router.push(`/signin/message?${sp.toString()}`)
         }
       } else {
         const sp = new URLSearchParams({
@@ -49,7 +49,7 @@ export function useGoogleSignin() {
           message: USER_ERROR_MESSAGE[(error.body as SigninErrorTypes).code],
         })
 
-        router.replace(`/signin/message?${sp.toString()}`)
+        router.push(`/signin/message?${sp.toString()}`)
       }
     },
   })
