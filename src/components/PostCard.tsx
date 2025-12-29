@@ -62,7 +62,7 @@ export default function PostCard({ post }: PostCardProps) {
         <div className={clsx('flex w-full flex-col gap-2', 'md:min-h-[58px] md:items-start')}>
           <h2
             className={clsx(
-              'w-full text-[24px] leading-[30px] font-medium text-black',
+              'w-full text-[20px] leading-[30px] font-medium text-black md:text-[24px]',
               'line-clamp-2 md:line-clamp-1',
             )}
             title={post.title}
