@@ -82,6 +82,12 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
         {/* 좌측: 작성 폼 */}
         <section className="box-border flex w-full flex-col items-start gap-4 bg-white p-0 lg:w-[808px] lg:gap-[24px] lg:rounded-[10px] lg:border lg:border-[#E5E7EB] lg:bg-white lg:p-[33px]">
           <div className="flex w-full flex-col gap-[8px]">
+            <label
+              htmlFor="topic"
+              className="text-[16px] leading-[24px] font-normal text-[#364153]"
+            >
+              카테고리
+            </label>
             <Select
               name="topic"
               defaultValue={(state.values?.topic ?? initialValues.topic) as TopicType}
@@ -94,6 +100,12 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
           </div>
 
           <div className="flex w-full flex-col gap-[8px]">
+            <label
+              htmlFor="title"
+              className="text-[16px] leading-[24px] font-normal text-[#364153]"
+            >
+              제목
+            </label>
             <Input
               name="title"
               placeholder="제목을 입력하세요"
@@ -108,6 +120,12 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
 
           {/* TODO: highlightType 설정폼 추가 */}
           <div className="flex h-full w-full flex-col gap-[8px]">
+            <label
+              htmlFor="content"
+              className="text-[16px] leading-[24px] font-normal text-[#364153]"
+            >
+              내용
+            </label>
             <div
               className={[
                 'h-full w-full overflow-hidden rounded-[8px] bg-[#F4F4F5]',

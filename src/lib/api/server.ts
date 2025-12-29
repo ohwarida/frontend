@@ -1,8 +1,7 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { applySetCookies } from '@/utils/applySetCookie'
-import { ACCESS_TOKEN } from '@/constants/token'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/token'
 import { redirect } from 'next/navigation'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE!
@@ -14,6 +13,7 @@ function isFormData(body: RequestInit['body']): body is FormData {
 export async function server(endpoint: string, options: RequestInit = {}): Promise<Response> {
   const cookieStore = await cookies()
   const accessToken = cookieStore.get(ACCESS_TOKEN)?.value
+  const refreshToken = cookieStore.get(REFRESH_TOKEN)?.value
 
   const body = options.body
   const headers = new Headers(options.headers)
@@ -26,6 +26,7 @@ export async function server(endpoint: string, options: RequestInit = {}): Promi
   }
 
   if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`)
+  if (refreshToken) headers.set('cookie', `${REFRESH_TOKEN}=${encodeURIComponent(refreshToken)}`)
 
   const res = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
@@ -40,7 +41,9 @@ export async function server(endpoint: string, options: RequestInit = {}): Promi
     res.headers.getSetCookie?.() ??
     (res.headers.get('set-cookie') ? [res.headers.get('set-cookie')!] : [])
 
-  await applySetCookies(setCookies)
+  for (const sc of setCookies) {
+    res.headers.append('set-cookie', sc)
+  }
 
   // 쿠키 정리 후 로그인으로 복귀(SSR/페이지 크래시 및 리다이렉트 루프를 최소화)
   if (res.status === 401 || res.status === 403) {
