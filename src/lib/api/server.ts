@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/token'
-import 'server-only'
+import { redirect } from 'next/navigation'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE!
 
