@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/token'
 import { redirect } from 'next/navigation'
+import { applySetCookies } from '@/utils/applySetCookie'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE!
 
@@ -41,9 +42,7 @@ export async function server(endpoint: string, options: RequestInit = {}): Promi
     res.headers.getSetCookie?.() ??
     (res.headers.get('set-cookie') ? [res.headers.get('set-cookie')!] : [])
 
-  for (const sc of setCookies) {
-    res.headers.append('set-cookie', sc)
-  }
+  await applySetCookies(setCookies)
 
   // 쿠키 정리 후 로그인으로 복귀(SSR/페이지 크래시 및 리다이렉트 루프를 최소화)
   if (res.status === 401 || res.status === 403) {

@@ -13,28 +13,9 @@ export function ModalShell({
   backdropClassName?: string
   returnTo?: string
 }) {
-  const router = useRouter()
-  const close = useCallback(() => {
-    const to = returnTo ?? '/admin/operator'
-    router.replace(to)
-    router.refresh()
-  }, [router, returnTo])
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  }, [close])
-
   return (
     <div className="fixed inset-0 z-[9999]">
-      <button
-        aria-label="close overlay"
-        onClick={close}
-        className={clsx('absolute inset-0 bg-black/40', backdropClassName)}
-      />
+      <div className={clsx('absolute inset-0 bg-black/40', backdropClassName)} />
       {children}
     </div>
   )

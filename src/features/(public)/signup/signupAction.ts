@@ -79,5 +79,9 @@ export async function signupAction(
     message: '관리자가 승인을 완료하면 서비스를 이용가능합니다.',
     returnTo: '/signin',
   })
-  redirect(`/signin/message?${sp.toString()}`)
+  return {
+    success: true,
+    fieldErrors,
+    values: { name: '', phoneNumber: '', track: '', token: '', provider },
+  }
 }

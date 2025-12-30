@@ -32,7 +32,7 @@ export default function PostCard({ post }: PostCardProps) {
     <Link
       href={`/post/${post.postId}`}
       className={clsx(
-        'block w-full border-b border-[rgba(0,0,0,0.06)] bg-white px-6 py-6',
+        'block w-full border-b border-[rgba(0,0,0,0.06)] bg-white px-4 py-4', // ✅ 모바일 16px
         'md:box-border md:h-[201px] md:max-w-[1045px] md:overflow-hidden md:rounded-[8px] md:border-b-0 md:bg-white md:pb-px md:shadow-[0px_1px_2px_rgba(0,0,0,0.12)]',
         'md:p-0',
       )}

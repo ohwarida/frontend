@@ -46,7 +46,7 @@ export default async function AppShell({
         <div
           className={clsx(
             'mx-auto w-full max-w-(--container-max)',
-            isPostCreatePage ? 'px-4 pt-4 lg:px-5 lg:pt-6' : 'px-0 pt-0 lg:px-5 lg:pt-6',
+            isPostCreatePage ? 'px-4 py-4 lg:px-5 lg:py-6' : 'px-0 py-0 lg:px-5 lg:py-6',
           )}
         >
           {children}

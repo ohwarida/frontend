@@ -13,6 +13,8 @@ import {
 
 const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false })
 
+const MAX_CONTENT_LENGTH = 5000
+
 type MarkdownEditorProps = {
   name: string
   draftId: string
@@ -21,8 +23,7 @@ type MarkdownEditorProps = {
 }
 
 function formatImageUrl(res: { url: string; relativePath: string }) {
-  const url = res.url?.trim()
-  return `${url}`
+  return res.url?.trim() ?? ''
 }
 
 function formatBytes(bytes: number) {
@@ -47,29 +48,83 @@ function validateImageFile(file: File) {
   return null
 }
 
+function clampToMax(value: string) {
+  return value.length <= MAX_CONTENT_LENGTH ? value : value.slice(0, MAX_CONTENT_LENGTH)
+}
+
+function insertAtSelection(params: {
+  value: string
+  insert: string
+  selectionStart: number
+  selectionEnd: number
+}) {
+  const { value, insert, selectionStart, selectionEnd } = params
+  const before = value.slice(0, selectionStart)
+  const after = value.slice(selectionEnd)
+  const next = before + insert + after
+  const cursor = selectionStart + insert.length
+  return { next, cursor }
+}
+
 export default function MarkdownEditor({
   name,
   draftId,
   defaultValue = '',
   onChange,
 }: MarkdownEditorProps) {
-  const [value, setValue] = useState(defaultValue)
+  const [value, setValue] = useState(() => clampToMax(defaultValue))
   const valueRef = useRef(value)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const [focused, setFocused] = useState(false)
+  const editorWrapRef = useRef<HTMLDivElement | null>(null)
   const [uploading, setUploading] = useState(false)
+  const selectionRef = useRef<{ start: number; end: number } | null>(null)
+  const shouldRestoreSelectionRef = useRef(false)
 
   const accept = useMemo(() => 'image/jpeg,image/png,image/gif,image/webp', [])
 
   useEffect(() => {
-    setValue(defaultValue)
+    const next = clampToMax(defaultValue)
+    setValue(next)
+    onChange?.(next)
   }, [defaultValue])
 
   useEffect(() => {
     valueRef.current = value
   }, [value])
 
-  const syncValue = (next: string) => {
+  const getTextarea = () => {
+    const root = editorWrapRef.current
+    if (!root) return null
+    return root.querySelector('textarea') as HTMLTextAreaElement | null
+  }
+
+  const saveSelection = () => {
+    const ta = getTextarea()
+    const current = valueRef.current
+    if (!ta) {
+      selectionRef.current = { start: current.length, end: current.length }
+      return
+    }
+    selectionRef.current = { start: ta.selectionStart ?? 0, end: ta.selectionEnd ?? 0 }
+  }
+
+  const restoreSelection = (cursor: number) => {
+    const run = () => {
+      const ta = getTextarea()
+      if (!ta) return
+      ta.focus()
+      const c = Math.min(cursor, ta.value.length)
+      ta.setSelectionRange(c, c)
+    }
+    requestAnimationFrame(() => {
+      run()
+      setTimeout(run, 0)
+    })
+  }
+
+  const syncValue = (nextRaw: string) => {
+    const next =
+      nextRaw.length > MAX_CONTENT_LENGTH ? nextRaw.slice(0, MAX_CONTENT_LENGTH) : nextRaw
     setValue(next)
     onChange?.(next)
   }
@@ -92,12 +147,38 @@ export default function MarkdownEditor({
       if (!res) throw new Error('이미지 업로드 응답이 비어있습니다.')
 
       const imageUrl = formatImageUrl(res)
-      const next = `${valueRef.current}\n\n![이미지 설명](${imageUrl})\n\n`
+      const insert = `![](${imageUrl})`
+
+      const current = valueRef.current
+      const saved = selectionRef.current
+      const selectionStart = saved?.start ?? current.length
+      const selectionEnd = saved?.end ?? current.length
+
+      const needsPrefixNewline =
+        selectionStart > 0 && current.slice(selectionStart - 1, selectionStart) !== '\n'
+      const chunk = `${needsPrefixNewline ? '\n' : ''}${insert}\n`
+      const nextLen = current.length - (selectionEnd - selectionStart) + chunk.length
+      if (nextLen > MAX_CONTENT_LENGTH) {
+        alert(`이미지를 삽입하려면 내용이 ${MAX_CONTENT_LENGTH.toLocaleString()}자 이하여야 해요.`)
+        return
+      }
+
+      const { next, cursor } = insertAtSelection({
+        value: current,
+        insert: chunk,
+        selectionStart,
+        selectionEnd,
+      })
       syncValue(next)
+
+      shouldRestoreSelectionRef.current = true
+      restoreSelection(cursor)
     } catch (e) {
       alert(e instanceof Error ? e.message : '이미지 업로드에 실패했습니다.')
     } finally {
       setUploading(false)
+      selectionRef.current = null
+      shouldRestoreSelectionRef.current = false
     }
   }
 
@@ -125,23 +206,31 @@ export default function MarkdownEditor({
         accept={accept}
         className="hidden"
         onChange={(e) => {
+          saveSelection()
           const file = e.target.files?.[0]
           if (file) void handleUpload(file)
           e.target.value = ''
         }}
       />
 
-      <div data-color-mode="light" className="h-full w-full rounded">
+      <div ref={editorWrapRef} data-color-mode="light" className="flex h-full w-full flex-col">
         <MDEditor
           preview="edit"
           visibleDragbar={false}
           value={value}
-          onChange={(val) => syncValue(val ?? '')}
           textareaProps={{
             name,
             placeholder,
-            onFocus: () => setFocused(true),
-            onBlur: () => setFocused(false),
+            maxLength: MAX_CONTENT_LENGTH,
+            onChange: (e) => syncValue(e.target.value),
+            onKeyUp: saveSelection,
+            onMouseUp: saveSelection,
+            onSelect: saveSelection,
+            onFocus: saveSelection,
+            style: {
+              fontSize: '16px',
+              lineHeight: '24px',
+            },
           }}
           className={clsx(
             'ring-0 outline-none',
@@ -172,13 +261,21 @@ export default function MarkdownEditor({
             if (cmd.name === 'image') {
               return {
                 ...cmd,
-                execute: () => fileInputRef.current?.click(),
+                execute: () => {
+                  saveSelection()
+                  fileInputRef.current?.click()
+                },
               }
             }
-
             return cmd
           }}
         />
+
+        <div className="my-2 flex w-full justify-end px-2">
+          <p className="text-[12px] leading-[16px] text-[#717182]">
+            {value.length.toLocaleString()} / {MAX_CONTENT_LENGTH.toLocaleString()}
+          </p>
+        </div>
       </div>
     </>
   )

@@ -1,11 +1,12 @@
 'use client'
 
-import React, { useActionState, useState } from 'react'
+import React, { useActionState, useEffect, useState } from 'react'
 import { signupAction } from '@/features/(public)/signup/signupAction'
 import FieldInput from '@/components/form/FieldInput'
 import { SignupFormTypes } from '@/features/(public)/signup/types/SignupForm.types'
 import FieldSelect from '@/components/form/FieldSelect'
 import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export const initialState: FormStateTypes<SignupFormTypes> = {
   values: {
@@ -28,11 +29,22 @@ export default function SignupForm({
   provider: string
   selectTrack: { label: string; value: string }[]
 }) {
+  const router = useRouter()
   const [state, formAction, isPending] = useActionState<FormStateTypes<SignupFormTypes>, FormData>(
     signupAction,
     initialState,
   )
   const [phone, setPhone] = useState(state.values?.phoneNumber ?? '')
+
+  useEffect(() => {
+    if (state?.success) {
+      const sp = new URLSearchParams({
+        title: '가입이 완료되었습니다.',
+        message: '관리자가 승인을 완료하면 서비스를 이용가능합니다.',
+      })
+      router.replace(`/signin/message?${sp.toString()}`)
+    }
+  }, [state, router])
 
   return (
     <form action={formAction} className="space-y-4">
@@ -72,7 +84,7 @@ export default function SignupForm({
 
       <button
         type="submit"
-        className="mt-4 flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+        className="mt-4 flex h-9 max-h-9 min-h-9 w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
       >
         {isPending && <Loader2 className="mr-2 animate-spin" />}
         회원가입 완료

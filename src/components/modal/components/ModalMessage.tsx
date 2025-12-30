@@ -28,6 +28,7 @@ export default function ModalMessage({ buttonMessage = '확인' }: { buttonMessa
           onClick={() => {
             if (returnTo) {
               router.replace(returnTo)
+              router.refresh()
             } else {
               router.back()
             }
