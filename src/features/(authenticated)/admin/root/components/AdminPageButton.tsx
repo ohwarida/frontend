@@ -22,7 +22,7 @@ export default function AdminPageButton({ tabs }: { tabs: TrackField[] }) {
 
   return (
     <>
-      <div className="relative z-20 w-full">
+      <div className="relative z-10 w-full">
         <nav className="flex h-[48px] w-[calc(100%-130px)] items-end gap-2 overflow-x-auto whitespace-nowrap [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {!isCreateMode ? (
             tabs.map((tab) => {
@@ -108,10 +108,10 @@ export default function AdminPageButton({ tabs }: { tabs: TrackField[] }) {
           </button>
         </nav>
       </div>
-      <div className="relative z-20">
+      <div className="relative z-10">
         <TrackFiled selectedTabData={isCreateMode ? undefined : selectedTabData!} />
       </div>
-      {isCreateMode && <div className="fixed inset-0 z-10 h-full bg-white"></div>}
+      {isCreateMode && <div className="fixed inset-0 z-[5] h-full bg-white"></div>}
     </>
   )
 }
