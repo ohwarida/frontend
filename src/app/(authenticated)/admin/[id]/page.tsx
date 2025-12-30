@@ -35,7 +35,7 @@ export default async function Page({
     trackId: Number(trackId),
     sort: ['createdAt,desc'],
   })
-  const trackData = await getTrackList()
+  const trackData = await getTrackList(true)
   const TABS: TrackField[] =
     trackData?.content?.length > 0
       ? trackData.content.map((track) => ({
