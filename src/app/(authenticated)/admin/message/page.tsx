@@ -4,7 +4,7 @@ import MiddleModal from '@/components/modal/MiddleModal'
 
 export default async function Page() {
   return (
-    <MiddleModal returnTo="/admin/operator">
+    <MiddleModal returnTo="/admin/1">
       <ModalMessage buttonMessage="홈으로 이동" />
     </MiddleModal>
   )

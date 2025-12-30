@@ -2,10 +2,9 @@
 
 import React from 'react'
 import { usePathname } from 'next/navigation'
-import { TrackFields, useTrackButtonStore } from '@/store/trackButton.store'
+import { TrackField, useTrackButtonStore } from '@/store/trackButton.store'
 import TrackCreate from '@/features/(authenticated)/admin/root/components/track/TrackCreate'
 import TrackEdit from '@/features/(authenticated)/admin/root/components/track/TrackEdit'
-import { notFound } from 'next/navigation'
 
 export const initialState = (
   trackName?: string,
@@ -23,40 +22,19 @@ export const initialState = (
   success: false,
 })
 
-export default function TrackFiled({ selectedTabData }: { selectedTabData: TrackFields }) {
+export default function TrackFiled({ selectedTabData }: { selectedTabData?: TrackField }) {
   const pathname = usePathname()
   const store = useTrackButtonStore()
 
-  if (pathname === '/admin/operator') return null
-  // Create 전용
-  if (pathname === '/admin/track') {
-    return (
-      <TrackCreate
-        key="create"
-        trackName={store.trackName ?? ''}
-        startDate={store.startDate ?? ''}
-        endDate={store.endDate ?? ''}
-        trackStatus={store.trackStatus ?? 'GRADUATED'}
-      />
-    )
-  }
+  if (!selectedTabData) return <TrackCreate key="create" />
+
   // 만약에 id 가 없으면 걍 null
   const seg = pathname.split('/').filter(Boolean).at(-1) ?? ''
   const idNum = Number(seg)
   if (!seg || Number.isNaN(idNum)) return null
 
-  const trackId = store.trackId ?? selectedTabData?.trackId
-  const formKey = `edit:${trackId ?? ''}`
-
-  if (
-    !selectedTabData ||
-    !selectedTabData.trackName ||
-    !selectedTabData.startDate ||
-    !selectedTabData.endDate ||
-    !selectedTabData.trackStatus
-  ) {
-    notFound()
-  }
+  const trackId = store.trackId ?? selectedTabData.trackId
+  const formKey = `edit:${trackId}`
 
   return (
     <TrackEdit

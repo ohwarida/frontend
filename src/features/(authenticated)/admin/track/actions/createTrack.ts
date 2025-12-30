@@ -37,7 +37,7 @@ export async function createTrackAction(
   const sp = new URLSearchParams({
     title: '트랙이 생성되었습니다.',
     message: `${startDate} ~ ${endDate} 기간의 ${trackName} 트랙이 생성되었습니다.`,
-    returnTo: '/admin/operator',
+    returnTo: '/admin/1',
   })
 
   revalidatePath('/admin/track')

@@ -39,69 +39,71 @@ export default function TrackFormBase({
   const isEdit = mode === 'edit'
 
   return (
-    <section className="mt-4 rounded-md border border-gray-200 bg-white p-5">
-      <form action={formAction}>
-        <div className="flex w-full items-start justify-between gap-2 space-y-4 overflow-y-auto">
-          <FieldInput
-            name="trackName"
-            label="트랙명"
-            id="trackName"
-            required
-            outerClassName="w-full"
-            placeholder="FE, BE, AI 등"
-            errorMessage={state.fieldErrors?.trackName?.[0]}
-            defaultValue={state.values?.trackName ?? ''}
-          />
+    <>
+      <section className="z-20 mt-4 rounded-md border border-gray-200 bg-white p-5">
+        <form action={formAction}>
+          <div className="flex w-full items-start justify-between gap-2 space-y-4 overflow-y-auto">
+            <FieldInput
+              name="trackName"
+              label="트랙명"
+              id="trackName"
+              required
+              outerClassName="w-full"
+              placeholder="FE, BE, AI 등"
+              errorMessage={state.fieldErrors?.trackName?.[0]}
+              defaultValue={state.values?.trackName ?? ''}
+            />
 
-          <FieldInput
-            type="date"
-            name="startDate"
-            label="시작일"
-            id="startDate"
-            outerClassName="w-full"
-            required
-            errorMessage={state.fieldErrors?.startDate?.[0]}
-            defaultValue={toDateValue(state.values?.startDate)}
-          />
+            <FieldInput
+              type="date"
+              name="startDate"
+              label="시작일"
+              id="startDate"
+              outerClassName="w-full"
+              required
+              errorMessage={state.fieldErrors?.startDate?.[0]}
+              defaultValue={toDateValue(state.values?.startDate)}
+            />
 
-          <FieldInput
-            type="date"
-            name="endDate"
-            label="종료일"
-            id="endDate"
-            outerClassName="w-full"
-            required
-            errorMessage={state.fieldErrors?.endDate?.[0]}
-            defaultValue={toDateValue(state.values?.endDate)}
-          />
+            <FieldInput
+              type="date"
+              name="endDate"
+              label="종료일"
+              id="endDate"
+              outerClassName="w-full"
+              required
+              errorMessage={state.fieldErrors?.endDate?.[0]}
+              defaultValue={toDateValue(state.values?.endDate)}
+            />
 
-          <FieldSelect
-            name="trackStatus"
-            label="상태"
-            id="trackStatus"
-            inputClassName="h-10"
-            required
-            outerClassName="w-full"
-            options={[
-              { label: '재학', value: 'ENROLLED' },
-              { label: '수료', value: 'GRADUATED' },
-            ]}
-            errorMessage={state.fieldErrors?.trackStatus?.[0]}
-            defaultValue={state.values?.trackStatus ?? 'GRADUATED'}
-          />
-        </div>
+            <FieldSelect
+              name="trackStatus"
+              label="상태"
+              id="trackStatus"
+              inputClassName="h-10"
+              required
+              outerClassName="w-full"
+              options={[
+                { label: '재학', value: 'ENROLLED' },
+                { label: '수료', value: 'GRADUATED' },
+              ]}
+              errorMessage={state.fieldErrors?.trackStatus?.[0]}
+              defaultValue={state.values?.trackStatus ?? 'GRADUATED'}
+            />
+          </div>
 
-        <div className="flex justify-end">
-          <Button
-            variant="add"
-            type="submit"
-            icon={isPending ? <Loader2 className="animate-spin" /> : null}
-          >
-            {isPending ? (isEdit ? '수정중...' : '생성중...') : isEdit ? '수정' : '생성'}
-          </Button>
-        </div>
-      </form>
-    </section>
+          <div className="flex justify-end">
+            <Button
+              variant="add"
+              type="submit"
+              icon={isPending ? <Loader2 className="animate-spin" /> : null}
+            >
+              {isPending ? (isEdit ? '수정중...' : '생성중...') : isEdit ? '수정' : '생성'}
+            </Button>
+          </div>
+        </form>
+      </section>
+    </>
   )
 }
 

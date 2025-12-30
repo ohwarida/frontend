@@ -21,7 +21,16 @@ const Button = (props: ButtonProps) => {
   }[variant]
 
   return (
-    <button {...rest} type={type} className={clsx('btn-basic', variantClass, className)}>
+    <button
+      {...rest}
+      type={type}
+      className={clsx(
+        'btn-basic',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-inherit disabled:active:scale-100',
+        variantClass,
+        className,
+      )}
+    >
       {icon && <div>{icon}</div>}
       <span>{children}</span>
     </button>

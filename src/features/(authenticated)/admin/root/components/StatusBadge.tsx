@@ -15,9 +15,9 @@ function getStatusBadge(status: string) {
 
   switch (s) {
     case 'ACTIVE':
-      return { label: '활성', className: 'bg-green-100 text-green-700' }
+      return { label: '승인 완료', className: 'bg-[#DCFCE7] text-[#008236]' }
     case 'BLOCKED':
-      return { label: '차단', className: 'bg-red-100 text-red-700' }
+      return { label: '승인 대기', className: 'bg-[#F3F4F6] text-[#4A5565]' }
     case 'EXPIRED':
       return { label: '만료', className: 'bg-gray-100 text-gray-600' }
     default:
