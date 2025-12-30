@@ -1,3 +1,5 @@
+'use server'
+
 import { server, safeJson } from '@/lib/api/server'
 import { GetDashboardResponse } from '../types/Dashboard.type'
 
