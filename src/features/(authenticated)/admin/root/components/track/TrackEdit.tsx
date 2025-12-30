@@ -2,7 +2,7 @@ import TrackFormBase from '@/features/(authenticated)/admin/root/components/trac
 import { updateTrackAction } from '@/features/(authenticated)/admin/track/actions/updateTrack'
 import React from 'react'
 import { initialState } from '@/features/(authenticated)/admin/root/components/track/TrackFiled'
-import { TrackFields } from '@/store/trackButton.store'
+import { TrackField } from '@/store/trackButton.store'
 
 export default function TrackEdit({
   trackId,
@@ -11,14 +11,15 @@ export default function TrackEdit({
   endDate,
   trackStatus,
 }: {
-  trackId?: TrackFields['trackId']
-  trackName?: TrackFields['trackName']
-  startDate?: TrackFields['startDate']
-  endDate?: TrackFields['endDate']
-  trackStatus?: TrackFields['trackStatus']
+  trackId?: TrackField['trackId']
+  trackName?: TrackField['trackName']
+  startDate?: TrackField['startDate']
+  endDate?: TrackField['endDate']
+  trackStatus?: TrackField['trackStatus']
 }) {
   const trackIdNum = Number(trackId)
   if (!trackId || Number.isNaN(trackIdNum)) return null
+  if (trackId === 1) return null
   return (
     <TrackFormBase
       mode="edit"

@@ -22,7 +22,7 @@ export default function HeaderElement({ location }: { location: LocationType }) 
             <Button variant="cancel">관리자 모드 종료</Button>
           </Link>
         ) : (
-          <Link href="/admin/operator">
+          <Link href="/admin/1">
             <Button variant="warning" icon={<Shield size={16} />}>
               관리자 모드
             </Button>
