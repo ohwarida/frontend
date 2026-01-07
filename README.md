@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 코드 컨벤션
 
-## Getting Started
+## 1) 폴더 역할
 
-First, run the development server:
+### app/
+- 라우팅/레이아웃/에러/로딩/메타데이터만 둔다.
+- page.tsx는 “조립”만 한다. (로직/상태/쿼리 훅은 features로)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### features/
+- 기능(도메인) 코드 본체.
+- 기능별로 필요에 따라 `components / apis / queries / actions / stores / types / constants / utils`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### components/
+- 도메인 모르는 공용 UI만 둔다.
+- 파일/컴포넌트명에 Post/Admin/Track 같은 도메인 단어가 들어가면 features로 이동한다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 2) 네이밍
 
-## Learn More
+### 폴더명
+- 기본: kebab-case
+- Next 라우트 세그먼트는 Next 규칙 그대로 사용: (group), @slot, [id]
 
-To learn more about Next.js, take a look at the following resources:
+### 파일명
+- 컴포넌트: PascalCase.tsx
+- 훅: useXxx.ts(x)
+- 유틸: camelCase.ts
+- 스토어: xxx.store.ts
+- API: xxx.api.ts
+- 서버 액션: xxx.action.ts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 타입 파일명(통일)
+- *.types.ts 로 통일한다.
+- 타입 이름은 단수로 export 한다.
+    - export type User = ...
+    - export type Pagination = ...
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 3) export 규칙
+- page/layout/error/loading/not-found/route 만 default export 허용
+- 그 외는 전부 named export
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 4) store 위치
+- 전역에서 공유되는 상태만 /store
+- 기능 전용이면 features/**/stores
+
+---
+
+## 5) 서버/클라이언트 컴포넌트
+- 기본은 Server Component
+- 필요할 때만 'use client'
+- 'use client'는 인터랙션 컴포넌트에만 붙이고 페이지에 크게 붙이지 않는다.
+
+---
+
+## 6) import 규칙
+- @/ 절대경로 우선, 깊은 상대경로 지양
+- import 순서:
+    1) react, next/*
+    2) 외부 라이브러리
+    3) @/
+    4) 상대경로
+- 타입은 import type 사용
+
+---
+
+## 7) 액션 규칙
+- 기본: 1 파일 = 1 액션 → xxx.action.ts
+- 예외: 여러 액션이면 xxx.actions.ts 허용
+
+---
+
+## 8) 지금 프로젝트에서 바로 통일할 것
+- *.type.ts → *.types.ts
+- TrackFiled.tsx → TrackField.tsx
+- lib/o-auth → lib/oauth

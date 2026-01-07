@@ -1,11 +1,17 @@
 'use client'
 
-import React from 'react'
-import { CircleQuestionMark } from 'lucide-react'
-import clsx from 'clsx'
 import Link from 'next/link'
+import React from 'react'
+import { CircleAlert } from 'lucide-react'
+import clsx from 'clsx'
 
-export default function NotFound() {
+export default function ErrorPage({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
   return (
     <main className="flex min-h-[100svh] items-center justify-center bg-white px-6">
       <section
@@ -16,18 +22,25 @@ export default function NotFound() {
         )}
       >
         <div className="mx-auto mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-[#FDE2E2]">
-          <CircleQuestionMark className="h-6 w-6 text-[#EF4444]" />
+          <CircleAlert className="h-6 w-6 text-[#EF4444]" />
         </div>
 
         <h1 className="text-[16px] leading-[24px] font-semibold text-[#171719]">
-          페이지를 찾을 수 없습니다
+          문제가 발생했습니다
         </h1>
 
         <p className="mt-2 text-[12px] leading-[18px] text-[rgba(55,56,60,0.61)]">
-          요청하신 페이지가 존재하지 않거나 삭제되었습니다.
+          요청을 처리하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
         </p>
 
-        <div className="mt-6">
+        {/* 필요하면 디버그용(프로덕션에선 숨기고 싶으면 조건 처리) */}
+        {error?.digest && (
+          <p className="mt-3 text-[11px] leading-[16px] text-[#9CA3AF]">
+            오류 코드: {error.digest}
+          </p>
+        )}
+
+        <div className="mt-6 flex items-center justify-center gap-2">
           <Link
             href="/"
             className={clsx(

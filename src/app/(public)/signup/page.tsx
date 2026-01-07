@@ -1,15 +1,13 @@
 import SignupForm from '@/features/(public)/signup/components/SignupForm'
-import { redirect } from 'next/navigation'
-import jwt from 'jsonwebtoken'
 import { getTrackList } from '@/features/(authenticated)/admin/track/services/getTrackList'
+import type { Metadata } from 'next'
 
-type SearchParams = { [key: string]: string | string[] | undefined }
+export const metadata: Metadata = {
+  title: '회원 가입 | Wanted Ground PotenUp',
+  description: '업계 트렌드와 이슈를 공유하고 정리하는 트렌드 게시판에 환영합니다.',
+}
 
-export default async function SignupPage(props: {
-  searchParams: SearchParams | Promise<SearchParams>
-}) {
-  const searchParams = await props.searchParams
-  const token = typeof searchParams.token === 'string' ? searchParams.token : ''
+export default async function SignupPage() {
   const trackData = await getTrackList(false)
   const selectTrack =
     trackData?.content?.length > 0
@@ -18,24 +16,6 @@ export default async function SignupPage(props: {
           value: String(track.trackId),
         }))
       : []
-
-  // token 아예 없으면 차단
-  if (!token || token.trim() === '') {
-    redirect('/signin')
-  }
-
-  // JWT 형식이 맞는지 확인
-  const isJwt = token.split('.').length === 3
-  if (!isJwt) {
-    redirect('/signin')
-  }
-
-  // 실제 JWT 검증
-  try {
-    jwt.decode(token)
-  } catch (_) {
-    redirect('/signin')
-  }
 
   return (
     <div className="mx-auto flex min-h-full max-w-sm flex-col justify-center px-4">
@@ -50,7 +30,7 @@ export default async function SignupPage(props: {
             입력해주세요.
           </p>
         </div>
-        <SignupForm token={token} provider="GOOGLE" selectTrack={selectTrack} />
+        <SignupForm provider="GOOGLE" selectTrack={selectTrack} />
 
         <p className="mx-auto mt-3 w-72 text-center text-xs leading-5 text-gray-400">
           회원가입을 진행하면 이용약관과 개인정보처리방침을 동의한 것으로 간주됩니다.

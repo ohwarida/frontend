@@ -14,12 +14,16 @@ import type { ReactionType } from '@/features/(authenticated)/post/types/Post.ty
 import { getPostDetailReaction } from '@/features/(authenticated)/post/apis/reaction.api'
 import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReactionAction'
 import { PostDetailHeader } from '@/features/(authenticated)/post/create/components/PostDetailHeader'
+import { RelativeTime } from '@/components/RelativeTime'
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params
 
   const post = await getPostDetail(id)
   const user = await getUser()
+
+  const wroteAt = post?.wroteAt ?? ''
+  const wroteAtLabel = wroteAt ? toRelativeTimeLabel(wroteAt) : ''
 
   const isOwner = post && user?.userId === post.writerId
 
@@ -85,12 +89,11 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
                   >
                     ·
                   </span>
-                  <time
+                  <RelativeTime
+                    dateTime={wroteAt}
+                    initialLabel={wroteAtLabel}
                     className="text-[14px] leading-[20px] text-[rgba(55,56,60,0.61)]"
-                    dateTime={post?.wroteAt}
-                  >
-                    {toRelativeTimeLabel(post?.wroteAt)}
-                  </time>
+                  />
                   <span className="inline-flex h-[22px] items-center justify-center rounded-lg bg-[#ECEEF2] px-2 text-[12px] leading-[16px] font-medium text-black">
                     {TOPIC_LABEL[post?.topic]}
                   </span>
