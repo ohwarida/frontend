@@ -7,6 +7,7 @@ import { SignupFormTypes } from '@/features/(public)/signup/types/SignupForm.typ
 import FieldSelect from '@/components/form/FieldSelect'
 import { Loader2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useIdTokenStore } from '@/store/idToken.store'
 
 export const initialState: FormStateTypes<SignupFormTypes> = {
   values: {
@@ -21,15 +22,14 @@ export const initialState: FormStateTypes<SignupFormTypes> = {
 }
 
 export default function SignupForm({
-  token,
   provider,
   selectTrack,
 }: {
-  token: string
   provider: string
   selectTrack: { label: string; value: string }[]
 }) {
   const router = useRouter()
+  const idToken = useIdTokenStore((state) => state.idToken)
   const [state, formAction, isPending] = useActionState<FormStateTypes<SignupFormTypes>, FormData>(
     signupAction,
     initialState,
@@ -46,10 +46,16 @@ export default function SignupForm({
     }
   }, [state, router])
 
+  useEffect(() => {
+    if (!idToken) {
+      router.replace(`/signin`)
+    }
+  }, [idToken, router])
+
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="provider" value={provider} />
-      <input type="hidden" name="token" value={token} />
+      <input type="hidden" name="token" value={idToken ?? ''} />
 
       <FieldInput
         name="name"
