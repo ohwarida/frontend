@@ -30,7 +30,7 @@ export default async function Page({
 }) {
   const { id: trackId } = await params
   const sp = await searchParams
-  const page = Math.max(0, Number(sp.page ?? '0') || 0)
+  const page = Math.max(1, Number(sp.page ?? '1') || 1)
   const size = Math.min(100, Math.max(1, Number(sp.size ?? '10') || 10))
   const userData = await getUserList({
     page,
