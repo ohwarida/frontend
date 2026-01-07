@@ -9,9 +9,12 @@ import { SigninErrorTypes } from '@/features/(public)/signin/types/SigninError.t
 import { client } from '@/lib/api/client'
 import { USER_ERROR_MESSAGE } from '@/constants/error-message/user'
 import { HttpErrorTypes } from '@/types/HttpError.types'
+import { useIdTokenStore } from '@/store/idToken.store'
 
 export function useGoogleSignin() {
   const router = useRouter()
+  const setIdToken = useIdTokenStore((state) => state.setIdToken)
+
   const signinMutation = useMutation({
     mutationFn: async (code: string) => {
       const res = await client('/api/signin', {
@@ -35,7 +38,8 @@ export function useGoogleSignin() {
       if ((error.body as SigninErrorTypes).code === USER_ERROR_CODE.USER_NOT_FOUND) {
         const token = (error.body as SigninErrorTypes)?.idToken
         if (token) {
-          router.push(`/signup?token=${encodeURIComponent(token)}`)
+          setIdToken(token)
+          router.push(`/signup`)
         } else {
           const sp = new URLSearchParams({
             title: '유저 알림', //TODO: 성규님과 상의
