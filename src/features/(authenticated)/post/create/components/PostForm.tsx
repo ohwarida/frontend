@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useMemo, useState } from 'react'
+import { useActionState, useEffect, useMemo, useRef, useState } from 'react'
 import Form from 'next/form'
 import Input from '@/components/ui/Input'
 import MarkdownEditor from '@/components/markdown/MarkdownEditor'
@@ -25,6 +25,18 @@ type PostFormProps = {
   initialValues: PostFormValues
   postId?: number
   formKey?: string | number
+}
+
+const FORM_ID = 'postFormId'
+
+function setHeaderSubmitDisabled(disabled: boolean) {
+  if (typeof document === 'undefined') return
+  document
+    .querySelectorAll<HTMLButtonElement>(`button[type="submit"][form="${FORM_ID}"]`)
+    .forEach((btn) => {
+      btn.disabled = disabled
+      btn.setAttribute('aria-disabled', String(disabled))
+    })
 }
 
 export default function PostForm({ mode, action, initialValues, postId, formKey }: PostFormProps) {
@@ -68,13 +80,37 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
     } else router.replace('/') // postId 못 받는 비정상 케이스 fallback
   }, [state.success, state.postId, qc, router])
 
+  const submittingRef = useRef(false)
+  useEffect(() => {
+    if (state.success) {
+      submittingRef.current = true
+      setHeaderSubmitDisabled(true)
+      return
+    }
+
+    if (!isPending) {
+      submittingRef.current = false
+      setHeaderSubmitDisabled(false)
+    }
+  }, [isPending, state.success])
+
   return (
     <div className="w-full" key={formKey}>
       <Form
-        id="postFormId"
+        id={FORM_ID}
         action={formAction}
         aria-busy={isPending}
         className="flex w-full flex-col gap-4 lg:flex-row lg:gap-[24px]"
+        onSubmitCapture={(e) => {
+          if (submittingRef.current) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+          }
+
+          submittingRef.current = true
+          setHeaderSubmitDisabled(true)
+        }}
       >
         <input type="hidden" name="draftId" value={draftId} />
         {mode === 'edit' && <input type="hidden" name="postId" value={postId} />}
@@ -110,7 +146,8 @@ export default function PostForm({ mode, action, initialValues, postId, formKey 
               name="title"
               placeholder="제목을 입력하세요"
               defaultValue={state.values?.title ?? initialValues.title ?? ''}
-              disabled={isPending}
+              readOnly={isPending}
+              aria-disabled={isPending}
               className="h-[36px] w-full rounded-[8px] border-none !bg-[#F4F4F5] px-[16px] text-[14px] text-[#0A0A0A] placeholder:text-[#717182]"
             />
             {state.fieldErrors.title && (

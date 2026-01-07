@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef } from 'react'
 import { Avatar } from '@/components/ui/Avatar'
 import { Heart } from 'lucide-react'
 import type { Comment } from '../types/Comment.types'
@@ -37,6 +38,9 @@ export function CommentItem({
     setEditText,
     resetEditText,
   } = useCommentItemState(postId, comment.commentId)
+
+  const replySubmitLockRef = useRef(false)
+  const editSubmitLockRef = useRef(false)
 
   if (!actions) return null
 
@@ -84,12 +88,29 @@ export function CommentItem({
             </p>
           ) : (
             <form
+              onSubmitCapture={(e) => {
+                if (editSubmitLockRef.current) {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  return
+                }
+                editSubmitLockRef.current = true
+              }}
               onSubmit={async (e) => {
                 e.preventDefault()
-                if (!canSubmitEdit) return
-                await onUpdate({ commentId: comment.commentId, content: editText.trim() })
-                resetEditText(comment.commentId)
-                closeAllEdit()
+
+                if (!canSubmitEdit) {
+                  editSubmitLockRef.current = false
+                  return
+                }
+
+                try {
+                  await onUpdate({ commentId: comment.commentId, content: editText.trim() })
+                  resetEditText(comment.commentId)
+                  closeAllEdit()
+                } finally {
+                  editSubmitLockRef.current = false
+                }
               }}
               className="hidden flex-col gap-2 lg:flex"
             >
@@ -110,13 +131,14 @@ export function CommentItem({
                   onClick={() => {
                     resetEditText(comment.commentId)
                     closeAllEdit()
+                    editSubmitLockRef.current = false
                   }}
                 >
                   취소
                 </button>
                 <button
                   type="submit"
-                  disabled={!canSubmitEdit}
+                  disabled={!canSubmitEdit || editSubmitLockRef.current}
                   className="h-8 rounded-lg bg-[#155DFC] px-4 text-[14px] leading-[20px] font-medium text-white disabled:opacity-50"
                 >
                   수정하기
@@ -226,6 +248,7 @@ export function CommentItem({
                       if (replyOpen) {
                         resetReplyText(comment.commentId)
                         closeAllReply()
+                        replySubmitLockRef.current = false
                         return
                       }
                       openOnlyReply(comment.commentId)
@@ -242,6 +265,7 @@ export function CommentItem({
                       if (editOpen) {
                         resetEditText(comment.commentId)
                         closeAllEdit()
+                        editSubmitLockRef.current = false
                         return
                       }
                       setEditText(comment.commentId, comment.content ?? '')
@@ -288,12 +312,29 @@ export function CommentItem({
               {!isDeleted && canReplyToThis && safeReplyOpen && (
                 <form
                   className="hidden pt-2 lg:block"
+                  onSubmitCapture={(e) => {
+                    if (replySubmitLockRef.current) {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      return
+                    }
+                    replySubmitLockRef.current = true
+                  }}
                   onSubmit={async (e) => {
                     e.preventDefault()
-                    if (!canSubmitReply) return
-                    await onCreate({ parentId: comment.commentId, content: replyText.trim() })
-                    resetReplyText(comment.commentId)
-                    closeAllReply()
+
+                    if (!canSubmitReply) {
+                      replySubmitLockRef.current = false
+                      return
+                    }
+
+                    try {
+                      await onCreate({ parentId: comment.commentId, content: replyText.trim() })
+                      resetReplyText(comment.commentId)
+                      closeAllReply()
+                    } finally {
+                      replySubmitLockRef.current = false
+                    }
                   }}
                 >
                   <label className="sr-only" htmlFor={`reply-${comment.commentId}`}>
@@ -315,13 +356,14 @@ export function CommentItem({
                       onClick={() => {
                         resetReplyText(comment.commentId)
                         closeAllReply()
+                        replySubmitLockRef.current = false
                       }}
                     >
                       취소
                     </button>
                     <button
                       type="submit"
-                      disabled={!canSubmitReply}
+                      disabled={!canSubmitReply || replySubmitLockRef.current}
                       className="h-8 rounded-lg bg-[#155DFC] px-4 text-[14px] leading-[20px] font-medium text-white disabled:opacity-50"
                     >
                       답글 작성

@@ -64,6 +64,9 @@ export function CommentSection({
   const isMobileSubmitting = createMut.isPending || updateMut.isPending
   const mobileCanSubmit = mobileText.trim().length > 0
 
+  const desktopSubmitLockRef = useRef(false)
+  const mobileSubmitLockRef = useRef(false)
+
   const openMobileCreate = () => {
     setComposer({ mode: 'create' })
     setMobileText('')
@@ -153,11 +156,24 @@ export function CommentSection({
         ))}
       </ol>
 
+      {/* 데스크탑 댓글 작성 */}
       <form
         className="hidden flex-col items-end gap-3 lg:flex"
+        onSubmitCapture={(e) => {
+          if (desktopSubmitLockRef.current) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+          }
+          desktopSubmitLockRef.current = true
+        }}
         onSubmit={async (e) => {
           e.preventDefault()
-          await submitDesktopRootComment()
+          try {
+            await submitDesktopRootComment()
+          } finally {
+            desktopSubmitLockRef.current = false
+          }
         }}
       >
         <label className="sr-only" htmlFor={`comment-${postId}`}>
@@ -194,15 +210,28 @@ export function CommentSection({
         </div>
       </form>
 
+      {/* 모바일 댓글 작성 */}
       <form
         className={[
           'fixed inset-x-0 bottom-0 z-30 lg:hidden',
           'border-t border-[#E5E7EB] bg-white',
           'px-4 pt-[17px] pb-[calc(16px+env(safe-area-inset-bottom))]',
         ].join(' ')}
+        onSubmitCapture={(e) => {
+          if (mobileSubmitLockRef.current) {
+            e.preventDefault()
+            e.stopPropagation()
+            return
+          }
+          mobileSubmitLockRef.current = true
+        }}
         onSubmit={async (e) => {
           e.preventDefault()
-          await submitMobile()
+          try {
+            await submitMobile()
+          } finally {
+            mobileSubmitLockRef.current = false
+          }
         }}
       >
         {mobileBannerText && (

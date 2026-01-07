@@ -9,6 +9,9 @@ import { RequestStatus } from '@/features/(authenticated)/admin/root/types/Admin
 import { getTrackList } from '@/features/(authenticated)/admin/track/services/getTrackList'
 import { TrackField } from '@/store/trackButton.store'
 import AdminPageButton from '@/features/(authenticated)/admin/root/components/AdminPageButton'
+import AdminCheckBox from '@/features/(authenticated)/admin/root/components/AdminCheckBox'
+import AdminSelectAllCheckBox from '@/features/(authenticated)/admin/root/components/AdminSelectAllCheckBox'
+import AdminAllButton from '@/features/(authenticated)/admin/root/components/AdminAllButton'
 
 export const metadata: Metadata = {
   title: '관리자 모드 | Wanted Ground PotenUp',
@@ -27,8 +30,8 @@ export default async function Page({
 }) {
   const { id: trackId } = await params
   const sp = await searchParams
-  const page = Math.max(0, Number(sp.page ?? '0') || 0)
-  const size = Math.min(100, Math.max(1, Number(sp.size ?? '20') || 20))
+  const page = Math.max(1, Number(sp.page ?? '1') || 1)
+  const size = Math.min(100, Math.max(1, Number(sp.size ?? '10') || 10))
   const userData = await getUserList({
     page,
     size,
@@ -48,6 +51,7 @@ export default async function Page({
       : []
 
   const rows = userData.content
+  const selectableIds = rows.map((r) => r.userId)
 
   return (
     <>
@@ -55,20 +59,41 @@ export default async function Page({
 
       <div className="h-full w-full pt-4">
         <div className="rounded-md border border-gray-200 bg-white">
-          <div className="flex flex-col gap-4 p-6">
-            <h1 className="text-2xl">관리자 페이지</h1>
-            <p>회원 가입 승인 대기 목록 (인원 수)</p>
+          <div className="flex items-end justify-between gap-4 p-6">
+            <div>
+              <h1 className="text-2xl">관리자 페이지</h1>
+              <div className="mt-1 flex items-center justify-start gap-5">
+                <p>전체 ({rows.length}명)</p>
+                <p>승인 대기 ({}명)</p>
+                <p>승인 완료 ({}명)</p>
+              </div>
+            </div>
+            <div>
+              <AdminAllButton trackId={Number(trackId)} />
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
+              <colgroup>
+                <col className="w-6" />
+                <col className="w-14" />
+                <col className="w-28" />
+                <col className="w-36" />
+                <col className="w-56" />
+                <col className="w-24" />
+                <col className="w-28" />
+                <col className="w-28" />
+                <col className="w-10" />
+              </colgroup>
               <thead className="bg-gray-100 px-6">
                 <tr className="border-b border-gray-200">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600">
+                    <AdminSelectAllCheckBox ids={selectableIds} />
+                  </th>
+
                   {['번호', '이름', '전화번호', '이메일', '가입일', '역할', '상태', '관리'].map(
                     (h) => (
-                      <th
-                        key={h}
-                        className="px-6 py-3 text-left text-xs font-semibold text-gray-600"
-                      >
+                      <th key={h} className="px-6 py-3 text-left text-xs font-bold text-gray-600">
                         {h}
                       </th>
                     ),
@@ -79,16 +104,16 @@ export default async function Page({
               <tbody>
                 {rows.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-10 text-center text-sm text-gray-500">
+                    <td colSpan={9} className="px-6 py-10 text-center text-sm text-gray-500">
                       현재 승인 대기 중인 사용자가 없습니다.
                     </td>
                   </tr>
                 ) : (
                   rows.map((r, index) => {
                     const isAdmin = r.role === 'ADMIN'
-
                     const approveDisabled = normalizeReq(r.requestStatus) === 'ACCEPTED'
                     const rejectDisabled = normalizeReq(r.requestStatus) === 'REJECTED'
+                    const no = (page - 1) * size + index + 1
 
                     return (
                       <tr
@@ -98,7 +123,10 @@ export default async function Page({
                           index === rows.length - 1 ? '' : 'border-b',
                         )}
                       >
-                        <td className="px-6 py-3 text-sm text-gray-900">{index + 1}</td>
+                        <td>
+                          <AdminCheckBox id={r.userId} />
+                        </td>
+                        <td className="px-6 py-3 text-sm text-gray-900">{no}</td>
                         <td className="px-6 py-3 text-sm text-gray-900">{r.name}</td>
                         <td className="px-6 py-3 text-sm text-gray-700">{r.phoneNumber}</td>
                         <td className="px-6 py-3 text-sm text-gray-700">{r.email ?? '-'}</td>
@@ -139,7 +167,7 @@ export default async function Page({
                               <ActionButton
                                 trackId={Number(trackId)}
                                 disabled={rejectDisabled}
-                                variant="cancel"
+                                variant="warning"
                                 initialRole={r.role}
                                 userId={r.userId}
                                 requestStatus="REJECTED"

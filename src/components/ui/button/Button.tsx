@@ -26,7 +26,7 @@ const Button = (props: ButtonProps) => {
       type={type}
       className={clsx(
         'btn-basic',
-        'disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-inherit disabled:active:scale-100',
+        'disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100',
         variantClass,
         className,
       )}
