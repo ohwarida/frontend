@@ -7,6 +7,7 @@ type params = {
   ids: number[]
   trackId: number
 }
+
 export async function acceptAllUser(params: params): Promise<void> {
   const { ids, trackId } = params
   await server(`/api/v1/admin/users/decisions`, {

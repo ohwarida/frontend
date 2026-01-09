@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Button from '@/components/ui/button/Button'
 import ProfileMenu from '@/components/layout/header/ProfileMenu'
 import { Shield, SquarePen } from 'lucide-react'
-import { useAuthState } from '@/app/hooks/useAuthState'
+import { useAuthState } from '@/hooks/useAuthState'
 import type { LocationType } from '@/types/Location.types'
 
 export default function HeaderElement({ location }: { location: LocationType }) {
