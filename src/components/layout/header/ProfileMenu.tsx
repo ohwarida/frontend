@@ -62,8 +62,6 @@ export default function ProfileMenu() {
   }
 
   const handleMyPageClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    alert('서비스 준비중입니다') // TODO: 토스트 교체
     setOpen(false)
   }
 
