@@ -1,8 +1,8 @@
 'use client'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { toggleReactionAction } from '../actions/toggleReactionAction'
-import type { GetCommentsResponse, Comment } from '../types/Comment.types'
+import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
+import { GetCommentsResponse, Comment } from '@/features/(authenticated)/post/types/Comment.types'
 
 export const commentsKey = (postId: number) => ['comment', postId] as const
 

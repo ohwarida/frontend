@@ -1,6 +1,6 @@
 'use client'
 
-import { createTrackAction } from '@/features/(authenticated)/admin/track/actions/createTrack'
+import { createTrackAction } from '@/features/(authenticated)/admin/track/actions/createTrack.action'
 import React, { useActionState } from 'react'
 import FieldInput from '@/components/form/FieldInput'
 import FieldSelect from '@/components/form/FieldSelect'

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Loader2, Plus, X } from 'lucide-react'
-import { deleteTrack } from '@/features/(authenticated)/admin/track/actions/deleteTrack'
+import { deleteTrackAction } from '@/features/(authenticated)/admin/track/actions/deleteTrack.action'
 import clsx from 'clsx'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useState, useTransition } from 'react'
@@ -58,7 +58,7 @@ export default function AdminPageButton({ tabs }: { tabs: TrackField[] }) {
 
                         startTransition(async () => {
                           try {
-                            await deleteTrack(tab.trackId as number)
+                            await deleteTrackAction(tab.trackId as number)
                             router.replace(`/admin/1`)
                           } catch (e) {
                             alert(e instanceof Error ? e.message : '삭제 실패')
@@ -96,14 +96,14 @@ export default function AdminPageButton({ tabs }: { tabs: TrackField[] }) {
           <button
             type="button"
             className={clsx(
-              'absolute right-0 bottom-0 flex h-9 items-end justify-between gap-1 rounded-md border px-2 py-1',
+              'absolute right-0 bottom-0 flex h-9 items-center justify-between gap-2.5 rounded-md border px-3 py-1 transition-colors',
               isCreateMode
-                ? 'border-gray-50 bg-gray-200/50 text-black'
-                : 'border-green-300 bg-green-200/50 text-green-600',
+                ? 'border-gray-50 bg-gray-200/50 text-black hover:border-gray-200 hover:bg-gray-200/80'
+                : 'border-green-300 bg-green-200/50 text-green-600 hover:border-green-400 hover:bg-green-200/80 hover:text-green-700',
             )}
             onClick={() => setIsCreateMode((prev) => !prev)}
           >
-            {isCreateMode ? <X /> : <Plus />}
+            {isCreateMode ? <X className="size-3.5" /> : <Plus className="size-3.5" />}
             {isCreateMode ? '닫기' : '트랙 생성'}
           </button>
         </nav>

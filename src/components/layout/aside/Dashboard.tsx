@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   return (
     data && (
-      <section className="w-full space-y-3 rounded-[8px] border border-[#EAEBEC] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.12)]">
+      <section className="w-full space-y-3 rounded-[8px] border border-[#EAEBEC] bg-white p-4">
         <StatCard
           label="전체 게시글"
           value={totalPostCount.toLocaleString()}

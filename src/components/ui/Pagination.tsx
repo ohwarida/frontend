@@ -13,6 +13,7 @@ export default function Pagination({
   pageKey?: string
   sizeKey?: string
 }) {
+  if (!meta) return null
   const { currentPage, pageSize, totalPages, isFirst, isLast } = meta
 
   if (totalPages <= 1) return null

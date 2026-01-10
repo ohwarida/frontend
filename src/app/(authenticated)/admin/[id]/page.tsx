@@ -51,7 +51,7 @@ export default async function Page({
       : []
 
   const rows = userData.content
-  const selectableIds = rows.map((r) => r.userId)
+  const selectableIds = rows ? rows.map((r) => r.userId) : []
 
   return (
     <>
@@ -63,7 +63,7 @@ export default async function Page({
             <div>
               <h1 className="text-2xl">관리자 페이지</h1>
               <div className="mt-1 flex items-center justify-start gap-5">
-                <p>전체 ({rows.length}명)</p>
+                <p>전체 ({rows ? rows.length : 0}명)</p>
                 <p>승인 대기 ({}명)</p>
                 <p>승인 완료 ({}명)</p>
               </div>
@@ -102,13 +102,13 @@ export default async function Page({
               </thead>
 
               <tbody>
-                {rows.length === 0 ? (
+                {rows && rows.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="px-6 py-10 text-center text-sm text-gray-500">
                       현재 승인 대기 중인 사용자가 없습니다.
                     </td>
                   </tr>
-                ) : (
+                ) : rows ? (
                   rows.map((r, index) => {
                     const isAdmin = r.role === 'ADMIN'
                     const approveDisabled = normalizeReq(r.requestStatus) === 'ACCEPTED'
@@ -179,7 +179,7 @@ export default async function Page({
                       </tr>
                     )
                   })
-                )}
+                ) : null}
               </tbody>
             </table>
           </div>

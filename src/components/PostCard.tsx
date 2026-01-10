@@ -7,7 +7,7 @@ import { Avatar } from './ui/Avatar'
 import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
 import { MessageCircle } from 'lucide-react'
 import { Reaction } from '@/features/(authenticated)/post/components/Reaction'
-import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReactionAction'
+import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
 import { TopicType } from '@/types/Topic.types'
 import { HREF_BY_TOPIC } from '@/features/(authenticated)/post/constants/topic'
 

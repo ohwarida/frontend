@@ -12,7 +12,7 @@ import Link from 'next/link'
 import { getPostDetail, deletePost } from '@/features/(authenticated)/post/apis/post.api'
 import type { ReactionType } from '@/features/(authenticated)/post/types/Post.types'
 import { getPostDetailReaction } from '@/features/(authenticated)/post/apis/reaction.api'
-import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReactionAction'
+import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
 import { PostDetailHeader } from '@/features/(authenticated)/post/create/components/PostDetailHeader'
 import { RelativeTime } from '@/components/RelativeTime'
 

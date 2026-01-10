@@ -3,7 +3,7 @@
 import { safeJson, server } from '@/lib/api/server'
 import { revalidatePath } from 'next/cache'
 
-export async function deleteTrack(id: number) {
+export async function deleteTrackAction(id: number) {
   if (!id) throw new Error('id is required')
 
   const res = await server(`/api/v1/admin/tracks/${id}`, {

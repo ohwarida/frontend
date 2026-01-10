@@ -1,5 +1,5 @@
 import TrackFormBase from '@/features/(authenticated)/admin/root/components/track/TrackFormBase'
-import { updateTrackAction } from '@/features/(authenticated)/admin/track/actions/updateTrack'
+import { updateTrackAction } from '@/features/(authenticated)/admin/track/actions/updateTrack.action'
 import React from 'react'
 import { initialState } from '@/features/(authenticated)/admin/root/components/track/TrackFiled'
 import { TrackField } from '@/store/trackButton.store'

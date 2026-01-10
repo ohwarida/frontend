@@ -1,4 +1,4 @@
-import { updatePostAction } from '@/features/(authenticated)/post/actions/postUpdateAction'
+import { updatePostAction } from '@/features/(authenticated)/post/actions/postUpdate.action'
 import { getPostDetail } from '@/features/(authenticated)/post/apis/post.api'
 import PostForm from '@/features/(authenticated)/post/create/components/PostForm'
 
