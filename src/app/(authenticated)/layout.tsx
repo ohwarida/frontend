@@ -1,5 +1,5 @@
 import { getUser } from '@/features/(authenticated)/users/apis/user.api'
-import { AuthProvider } from '../_providers/AuthProvider'
+import { AuthProvider } from '@/lib/providers/AuthProvider'
 
 export const revalidate = 0
 export const dynamic = 'force-dynamic'

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import React from 'react'
 import '@/app/globals.css'
-import { ReactQueryProvider } from '@/app/_providers/_index'
+import { ReactQueryProvider } from '@/lib/providers/_index'
 import localFont from 'next/font/local'
 
 export const metadata: Metadata = {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ReactGoogleProvider } from '@/app/_providers/_index'
+import { ReactGoogleProvider } from '@/lib/providers/_index'
 
 export default async function Layout({
   children,
