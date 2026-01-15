@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ClipboardList, MessageCircle, Heart, UserCog, Trash2 } from 'lucide-react'
 import AsideMyPageSelector from '@/components/layout/aside/AsideMyPageSelector'
 import WithdrawMember from '@/features/(authenticated)/mypage/components/WithdrawMember'
+import { Avatar } from '@/components/ui/Avatar'
 
 export default async function AsideMyPage() {
   return (
@@ -16,7 +17,7 @@ export default async function AsideMyPage() {
           )}
         >
           <div className="mb-4 flex w-full items-center justify-start gap-4 border-b border-[#E5E7EB] pb-4">
-            <div className="rounded-full bg-gray-100 p-2.5 text-2xl">👨‍💻</div>
+            <Avatar />
             <div className="flex flex-col items-start text-xs">
               <p className="text-base font-bold text-gray-900">김 개발</p>
               <p className="text-gray-900">dev@example.com</p>
