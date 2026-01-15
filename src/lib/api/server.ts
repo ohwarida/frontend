@@ -42,7 +42,7 @@ export async function server(endpoint: string, options: RequestInit = {}): Promi
     res.headers.getSetCookie?.() ??
     (res.headers.get('set-cookie') ? [res.headers.get('set-cookie')!] : [])
 
-  await applySetCookies(setCookies)
+  // await applySetCookies(setCookies)
 
   // 쿠키 정리 후 로그인으로 복귀(SSR/페이지 크래시 및 리다이렉트 루프를 최소화)
   if (res.status === 401 || res.status === 403) {
