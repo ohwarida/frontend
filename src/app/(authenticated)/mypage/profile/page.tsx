@@ -2,7 +2,7 @@ import React from 'react'
 import PageTitle from '@/components/ui/PageTitle'
 import type { Metadata } from 'next'
 import { getUser } from '@/features/(authenticated)/users/apis/user.api'
-import Avatar from '@/components/ui/Avatar'
+import { Avatar } from '@/components/ui/Avatar'
 import MyPageProfileForm from '@/features/(authenticated)/mypage/components/MyPageProfileForm'
 import ChangeMyProfileImage from '@/features/(authenticated)/mypage/components/ChangeMyProfileImage'
 

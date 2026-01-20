@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import Avatar from '@/components/ui/Avatar'
+import { Avatar } from '@/components/ui/Avatar'
 import { Heart } from 'lucide-react'
 import type { Comment } from '../types/Comment.types'
 import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'

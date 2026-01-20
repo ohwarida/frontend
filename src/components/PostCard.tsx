@@ -9,7 +9,7 @@ import { Reaction } from '@/features/(authenticated)/post/components/Reaction'
 import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
 import { TopicMyType } from '@/types/Topic.types'
 import { HREF_BY_TOPIC } from '@/features/(authenticated)/post/constants/topic'
-import Avatar from '@/components/ui/Avatar'
+import { Avatar } from '@/components/ui/Avatar'
 
 type PostCardProps = { post: PostCard }
 

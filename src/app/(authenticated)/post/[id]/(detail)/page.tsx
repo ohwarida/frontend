@@ -14,7 +14,7 @@ import { getPostDetailReaction } from '@/features/(authenticated)/post/apis/reac
 import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
 import { PostDetailHeader } from '@/features/(authenticated)/post/create/components/PostDetailHeader'
 import { RelativeTime } from '@/components/RelativeTime'
-import Avatar from '@/components/ui/Avatar'
+import { Avatar } from '@/components/ui/Avatar'
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params

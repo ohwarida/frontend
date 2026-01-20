@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { Check, CircleUserRound, LogOut } from 'lucide-react'
 import { User } from '@/features/(authenticated)/users/types/User.type'
-import Avatar from '@/components/ui/Avatar'
+import { Avatar } from '@/components/ui/Avatar'
 const itemBase = `flex h-12 w-full items-center justify-start gap-3 pl-4 pr-0 text-[16px]
    font-normal leading-6 text-[#101828] outline-none transition-colors`
 const itemDefault = 'hover:bg-gray-50 focus-visible:bg-gray-50'

@@ -39,7 +39,7 @@ const sizePx: Record<AvatarSize, number> = {
   big: 168,
 }
 
-export default function Avatar({ src, alt, name, size = 'sm', className }: AvatarProps) {
+export function Avatar({ src, alt, name, size = 'sm', className }: AvatarProps) {
   const [imgError, setImgError] = useState(false)
 
   const normalizedSrc = useMemo(() => (src ?? '').trim(), [src])

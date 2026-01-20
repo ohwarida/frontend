@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ClipboardList, MessageCircle, Heart, UserCog, Trash2 } from 'lucide-react'
 import AsideMyPageSelector from '@/components/layout/aside/AsideMyPageSelector'
 import WithdrawMember from '@/features/(authenticated)/mypage/components/WithdrawMember'
-import Avatar from '@/components/ui/Avatar'
+import { Avatar } from '@/components/ui/Avatar'
 import { getUser } from '@/features/(authenticated)/users/apis/user.api'
 
 export default async function AsideMyPage() {
