@@ -42,7 +42,7 @@ export function useGoogleSignin() {
           router.push(`/signup`)
         } else {
           const sp = new URLSearchParams({
-            title: '유저 알림', //TODO: 성규님과 상의
+            title: '유저 알림',
             message: USER_ERROR_MESSAGE[USER_ERROR_CODE.USER_NOT_FOUND],
           })
           router.push(`/signin/message?${sp.toString()}`)
@@ -50,7 +50,9 @@ export function useGoogleSignin() {
       } else {
         const sp = new URLSearchParams({
           title: '알림',
-          message: USER_ERROR_MESSAGE[(error.body as SigninErrorTypes).code],
+          message:
+            USER_ERROR_MESSAGE[(error.body as SigninErrorTypes).code] ??
+            '문제가 계속되면 고객센터/관리자에게 문의해 주세요',
         })
 
         router.push(`/signin/message?${sp.toString()}`)
