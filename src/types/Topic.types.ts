@@ -15,4 +15,3 @@ export const TOPIC_LABEL: Record<TopicType, string> = {
 }
 
 export type TopicType = (typeof TOPIC_TYPE)[keyof typeof TOPIC_TYPE]
-export type TopicMyType = (typeof TOPIC_TYPE)[keyof typeof TOPIC_TYPE] | 'MY-POST' | 'MY-POST-LIKED'

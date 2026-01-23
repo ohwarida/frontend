@@ -7,14 +7,14 @@ import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
 import { MessageCircle } from 'lucide-react'
 import { Reaction } from '@/features/(authenticated)/post/components/Reaction'
 import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
-import { TopicMyType } from '@/types/Topic.types'
 import { HREF_BY_TOPIC } from '@/features/(authenticated)/post/constants/topic'
+import { TopicType } from '@/types/Topic.types'
 import { Avatar } from '@/components/ui/Avatar'
 
 type PostCardProps = { post: PostCard }
 
 export default function PostCard({ post }: PostCardProps) {
-  const revalidatePathname = HREF_BY_TOPIC[post.topic as TopicMyType] ?? '/'
+  const revalidatePathname = HREF_BY_TOPIC[post.topic as TopicType] ?? '/'
 
   async function handleToggleReaction(reactionType: ReactionType, reactedByMe: boolean) {
     await toggleReactionAction({

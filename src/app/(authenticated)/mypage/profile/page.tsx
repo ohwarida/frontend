@@ -26,7 +26,7 @@ export default async function ProfilePage() {
         <MyPageProfileForm
           name={initialUser.name}
           email={initialUser.email}
-          track={String(initialUser.trackId)}
+          track={String(initialUser.trackName)}
         />
       </section>
     </div>

@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { type TopicMyType } from '@/types/Topic.types'
+import { type TopicType } from '@/types/Topic.types'
 import { HighlightType, PostFormState } from '../types/Post.types'
 import { validatePost } from '../create/utils/validatePost'
 import { createPost } from '../apis/post.api'
@@ -12,7 +12,7 @@ export async function createPostAction(
   formData: FormData,
 ): Promise<PostFormState> {
   const values = {
-    topic: String(formData.get('topic')) as TopicMyType,
+    topic: String(formData.get('topic')) as TopicType,
     title: String(formData.get('title')),
     content: String(formData.get('content')),
     draftId: String(formData.get('draftId')),

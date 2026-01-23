@@ -7,7 +7,7 @@ import MarkdownEditor from '@/components/markdown/MarkdownEditor'
 import MarkdownViewer from '@/components/markdown/MarkdownViewer'
 import ErrorMessage from '@/components/ui/ErrorMessage'
 import Select from '@/components/ui/Select'
-import { TOPIC_LABEL, TOPIC_TYPE, type TopicMyType } from '@/types/Topic.types'
+import { TOPIC_LABEL, TOPIC_TYPE, type TopicType } from '@/types/Topic.types'
 import { useAuthState } from '@/hooks/useAuthState'
 import { PostFormState, PostFormValues } from '@/features/(authenticated)/post/types/Post.types'
 import { useQueryClient } from '@tanstack/react-query'
@@ -126,7 +126,7 @@ export function PostForm({ mode, action, initialValues, postId, formKey }: PostF
             </label>
             <Select
               name="topic"
-              defaultValue={(state.values?.topic ?? initialValues.topic) as TopicMyType}
+              defaultValue={(state.values?.topic ?? initialValues.topic) as TopicType}
               options={topicOptions}
               className="h-[36px] w-full rounded-[8px] border-none !bg-[#F4F4F5] px-[12px] text-[14px] text-[#0A0A0A]"
             />

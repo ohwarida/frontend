@@ -1,7 +1,7 @@
 'use server'
 
 import { server, safeJson } from '@/lib/api/server'
-import { TopicMyType } from '@/types/Topic.types'
+import { TopicType } from '@/types/Topic.types'
 import {
   GetPostsResponse,
   GetPostDetailResponse,
@@ -12,7 +12,7 @@ import {
 type GetPostsParams = {
   page?: number
   size?: number
-  topic?: TopicMyType
+  topic?: TopicType
 }
 
 export async function getPosts(params: GetPostsParams = {}): Promise<GetPostsResponse> {
