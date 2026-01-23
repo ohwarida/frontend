@@ -1,6 +1,6 @@
 import { updatePostAction } from '@/features/(authenticated)/post/actions/postUpdate.action'
 import { getPostDetail } from '@/features/(authenticated)/post/apis/post.api'
-import PostForm from '@/features/(authenticated)/post/create/components/PostForm'
+import { PostForm } from '@/features/(authenticated)/post/components/PostForm'
 
 export default async function PostEditPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
