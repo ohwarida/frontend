@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'localhost',
         port: '8080',
-        pathname: '/**',
+        pathname: '/api/v1/users/profiles/**',
       },
     ],
   },
