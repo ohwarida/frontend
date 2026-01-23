@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import clsx from 'clsx'
 import Image from 'next/image'
 import { CircleUserRound } from 'lucide-react'
+import { IS_PROD } from '@/constants/env'
 
 type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl'
 type AvatarProps = {
@@ -50,7 +51,7 @@ export function Avatar({ src, alt, name, size = 'sm', className }: AvatarProps) 
     <div
       className={clsx(
         'relative flex items-center justify-center overflow-hidden rounded-full',
-        'shrink-0 bg-transparent',
+        'shrink-0 border border-gray-100 bg-transparent',
         sizeClasses[size],
         className,
       )}
@@ -63,6 +64,7 @@ export function Avatar({ src, alt, name, size = 'sm', className }: AvatarProps) 
           sizes={`${px}px`}
           className="object-cover"
           onError={() => setImgError(true)}
+          unoptimized={!IS_PROD}
         />
       ) : (
         <CircleUserRound size={px} strokeWidth={1} color="#989BA2" />
