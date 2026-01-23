@@ -2,9 +2,9 @@ import React from 'react'
 import PageTitle from '@/components/ui/PageTitle'
 import { Metadata } from 'next'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { PostInfiniteList } from '@/features/(authenticated)/post/components/PostInfiniteList'
 import { nqc } from '@/lib/query-client/queryClient'
-import { getPostsInfiniteQueryOption } from '@/features/(authenticated)/post/queries/postQueryOption'
+import { MyPostInfiniteList } from '@/features/(authenticated)/mypage/components/MyPostInfiniteList'
+import { getMyPostsInfiniteQueryOption } from '@/features/(authenticated)/mypage/queries/getMyPostsInfiniteQueryOption'
 
 export const metadata: Metadata = {
   title: '좋아요 | 마이페이지 | Wanted Ground PotenUp',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function LikePage() {
   const qc = nqc()
 
-  await qc.prefetchInfiniteQuery(getPostsInfiniteQueryOption({ topic: 'MY-POST-LIKED' }))
+  await qc.prefetchInfiniteQuery(getMyPostsInfiniteQueryOption({ topic: 'MY-POST-LIKED' }))
 
   return (
     <div>
@@ -25,7 +25,7 @@ export default async function LikePage() {
             shouldDehydrateQuery: (q) => q.state.status === 'success',
           })}
         >
-          <PostInfiniteList topic="MY-POST-LIKED" />
+          <MyPostInfiniteList topic="MY-POST-LIKED" />
         </HydrationBoundary>
       </section>
     </div>
