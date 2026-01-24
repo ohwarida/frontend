@@ -53,7 +53,11 @@ export function Avatar({ src, alt, name, size = 'sm', className }: AvatarProps) 
           onError={() => setImgError(true)}
         />
       ) : (
-        <CircleUserRound size={px} strokeWidth={1} color="#989BA2" />
+        <CircleUserRound
+          size={px}
+          strokeWidth={1}
+          className={className ? className : 'text-[#989BA2]'}
+        />
       )}
     </div>
   )
