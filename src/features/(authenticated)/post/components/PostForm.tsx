@@ -9,11 +9,11 @@ import ErrorMessage from '@/components/ui/ErrorMessage'
 import Select from '@/components/ui/Select'
 import { TOPIC_LABEL, TOPIC_TYPE, type TopicType } from '@/types/Topic.types'
 import { useAuthState } from '@/hooks/useAuthState'
-import { PostFormState, PostFormValues } from '../../types/Post.types'
+import { PostFormState, PostFormValues } from '@/features/(authenticated)/post/types/Post.types'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { postKeys } from '../../queries/postQueryOption'
-import PostWritingGuide from '../../components/PostWritingGuide'
+import { postKeys } from '@/features/(authenticated)/post/queries/postQueryOption'
+import PostWritingGuide from '@/features/(authenticated)/post/components/PostWritingGuide'
 
 export type PostFormMode = 'create' | 'edit'
 
@@ -39,7 +39,7 @@ function setHeaderSubmitDisabled(disabled: boolean) {
     })
 }
 
-export default function PostForm({ mode, action, initialValues, postId, formKey }: PostFormProps) {
+export function PostForm({ mode, action, initialValues, postId, formKey }: PostFormProps) {
   const { user } = useAuthState()
   const isAdmin = user?.role === 'ADMIN'
 

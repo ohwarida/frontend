@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import Logo from '@/components/ui/Logo'
 import HeaderElement from '@/components/layout/header/HeaderElement'
 import { LocationType } from '@/types/Location.types'
-import { PostCreateHeader } from '@/features/(authenticated)/post/create/components/PostCreateHeader'
+import { PostCreateHeader } from '@/features/(authenticated)/post/components/PostCreateHeader'
 
 export default async function AppShell({
   children,

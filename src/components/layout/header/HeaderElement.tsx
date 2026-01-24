@@ -35,7 +35,7 @@ export default function HeaderElement({ location }: { location: LocationType }) 
         </Link>
       )}
 
-      <ProfileMenu />
+      <ProfileMenu user={user} />
     </div>
   )
 }

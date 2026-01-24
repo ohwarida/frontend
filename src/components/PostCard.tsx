@@ -3,13 +3,13 @@
 import Link from 'next/link'
 import clsx from 'clsx'
 import type { PostCard, ReactionType } from '@/features/(authenticated)/post/types/Post.types'
-import { Avatar } from './ui/Avatar'
 import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
 import { MessageCircle } from 'lucide-react'
 import { Reaction } from '@/features/(authenticated)/post/components/Reaction'
 import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
-import { TopicType } from '@/types/Topic.types'
 import { HREF_BY_TOPIC } from '@/features/(authenticated)/post/constants/topic'
+import { TopicType } from '@/types/Topic.types'
+import { Avatar } from '@/components/ui/Avatar'
 
 type PostCardProps = { post: PostCard }
 

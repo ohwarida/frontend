@@ -1,5 +1,5 @@
 import { createPostAction } from '@/features/(authenticated)/post/actions/postCreate.action'
-import PostForm from '@/features/(authenticated)/post/create/components/PostForm'
+import { PostForm } from '@/features/(authenticated)/post/components/PostForm'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {

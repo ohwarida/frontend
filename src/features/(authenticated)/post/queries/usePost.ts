@@ -3,11 +3,12 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { deletePost, updatePost } from '../apis/post.api'
 import type { UpdatePostRequest } from '../types/Post.types'
-import type { TopicType } from '@/types/Topic.types'
-import { DEFAULT_POSTS_PAGE_SIZE, getPostsInfiniteQueryOption, postKeys } from './postQueryOption'
+import { TopicType } from '@/types/Topic.types'
+import { getPostsInfiniteQueryOption, postKeys } from './postQueryOption'
+import { DEFAULT_PAGE_SIZE } from '@/constants/pageSize'
 
 // 게시글 전체 조회 (무한 스크롤)
-export function useGetPostsQuery(topic?: TopicType, size: number = DEFAULT_POSTS_PAGE_SIZE) {
+export function useGetPostsQuery(topic?: TopicType, size: number = DEFAULT_PAGE_SIZE) {
   return useInfiniteQuery(getPostsInfiniteQueryOption({ topic, size }))
 }
 

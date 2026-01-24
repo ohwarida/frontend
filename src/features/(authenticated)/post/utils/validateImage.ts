@@ -1,4 +1,8 @@
-import { ALLOWED_MIME_TYPES, MAX_GIF_BYTES, MAX_IMAGE_BYTES } from '../../constants/image'
+import {
+  ALLOWED_MIME_TYPES,
+  MAX_GIF_BYTES,
+  MAX_IMAGE_BYTES,
+} from '@/features/(authenticated)/post/constants/image'
 
 function formatBytes(bytes: number) {
   const mb = bytes / 1024 / 1024
