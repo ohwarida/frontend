@@ -14,7 +14,6 @@ import { getPostDetailReaction } from '@/features/(authenticated)/post/apis/reac
 import { toggleReactionAction } from '@/features/(authenticated)/post/actions/toggleReaction.action'
 import { PostDetailHeader } from '@/features/(authenticated)/post/components/PostDetailHeader'
 import { RelativeTime } from '@/components/RelativeTime'
-import { BackToListButton } from '@/features/(authenticated)/post/components/BackToListButton'
 import { Avatar } from '@/components/ui/Avatar'
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: number }> }) {
@@ -22,6 +21,9 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
 
   const post = await getPostDetail(id)
   const user = await getUser()
+
+  const hasPrev = Boolean(post?.previousPostId)
+  const hasNext = Boolean(post?.nextPostId)
 
   const wroteAt = post?.wroteAt ?? ''
   const wroteAtLabel = wroteAt ? toRelativeTimeLabel(wroteAt) : ''
@@ -72,7 +74,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
         <section
           aria-labelledby="post-title"
           className={[
-            'bg-white px-4 pb-6',
+            'bg-white px-4 pb-25 lg:pb-6',
             'lg:mx-auto lg:w-full lg:max-w-[1377px] lg:rounded-lg lg:p-8 lg:pt-8',
           ].join(' ')}
         >
@@ -147,30 +149,60 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
           <div className="mt-9 space-y-9">
             {/*TODO 이전 다음 글 postId, title 받고 넣기 */}
             <div className="flex items-center gap-4">
-              <Link
-                href=""
-                className="flex w-full flex-col gap-1 rounded-2xl border border-gray-300 px-2 py-4"
-              >
-                <div className="flex items-center gap-2 text-xs leading-none text-gray-400">
-                  <ArrowLeft size={12} />
-                  <span className="mt-0.5 leading-none">이전 글</span>
+              {hasPrev ? (
+                <Link
+                  href={`/post/${post.previousPostId}`}
+                  className="flex w-full flex-col gap-1 rounded-2xl border border-gray-300 px-2 py-4"
+                >
+                  <div className="flex items-center gap-2 text-xs leading-none text-gray-400">
+                    <ArrowLeft size={12} />
+                    <span className="mt-0.5 leading-none">이전 글</span>
+                  </div>
+                  <span className="mt-0.5 leading-none">{post?.previousPostTitle}</span>
+                </Link>
+              ) : (
+                <div
+                  aria-disabled="true"
+                  className="flex w-full cursor-not-allowed flex-col gap-1 rounded-2xl border border-gray-200 bg-gray-50 px-2 py-4 opacity-60"
+                >
+                  <div className="flex items-center gap-2 text-xs leading-none text-gray-400">
+                    <ArrowLeft size={12} />
+                    <span className="mt-0.5 leading-none">이전 글이 없습니다</span>
+                  </div>
                 </div>
-                <span className="">이전 글 타이틀</span>
-              </Link>
-
-              <Link
-                href=""
-                className="flex w-full flex-col items-end gap-1 rounded-2xl border border-gray-300 px-2 py-4"
-              >
-                <div className="flex items-center gap-2 text-xs leading-none text-gray-400">
-                  <span className="mt-0.5 leading-none">다음 글</span>
-                  <ArrowRight size={12} />
+              )}
+              {hasNext ? (
+                <Link
+                  href={`/post/${post.nextPostId}`}
+                  className="flex w-full flex-col items-end gap-1 rounded-2xl border border-gray-300 px-2 py-4"
+                >
+                  <div className="flex items-center gap-2 text-xs leading-none text-gray-400">
+                    <span className="mt-0.5 leading-none">다음 글</span>
+                    <ArrowRight size={12} />
+                  </div>
+                  <span className="mt-0.5 leading-none">{post?.nextPostTitle}</span>
+                </Link>
+              ) : (
+                <div
+                  aria-disabled="true"
+                  className="flex w-full cursor-not-allowed flex-col gap-1 rounded-2xl border border-gray-200 bg-gray-50 px-2 py-4 opacity-60"
+                >
+                  <div className="flex items-center gap-2 text-xs leading-none text-gray-400">
+                    <ArrowLeft size={12} />
+                    <span className="mt-0.5 leading-none">다음 글이 없습니다</span>
+                  </div>
                 </div>
-                <span className="">다음 글 타이틀</span>
-              </Link>
+              )}
             </div>
+
             <div className="flex items-center justify-center">
-              <BackToListButton />
+              <Link
+                href={`${TOPIC_BASE_PATH[post.topic]}`}
+                className="flex items-center gap-4 rounded-lg border border-gray-300 px-3 py-1.5"
+              >
+                <List size={16} className="text-gray-700" />
+                <span>목록으로 돌아가기</span>
+              </Link>
             </div>
           </div>
         </section>
@@ -178,3 +210,11 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
     )
   )
 }
+
+const TOPIC_BASE_PATH = {
+  ALL: '/',
+  EMPLOYMENT_TIP: '/job-tips',
+  NOTICE: '/notice',
+  SMALL_TALK: '/small-talk',
+  KNOWLEDGE: '/knowledge',
+} as const

@@ -8,6 +8,10 @@ export type Post = {
   topic: TopicType
   wroteAt: string
   content: string
+  previousPostId?: number
+  nextPostId?: number
+  previousPostTitle?: string
+  nextPostTitle?: string
   tags?: string[] // TODO: 필요 여부 검토
   highlightType: HighlightType
   commentsCount: number
