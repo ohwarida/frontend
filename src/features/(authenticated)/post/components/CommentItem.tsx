@@ -39,6 +39,7 @@ export function CommentItem({
     resetEditText,
   } = useCommentItemState(postId, comment.commentId)
 
+  console.log(comment)
   const replySubmitLockRef = useRef(false)
   const editSubmitLockRef = useRef(false)
 
@@ -66,11 +67,15 @@ export function CommentItem({
   return (
     <li>
       <article className={`flex gap-4 ${depth === 0 ? 'pb-6' : 'py-2'}`}>
-        <Avatar size="xs" />
+        <Avatar size="xs" src={comment.author.profileImageUrl} />
 
         <div className="flex w-full flex-col gap-2">
           <header className="flex items-center gap-2">
             <span className="text-[16px] leading-[24px] text-[#171719]">{comment.author.name}</span>
+            <span className="text-[16px] leading-6 text-[rgba(55,56,60,0.61)]">·</span>
+            <span className="text-[14px] leading-5 text-[rgba(55,56,60,0.61)]">
+              {comment.author?.trackName}
+            </span>
             <span aria-hidden className="text-[16px] leading-[24px] text-[#99A1AF]">
               ·
             </span>

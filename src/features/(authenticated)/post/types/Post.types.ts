@@ -4,10 +4,12 @@ export type Post = {
   writerId: number
   postId: number
   writerName: string
+  profileImageUrl?: string
   title: string
   topic: TopicType
   wroteAt: string
   content: string
+  trackName: string
   nextPost: {
     nextPostId?: number
     nextPostTitle?: string

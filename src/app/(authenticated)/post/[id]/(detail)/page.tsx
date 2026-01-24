@@ -82,9 +82,13 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
             <div className="flex flex-col gap-3 border-b border-[#F3F4F6] py-4 lg:gap-8 lg:border-0 lg:py-0">
               <header className="flex items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2" aria-label="게시글 메타 정보">
-                  <Avatar size="sm" />
+                  <Avatar size="sm" src={post.profileImageUrl} />
                   <span className="text-[16px] leading-[24px] font-medium text-[#171719]">
                     {post?.writerName}
+                  </span>
+                  <span className="text-[16px] leading-6 text-[rgba(55,56,60,0.61)]">·</span>
+                  <span className="text-[14px] leading-5 text-[rgba(55,56,60,0.61)]">
+                    {post?.trackName}
                   </span>
                   <span
                     aria-hidden
