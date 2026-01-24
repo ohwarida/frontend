@@ -1,24 +1,16 @@
 'use client'
 
 import React, { useState } from 'react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { nqc } from '@/lib/query-client/queryClient'
 
 type Props = {
   children: React.ReactNode
 }
 
-const queryClientConfig = {
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-      staleTime: 1000 * 30,
-    },
-  },
-}
 export default function ReactQueryProvider({ children }: Props) {
-  const [client] = useState(() => new QueryClient(queryClientConfig))
+  const [client] = useState(() => nqc())
 
   return (
     <QueryClientProvider client={client}>

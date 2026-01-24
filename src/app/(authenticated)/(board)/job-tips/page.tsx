@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import { TOPIC_TYPE } from '@/types/Topic.types'
 import { PostInfiniteList } from '@/features/(authenticated)/post/components/PostInfiniteList'
 import { getPostsInfiniteQueryOption } from '@/features/(authenticated)/post/queries/postQueryOption'
+import { nqc } from '@/lib/query-client/queryClient'
 
 export const metadata: Metadata = {
   title: '취업 팁 | Wanted Ground PotenUp',
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default async function JobTipsPage() {
-  const qc = new QueryClient()
+  const qc = nqc()
 
   await qc.prefetchInfiniteQuery(getPostsInfiniteQueryOption({ topic: TOPIC_TYPE.EMPLOYMENT_TIP }))
 

@@ -1,16 +1,22 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { Check, CircleUserRound, LogOut } from 'lucide-react'
+import { User } from '@/features/(authenticated)/users/types/User.type'
 import { Avatar } from '@/components/ui/Avatar'
-import { CircleUserRound, LogOut } from 'lucide-react'
+const itemBase = `flex h-12 w-full items-center justify-start gap-3 pl-4 pr-0 text-[16px]
+   font-normal leading-6 text-[#101828] outline-none transition-colors`
+const itemDefault = 'hover:bg-gray-50 focus-visible:bg-gray-50'
+const iconClass = 'text-[#4A5565]'
 
-export default function ProfileMenu() {
+export default function ProfileMenu({ user }: { user: User | null }) {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const p = usePathname()
 
   // 바깥 클릭 닫기
   useEffect(() => {
@@ -65,11 +71,6 @@ export default function ProfileMenu() {
     setOpen(false)
   }
 
-  const itemBase =
-    'flex h-12 w-full items-center justify-start gap-3 pl-4 pr-0 text-[16px] font-normal leading-6 text-[#101828] outline-none transition-colors'
-  const itemDefault = 'hover:bg-gray-50 focus-visible:bg-gray-50'
-  const iconClass = 'text-[#4A5565]'
-
   return (
     <div ref={rootRef} className="relative h-8 w-8">
       <button
@@ -86,7 +87,7 @@ export default function ProfileMenu() {
           }
         }}
       >
-        <Avatar size="sm" />
+        <Avatar size="sm" src={user?.profileImageUrl} />
       </button>
 
       {open && (
@@ -124,6 +125,7 @@ export default function ProfileMenu() {
           >
             <CircleUserRound size={16} className={iconClass} color="#4A5565" />
             마이페이지
+            {p.startsWith('/mypage') && <CheckMenu />}
           </Link>
 
           <button
@@ -139,6 +141,14 @@ export default function ProfileMenu() {
           </button>
         </div>
       )}
+    </div>
+  )
+}
+
+function CheckMenu() {
+  return (
+    <div className="text-green-500">
+      <Check size={14} />
     </div>
   )
 }

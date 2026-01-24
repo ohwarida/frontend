@@ -7,6 +7,7 @@ export type User = {
   name: string
   email: string
   trackId: number
+  trackName: string
   profileImageUrl?: string | null
   role: UserRole
 }

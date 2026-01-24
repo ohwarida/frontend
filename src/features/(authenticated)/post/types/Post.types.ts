@@ -1,4 +1,4 @@
-import { TopicType } from '../../../../types/Topic.types'
+import { TopicType } from '@/types/Topic.types'
 
 export type Post = {
   writerId: number
