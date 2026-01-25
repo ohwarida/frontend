@@ -12,6 +12,8 @@ import {
 import { CommentItem } from './CommentItem'
 import { useCommentSectionState } from '../hooks/useCommentSectionState'
 import { MentionTextarea } from '@/components/mention-textarea/MentionTextarea'
+import { Loading } from '@/components/loading/Loading'
+import clsx from 'clsx'
 
 type MobileComposerState =
   | { mode: 'create' }
@@ -28,8 +30,8 @@ export function CommentSection({
   commentsCount?: number
 }) {
   const currentUserId = userId
-
-  const { data: comments = { contents: [], hasNext: false, nexPage: null } } =
+  const [mentionIds, setMentionIds] = useState<number[]>([])
+  const { data: comments = { contents: [], hasNext: false, nexPage: null }, isLoading } =
     useGetCommentsQuery(postId)
 
   const totalCount = useMemo(() => countAll(comments.contents), [comments.contents])
@@ -45,7 +47,7 @@ export function CommentSection({
     () => ({
       postId,
       currentUserId,
-      onCreate: (input: { parentId: number | null; content: string }) =>
+      onCreate: (input: { parentId: number | null; content: string; mentionUserIds?: number[] }) =>
         createMut.mutateAsync(input),
       onUpdate: (input: { commentId: number; content: string }) => updateMut.mutateAsync(input),
       onDelete: (id: number) => deleteMut.mutateAsync(id),
@@ -67,12 +69,6 @@ export function CommentSection({
 
   const desktopSubmitLockRef = useRef(false)
   const mobileSubmitLockRef = useRef(false)
-
-  const openMobileCreate = () => {
-    setComposer({ mode: 'create' })
-    setMobileText('')
-    queueMicrotask(() => mobileInputRef.current?.focus())
-  }
 
   const openMobileReply = (parentId: number, writerName?: string) => {
     setComposer({ mode: 'reply', parentId, writerName })
@@ -107,7 +103,7 @@ export function CommentSection({
     }
 
     const parentId = composer.mode === 'reply' ? composer.parentId : null
-    await actions.onCreate({ parentId, content })
+    await actions.onCreate({ parentId, content, mentionUserIds: mentionIds })
     cancelMobileMode()
   }
 
@@ -115,34 +111,24 @@ export function CommentSection({
 
   async function submitDesktopRootComment() {
     if (!canSubmitDesktopRoot || createMut.isPending) return
-    await actions.onCreate({ parentId: null, content: commentText.trim() })
+    await actions.onCreate({
+      parentId: null,
+      content: commentText.trim(),
+      mentionUserIds: mentionIds,
+    })
     resetCommentText()
   }
 
-  const mobileBannerText =
-    composer.mode === 'reply'
-      ? composer.writerName
-        ? `${composer.writerName}님에게 답글`
-        : '답글 작성 중'
-      : composer.mode === 'edit'
-        ? '댓글 수정 중'
-        : null
-
-  const mobilePlaceholder =
-    composer.mode === 'reply'
-      ? '답글을 입력하세요...'
-      : composer.mode === 'edit'
-        ? '수정 내용을 입력하세요...'
-        : '댓글을 입력하세요...'
-
-  const mobileSubmitAria =
-    composer.mode === 'reply' ? '답글 작성' : composer.mode === 'edit' ? '댓글 수정' : '댓글 작성'
+  const mobileBannerText = getMobileBannerText(composer)
+  const mobilePlaceholder = getMobilePlaceholder(composer)
+  const mobileSubmitAria = getMobileSubmitAria(composer)
 
   return (
     <section aria-label="댓글" className="flex flex-col gap-4 pb-[60px] md:pb-0">
       <h2 className="text-[16px] leading-[24px] font-normal text-[#101828]">댓글 {totalCount}</h2>
 
       <ol className="flex flex-col gap-6">
+        {isLoading && <Loading label="댓글을 불러오고 있습니다." />}
         {comments.contents.map((c) => (
           <CommentItem
             key={c.commentId}
@@ -184,10 +170,12 @@ export function CommentSection({
         <MentionTextarea
           id={`comment-${postId}`}
           value={commentText}
-          onChange={(e) => setCommentText(e.target.value)}
+          onChange={(e) => setCommentText(e)}
           maxLength={2000}
           className="h-[100px] w-full resize-none rounded-lg bg-[#F9FAFB] px-3 py-2 text-[14px] leading-[20px] text-[#171719] focus:ring-1 focus:ring-[#155DFC]/30 focus:outline-none"
           placeholder="댓글을 입력하세요..."
+          onMentionIdsChange={setMentionIds}
+          onSubmit={async () => await submitDesktopRootComment()}
         />
 
         <div className="flex items-center gap-2">
@@ -213,11 +201,11 @@ export function CommentSection({
 
       {/* 모바일 댓글 작성 */}
       <form
-        className={[
+        className={clsx(
           'fixed inset-x-0 bottom-0 z-30 lg:hidden',
           'border-t border-[#E5E7EB] bg-white',
           'px-4 pt-[17px] pb-[calc(16px+env(safe-area-inset-bottom))]',
-        ].join(' ')}
+        )}
         onSubmitCapture={(e) => {
           if (mobileSubmitLockRef.current) {
             e.preventDefault()
@@ -256,7 +244,7 @@ export function CommentSection({
             onChange={(e) => setMobileText(e.target.value)}
             maxLength={2000}
             rows={1}
-            className={[
+            className={clsx(
               'flex-1 resize-none',
               'h-11',
               'rounded-[8px] bg-[#F3F3F5]',
@@ -265,18 +253,18 @@ export function CommentSection({
               'focus:ring-1 focus:ring-[#155DFC]/30 focus:outline-none',
               'overflow-y-auto',
               isMobileSubmitting ? 'opacity-70' : '',
-            ].join(' ')}
+            )}
             placeholder={mobilePlaceholder}
           />
 
           <button
             type="submit"
             disabled={!mobileCanSubmit || isMobileSubmitting}
-            className={[
+            className={clsx(
               'flex h-9 w-10 items-center justify-center rounded-[8px]',
               mobileCanSubmit && !isMobileSubmitting ? 'bg-[#030213]' : 'bg-[#030213]/50',
               'text-white',
-            ].join(' ')}
+            )}
             aria-label={mobileSubmitAria}
           >
             <Send size={16} />
@@ -292,4 +280,27 @@ function countAll(nodes: Comment[]): number {
     const self = n.isDeleted ? 0 : 1
     return acc + self + countAll(n.replies ?? [])
   }, 0)
+}
+
+function getMobileBannerText(composer: {
+  mode: 'reply' | 'edit' | string
+  writerName?: string | null
+}) {
+  if (composer.mode === 'reply') {
+    return composer.writerName ? `${composer.writerName}님에게 답글` : '답글 작성 중'
+  }
+  if (composer.mode === 'edit') return '댓글 수정 중'
+  return null
+}
+
+function getMobilePlaceholder(composer: { mode: 'reply' | 'edit' | string }) {
+  if (composer.mode === 'reply') return '답글을 입력하세요...'
+  if (composer.mode === 'edit') return '수정 내용을 입력하세요...'
+  return '댓글을 입력하세요...'
+}
+
+function getMobileSubmitAria(composer: { mode: 'reply' | 'edit' | string }) {
+  if (composer.mode === 'reply') return '답글 작성'
+  if (composer.mode === 'edit') return '댓글 수정'
+  return '댓글 작성'
 }

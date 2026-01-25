@@ -1,305 +1,277 @@
-import React, { TextareaHTMLAttributes, useMemo, useRef, useState } from 'react'
-import { MentionBox } from '@/components/ui/MentionBox'
-import { MentionUser, useMentionUsers } from '@/hooks/useMentionUsers'
+'use client'
+
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { Mention, MentionsInput } from 'react-mentions'
 import clsx from 'clsx'
+import { Avatar } from '@/components/ui/Avatar'
+import { MentionUser, useMentionUsers } from '@/hooks/useMentionUsers'
+import './MentionTextarea.css'
+import { MENTION } from '@/constants/mention'
+import { Loading } from '@/components/loading/Loading'
 
 type MentionEntity = { userId: string | number; name: string; start: number; end: number }
-type MentionTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+
+type MentionTextareaProps = {
   onMentionsChange?: (mentions: MentionEntity[]) => void
+  id: string
+  value: string
+  onChange: (value: string) => void
+  maxLength?: number
+  className?: string
+  onScroll?: React.UIEventHandler<HTMLTextAreaElement>
+  placeholder?: string
+  onSubmit?: () => Promise<void>
+  onMentionIdsChange?: (ids: number[]) => void
 }
+
+type MentionDataItem = {
+  id: number
+  display: string
+  profileImageUrl: string | null
+  trackName: string
+}
+
 export function MentionTextarea({
   id,
   value,
   onChange,
   maxLength,
-  className,
+  onSubmit,
   onScroll,
   placeholder,
-  ...rest
+  onMentionsChange,
+  onMentionIdsChange,
 }: MentionTextareaProps) {
-  const [mentionOpen, setMentionOpen] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [mentionQuery, setMentionQuery] = useState('')
-  const [mentions, setMentionsState] = useState<MentionEntity[]>([])
-
-  const mentionsRef = useRef<MentionEntity[]>([])
-  const boxRef = useRef<HTMLDivElement | null>(null)
-  const taRef = useRef<HTMLTextAreaElement | null>(null)
-  const hlRef = useRef<HTMLDivElement | null>(null)
-  const caretRef = useRef(0)
-
+  const [mentionActive, setMentionActive] = useState(false)
+  const suggestionViewportRef = useRef<HTMLDivElement | null>(null)
   const textValue = (value ?? '').toString()
-
-  const { data } = useMentionUsers(20, mentionOpen)
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useMentionUsers(
+    20,
+    mentionActive,
+  )
   const members = useMemo(() => data?.pages.flatMap((p) => p) ?? [], [data])
+  const lastSearchRef = useRef('')
+  const suggestionsCbRef = useRef<((items: MentionDataItem[]) => void) | null>(null)
+  const mentionDataRef = useRef<MentionDataItem[]>([])
+  const mentionData: MentionDataItem[] = useMemo(
+    () =>
+      members.map((m: MentionUser) => ({
+        id: m.userId,
+        display: `${m.name} (${m.trackName})`,
+        profileImageUrl: m.profileImageUrl,
+        trackName: m.trackName,
+      })),
+    [members],
+  )
 
-  const filteredMembers = useMemo(() => {
-    if (!mentionOpen) return []
-    const q = mentionQuery.trim()
-    if (!q) return members
-    return members.filter((m) => m.name.startsWith(q))
-  }, [members, mentionOpen, mentionQuery])
+  useEffect(() => {
+    mentionDataRef.current = mentionData
+  }, [mentionData])
 
-  const safeActiveIndex = Math.min(activeIndex, Math.max(filteredMembers.length - 1, 0))
-
-  const closeMention = () => {
-    setMentionOpen(false)
-    setMentionQuery('')
-    setActiveIndex(0)
-  }
-  const prevTextRef = useRef(textValue)
-
-  const setMentions = (next: MentionEntity[]) => {
-    mentionsRef.current = next
-    setMentionsState(next)
-    rest.onMentionsChange?.(next)
-  }
-
-  const onSelect = (user: MentionUser) => {
-    const caret = caretRef.current
-    const replaced = replaceMentionToken({
-      text: textValue,
-      caret,
-      pickedName: user.name,
-    })
-
-    if (!replaced) return
-
-    onChange?.({
-      target: { value: replaced.nextText },
-      currentTarget: { value: replaced.nextText },
-    } as unknown as React.ChangeEvent<HTMLTextAreaElement>)
-
-    // 멘션 메타는 별도로 저장
-    setMentions([
-      ...mentionsRef.current,
-      {
-        userId: user.userId,
-        name: user.name,
-        start: replaced.mentionStart,
-        end: replaced.mentionEnd,
-      },
-    ])
-
-    closeMention()
-    requestAnimationFrame(() => {
-      taRef.current?.focus({ preventScroll: true })
-      taRef.current?.setSelectionRange(replaced.nextCaret, replaced.nextCaret)
-    })
+  function filterBySearch(q: string, list: MentionDataItem[]) {
+    const s = (q ?? '').trim()
+    return !s ? list : list.filter((u) => u.display.startsWith(s))
   }
 
   return (
-    <div className="relative w-full">
-      <div
-        ref={hlRef}
-        aria-hidden
-        className={clsx(
-          className ?? '',
-          'pointer-events-none absolute inset-0 z-0 overflow-hidden break-words whitespace-pre-wrap',
-        )}
-      >
-        {textValue.length > 0 ? (
-          renderHighlightedText(textValue, mentions)
-        ) : (
-          <span className="text-slate-400">{placeholder}</span>
-        )}
-        {'\u200b'}
-      </div>
-
-      {mentionOpen && (
-        <MentionBox
-          ref={boxRef}
-          members={filteredMembers}
-          activeIndex={safeActiveIndex}
-          onActiveIndexChange={setActiveIndex}
-          onSelect={onSelect}
-        />
-      )}
-
-      <textarea
-        {...rest}
-        ref={taRef}
+    <div className={clsx('mention-textarea')}>
+      <MentionsInput
         id={id}
-        value={value}
-        onChange={(e) => {
-          onChange?.(e)
-          const nextText = e.currentTarget.value
-          const prevText = prevTextRef.current
+        value={textValue}
+        placeholder={placeholder}
+        a11ySuggestionsListLabel="멘션 후보"
+        style={mentionInputStyle}
+        className="mention"
+        spellCheck={false}
+        onScroll={onScroll}
+        onFocus={() => setMentionActive(true)}
+        onBlur={() => setMentionActive(false)}
+        onChange={(e, newValue: string, _plain: string, rawMentions) => {
+          onChange(newValue)
 
-          const nextMentions = shiftMentions(prevText, nextText, mentionsRef.current)
-          setMentions(nextMentions)
-          prevTextRef.current = nextText
-
-          // 기존 멘션 검색 로직
-          const caret = e.currentTarget.selectionStart ?? nextText.length
-          caretRef.current = caret
-
-          const q = getMentionQuery(nextText, caret)
-          if (q === null) {
-            closeMention()
-            return
-          }
-
-          setMentionOpen(true)
-          setMentionQuery(q)
-          setActiveIndex(0)
-        }}
-        onScroll={(e) => {
-          onScroll?.(e)
-          const ta = e.currentTarget
-          if (hlRef.current) {
-            hlRef.current.scrollTop = ta.scrollTop
-            hlRef.current.scrollLeft = ta.scrollLeft
+          const nextMentions: MentionEntity[] = (rawMentions ?? []).map((m) => {
+            const start = (m.plainTextIndex ?? m.index ?? 0) as number
+            const name = (m.display ?? '') as string
+            const userId = (m.id ?? '') as string
+            const end = start + name.length + 1 // @ 포함
+            return { userId, name, start, end }
+          })
+          onMentionsChange?.(nextMentions)
+          const ids = Array.from(new Set(nextMentions.map((m) => Number(m.userId))))
+          onMentionIdsChange?.(ids)
+          if (typeof maxLength === 'number' && newValue.length > maxLength) {
           }
         }}
+        customSuggestionsContainer={(children) => (
+          <div className="z-50 flex w-72 flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm">
+            <p className="flex h-8 w-full items-center border-b border-gray-300 bg-gray-100 px-2.5 text-xs text-gray-700">
+              멤버 멘션하기
+            </p>
+
+            <div
+              ref={suggestionViewportRef}
+              className="max-h-48 overflow-y-auto rounded-b-lg"
+              onScroll={async (e) => {
+                const el = e.currentTarget
+                if (!hasNextPage || isFetchingNextPage) return
+                if (!isNearBottom(el, 32)) return
+
+                await fetchNextPage()
+
+                const cb = suggestionsCbRef.current
+                if (cb) cb(filterBySearch(lastSearchRef.current, mentionDataRef.current))
+              }}
+            >
+              {isLoading && members.length === 0 ? (
+                <div className="p-2">
+                  <Loading />
+                </div>
+              ) : (
+                children
+              )}
+
+              {isFetchingNextPage ? (
+                <div className="p-2">
+                  <Loading />
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
+        allowSuggestionsAboveCursor
         onKeyDown={(e) => {
-          if (!mentionOpen) return
+          if (e.nativeEvent?.isComposing) return
 
-          if (e.key === 'Escape') {
-            e.preventDefault()
-            e.stopPropagation()
-            e.nativeEvent.stopImmediatePropagation?.()
-            closeMention()
-            requestAnimationFrame(() => taRef.current?.focus({ preventScroll: true }))
-            return
-          }
-
-          if (filteredMembers.length === 0) return
-
-          if (e.key === 'ArrowDown') {
-            e.preventDefault()
-            setActiveIndex((i) => (i + 1) % filteredMembers.length)
-            return
-          }
-
-          if (e.key === 'ArrowUp') {
-            e.preventDefault()
-            setActiveIndex((i) => (i - 1 + filteredMembers.length) % filteredMembers.length)
-            return
-          }
+          // Shift+Enter는 줄바꿈 허용
+          if (e.key === 'Enter' && e.shiftKey) return
 
           if (e.key === 'Enter') {
+            // 멘션 후보창 떠있으면 전송 X (Enter는 멘션 선택)
+            const isSuggesting = !!document.querySelector('.mention__suggestions')
+            if (isSuggesting) return
+
             e.preventDefault()
-            const picked = filteredMembers[safeActiveIndex]
-            if (picked) onSelect(picked)
-            return
+            e.stopPropagation()
+            onSubmit?.()
           }
         }}
-        maxLength={maxLength}
-        className={clsx(className ?? '', 'relative caret-slate-900 selection:bg-blue-200')}
-        placeholder={placeholder}
-      />
+      >
+        <Mention
+          trigger="@"
+          data={(search, callback) => {
+            setMentionActive(true)
+
+            const q = (search ?? '').trim()
+            lastSearchRef.current = q
+            suggestionsCbRef.current = callback
+
+            callback(filterBySearch(q, mentionDataRef.current))
+          }}
+          appendSpaceOnAdd
+          markup={MENTION}
+          displayTransform={(_, display) => `@${display}`}
+          style={{
+            color: '#155DFC',
+            fontWeight: 600,
+            borderRadius: '4px',
+            backgroundColor: 'rgba(21, 93, 252, 0.18)',
+          }}
+          renderSuggestion={(entry, _search, highlightedDisplay, _index, focused) => {
+            const item = entry as MentionDataItem
+
+            return (
+              <div
+                ref={(el) => {
+                  if (!focused || !el) return
+                  const viewport = suggestionViewportRef.current
+                  if (!viewport) return
+                  requestAnimationFrame(() => ensureItemVisible(viewport, el))
+                }}
+                className={clsx(
+                  'w-full cursor-pointer py-2 text-left',
+                  focused ? 'bg-blue-500' : '',
+                )}
+              >
+                {isLoading ? (
+                  <div>
+                    <Loading />
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-2.5">
+                    <Avatar size="xs" alt={`${item.display} 프로필`} src={item.profileImageUrl} />
+                    <span className={clsx('text-sm', focused ? 'text-white' : 'text-gray-800')}>
+                      {highlightedDisplay}
+                    </span>
+                    <span className={clsx('text-[10px]', focused ? 'text-white' : 'text-gray-400')}>
+                      @{item.id}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )
+          }}
+        />
+      </MentionsInput>
     </div>
   )
 }
 
-function computeDiff(oldText: string, newText: string) {
-  let start = 0
-  while (start < oldText.length && start < newText.length && oldText[start] === newText[start])
-    start++
+function isNearBottom(el: HTMLElement, offset = 24) {
+  return el.scrollTop + el.clientHeight >= el.scrollHeight - offset
+}
 
-  let oldEnd = oldText.length
-  let newEnd = newText.length
-  while (oldEnd > start && newEnd > start && oldText[oldEnd - 1] === newText[newEnd - 1]) {
-    oldEnd--
-    newEnd--
+function ensureItemVisible(container: HTMLElement, item: HTMLElement) {
+  const c = container.getBoundingClientRect()
+  const i = item.getBoundingClientRect()
+
+  // 위로 벗어남
+  if (i.top < c.top) {
+    container.scrollTop -= c.top - i.top
+    return
   }
 
-  const delta = newEnd - start - (oldEnd - start) // 변경 길이 차이
-  return { start, oldEnd, newEnd, delta }
-}
-
-function shiftMentions(oldText: string, newText: string, mentions: MentionEntity[]) {
-  const { start, oldEnd, delta } = computeDiff(oldText, newText)
-
-  const next = mentions
-    .map((m) => {
-      // 변경 구간 이전이면 그대로
-      if (m.end <= start) return m
-      // 변경 구간 이후면 shift
-      if (m.start >= oldEnd) return { ...m, start: m.start + delta, end: m.end + delta }
-      // 변경 구간과 겹치면 멘션 무효(사용자가 편집한 것)
-      return null
-    })
-    .filter(Boolean) as MentionEntity[]
-
-  // 안전검증: 실제 텍스트가 @name이 아니면 무효
-  return next.filter((m) => newText.slice(m.start, m.end) === `@${m.name}`)
-}
-
-function replaceMentionToken(params: { text: string; caret: number; pickedName: string }) {
-  const { text, caret, pickedName } = params
-  const upto = text.slice(0, caret)
-  const at = upto.lastIndexOf('@')
-  if (at === -1) return null
-
-  if (at !== 0) {
-    const prev = upto[at - 1]
-    if (prev !== ' ' && prev !== '\n' && prev !== '\t') return null
+  // 아래로 벗어남
+  if (i.bottom > c.bottom) {
+    container.scrollTop += i.bottom - c.bottom
   }
-
-  const before = text.slice(0, at)
-  const after = text.slice(caret)
-
-  const visible = `@${pickedName}`
-  const insert = `${visible} ` // 뒤에 공백
-  const nextText = before + insert + after
-
-  const mentionStart = before.length
-  const mentionEnd = mentionStart + visible.length
-  const nextCaret = mentionStart + insert.length
-
-  return { nextText, nextCaret, mentionStart, mentionEnd }
 }
 
-function getMentionQuery(text: string, caret: number) {
-  const upto = text.slice(0, caret)
-  const at = upto.lastIndexOf('@')
-  if (at === -1) return null
+const mentionInputStyle = {
+  control: {
+    fontFamily: 'inherit',
+    fontSize: 14,
+    letterSpacing: 'inherit',
+  },
+  highlighter: {
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+    fontSize: 14,
+    letterSpacing: 'inherit',
+    whiteSpace: 'pre-wrap',
+    overflowWrap: 'break-word',
+    overflowY: 'auto',
+    color: '#171719',
+  },
+  input: {
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+    fontSize: 14,
+    letterSpacing: 'inherit',
+    whiteSpace: 'pre-wrap',
+    overflowWrap: 'break-word',
+    background: 'transparent',
+    width: '100%',
+    height: '100%',
+    // 겹침 방지: input 글자는 숨기고 highlighter가 보여줌
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
+    caretColor: '#171719',
 
-  // 선택된 토큰('@[')이면 멘션 입력으로 취급 안 함
-  if (upto[at + 1] === '[') return null
-
-  if (at !== 0) {
-    const prev = upto[at - 1]
-    if (prev !== ' ' && prev !== '\n' && prev !== '\t') return null
-  }
-
-  const after = upto.slice(at + 1)
-  if (after.length === 0) return ''
-  if (/\s/.test(after)) return null
-  return after
-}
-
-function renderHighlightedText(text: string, mentions: MentionEntity[]) {
-  const sorted = [...mentions].sort((a, b) => a.start - b.start)
-
-  const nodes: React.ReactNode[] = []
-  let cursor = 0
-
-  for (const m of sorted) {
-    // userId 없는 멘션은 하이라이트 금지
-    if (!m.userId) continue
-
-    // 범위가 깨졌거나 텍스트가 바뀌면 무효 처리
-    const expected = `@${m.name}`
-    if (text.slice(m.start, m.end) !== expected) continue
-
-    if (m.start > cursor) nodes.push(text.slice(cursor, m.start))
-
-    nodes.push(
-      <span
-        key={`${m.start}-${m.userId}`}
-        className="rounded bg-blue-300/40 font-semibold text-blue-500"
-        data-user-id={m.userId}
-      >
-        {expected}
-      </span>,
-    )
-
-    cursor = m.end
-  }
-
-  if (cursor < text.length) nodes.push(text.slice(cursor))
-  return nodes
-}
+    border: 0,
+    outline: 'none',
+  },
+  suggestions: {
+    list: { margin: 0, padding: 0, listStyleType: 'none' },
+    item: { margin: 0, padding: 0 },
+  },
+} as const
