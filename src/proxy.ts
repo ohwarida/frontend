@@ -1,37 +1,80 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { REFRESH_TOKEN } from '@/constants/token'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/constants/token'
+import { isAccessTokenExpiringSoon } from '@/utils/checkJWT'
 
-// 로그인 없이 접근 허용할 경로들
 const PUBLIC_PATHS = ['/signin', '/signup']
 const DEFAULT_AFTER_LOGIN = '/'
+
+function isStaticAsset(pathname: string) {
+  return (
+    pathname.startsWith('/_next') ||
+    pathname === '/favicon.ico' ||
+    /\.(?:png|jpg|jpeg|gif|svg|ico|css|js|woff2?)$/.test(pathname)
+  )
+}
+
+function getSetCookies(headers: Headers): string[] {
+  const anyHeaders = headers
+  if (typeof anyHeaders.getSetCookie === 'function') return anyHeaders.getSetCookie()
+  const single = headers.get('set-cookie')
+  return single ? [single] : []
+}
+
+async function tryRefresh(request: NextRequest): Promise<NextResponse | null> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/v1/auth/me`, {
+    headers: {
+      cookie: request.headers.get('cookie') ?? '',
+    },
+    cache: 'no-store',
+  })
+
+  if (!res.ok) return null
+
+  const newCookies = getSetCookies(res.headers)
+  if (newCookies.length === 0) return null
+
+  const response = NextResponse.next()
+  newCookies.forEach((c) => response.headers.append('set-cookie', c))
+  return response
+}
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
   const currentPath = `${pathname}${search}`
 
-  if (
-    pathname.startsWith('/_next') ||
-    pathname === '/favicon.ico' ||
-    pathname.match(/\.(?:png|jpg|jpeg|gif|svg|ico|css|js|woff2?)$/)
-  ) {
-    return NextResponse.next()
-  }
+  if (isStaticAsset(pathname)) return NextResponse.next()
 
   const isPublicPath = PUBLIC_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))
   const isAuthPage = pathname.startsWith('/signin') || pathname.startsWith('/signup')
 
-  // TODO: 토큰 유효성 검사 추가
+  const accessToken = request.cookies.get(ACCESS_TOKEN)?.value
   const refreshToken = request.cookies.get(REFRESH_TOKEN)?.value
-  if (isAuthPage && refreshToken) {
-    return NextResponse.redirect(new URL(DEFAULT_AFTER_LOGIN, request.url))
+
+  // accessToken이 "없거나 이미 만료"인지 판단 (임박 X)
+  // thresholdSec=0 => exp <= now 이면 true
+  const isMissingOrExpiredAccess = isAccessTokenExpiringSoon(accessToken, 0)
+
+  // auth 페이지: 이미 로그인(= access 살아있음) 상태면 홈으로 보내고 싶다면
+  if (isAuthPage) {
+    if (!isMissingOrExpiredAccess || refreshToken) {
+      return NextResponse.redirect(new URL(DEFAULT_AFTER_LOGIN, request.url))
+    }
+    return NextResponse.next()
   }
 
-  if (isPublicPath) {
+  if (isPublicPath) return NextResponse.next()
+
+  if (!isMissingOrExpiredAccess) {
     return NextResponse.next()
   }
 
   if (refreshToken) {
-    return NextResponse.next()
+    try {
+      const refreshed = await tryRefresh(request)
+      if (refreshed) return refreshed
+    } catch (e) {
+      console.error('Middleware refresh error:', e)
+    }
   }
 
   const loginUrl = new URL('/signin', request.url)
@@ -41,7 +84,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // api, _next/static, _next/image, 일부 정적 파일 제외
     '/((?!api|_next/static|_next/image|.*\\.(?:png|jpg|jpeg|gif|svg|ico|css|js|woff2?)$).*)',
   ],
 }
