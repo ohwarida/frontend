@@ -45,12 +45,16 @@ export default function PostCard({ post }: PostCardProps) {
       >
         <div className={clsx('flex w-full items-center gap-3', 'md:h-8')}>
           <div className={clsx('flex h-8 w-8 items-center justify-center', 'md:w-6')}>
-            <Avatar size="xs" />
+            <Avatar size="xs" src={post.profileImageUrl} />
           </div>
 
           <div className="flex flex-1 items-center gap-2">
             <span className="text-[16px] leading-6 font-medium text-[#171719]">
               {post.writerName}
+            </span>
+            <span className="text-[16px] leading-6 text-[rgba(55,56,60,0.61)]">·</span>
+            <span className="text-[14px] leading-5 text-[rgba(55,56,60,0.61)]">
+              {post?.trackName}
             </span>
             <span className="text-[16px] leading-6 text-[rgba(55,56,60,0.61)]">·</span>
             <span className="text-[14px] leading-5 text-[rgba(55,56,60,0.61)]">

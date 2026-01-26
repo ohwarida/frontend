@@ -3,6 +3,7 @@ import { CommentReactionSummary } from './Reaction.types'
 export type CommentAuthor = {
   userId: number
   name: string
+  trackName: string
   profileImageUrl: string | null
 }
 
