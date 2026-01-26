@@ -1,8 +1,11 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 
-export async function GET(req: Request, { params }: { params: { path: string[] } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const base = process.env.NEXT_PUBLIC_API_BASE
-  const joinedPath = params.path.join('/')
+  if (!base) return new NextResponse('NEXT_PUBLIC_API_BASE is missing', { status: 500 })
+
+  const { path } = await params
+  const joinedPath = path.join('/')
 
   const url = new URL(req.url)
   const upstream = `${base}/${joinedPath}${url.search}`
