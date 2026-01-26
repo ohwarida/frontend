@@ -11,7 +11,6 @@ export async function changeProfileAction(file: File): Promise<{ message: string
     await changeProfile(formData)
 
     revalidateTag('my-profile', 'max')
-    revalidatePath('/mypage')
     revalidatePath('/mypage/profile')
 
     return undefined
