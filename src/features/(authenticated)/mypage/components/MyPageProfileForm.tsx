@@ -1,8 +1,7 @@
 'use client'
-import React from 'react'
 import FieldInput from '@/components/form/FieldInput'
 
-export default function MyPageProfileForm({
+export function MyPageProfileForm({
   name,
   email,
   track,

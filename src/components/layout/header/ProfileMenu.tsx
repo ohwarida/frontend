@@ -116,7 +116,7 @@ export default function ProfileMenu({ user }: { user: User | null }) {
           }}
         >
           <Link
-            href="/mypage"
+            href="/mypage/profile"
             role="menuitem"
             tabIndex={0}
             data-menuitem
@@ -125,7 +125,7 @@ export default function ProfileMenu({ user }: { user: User | null }) {
           >
             <CircleUserRound size={16} className={iconClass} color="#4A5565" />
             마이페이지
-            {p.startsWith('/mypage') && <CheckMenu />}
+            {p.startsWith('/mypage/profile') && <CheckMenu />}
           </Link>
 
           <button

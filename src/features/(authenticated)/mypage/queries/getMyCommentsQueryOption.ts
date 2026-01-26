@@ -1,7 +1,6 @@
 import { getMyComments } from '@/features/(authenticated)/mypage/apis/getMyComment'
 import { DEFAULT_PAGE_SIZE } from '@/constants/pageSize'
-
-export type Cursor = number | null
+import type { GetMyCommentsResponse } from '@/features/(authenticated)/mypage/types/getMyCommentsResponse'
 
 export const myCommentKeys = {
   all: ['my-comment'] as const,
@@ -16,14 +15,17 @@ export function getMyCommentsInfiniteQueryOption(params: { size?: number } = {})
   return {
     queryKey: myCommentKeys.list({ size }),
     initialPageParam: 1,
-    queryFn: async ({ pageParam }: { pageParam: number }) => {
+
+    queryFn: async ({ pageParam }: { pageParam: number }): Promise<GetMyCommentsResponse> => {
       return getMyComments({
         page: pageParam,
         size,
       })
     },
-    getNextPageParam: (lastPage: any): Cursor => {
-      if (!lastPage.hasNext) return null
+
+    getNextPageParam: (lastPage: GetMyCommentsResponse) => {
+      if (!lastPage.hasNext) return undefined
+      if (typeof lastPage.nextPage !== 'number') return undefined
       return lastPage.nextPage
     },
   }

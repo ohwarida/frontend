@@ -22,8 +22,8 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
   const post = await getPostDetail(id)
   const user = await getUser()
 
-  const hasPrev = Boolean(post?.previousPost.previousPostId)
-  const hasNext = Boolean(post?.nextPost.nextPostId)
+  const hasPrev = Boolean(post?.previousPost?.previousPostId)
+  const hasNext = Boolean(post?.nextPost?.nextPostId)
 
   const wroteAt = post?.wroteAt ?? ''
   const wroteAtLabel = wroteAt ? toRelativeTimeLabel(wroteAt) : ''
@@ -224,4 +224,5 @@ const TOPIC_BASE_PATH = {
   NOTICE: '/notice',
   SMALL_TALK: '/small-talk',
   KNOWLEDGE: '/knowledge',
+  STUDY: '/study',
 } as const
