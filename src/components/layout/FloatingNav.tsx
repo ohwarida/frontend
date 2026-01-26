@@ -12,7 +12,7 @@ const HOME_PATHS = TABS.map((t) => t.href).filter(Boolean)
 const items = [
   { href: '/', label: '홈', icon: House },
   { href: '/post/create', label: '글쓰기', icon: PencilLine },
-  { href: '/mypage', label: '마이', icon: User, comingSoon: true },
+  { href: '/mypage/post', label: '마이', icon: User, comingSoon: true },
 ] as const
 
 export default function FloatingNav() {
@@ -21,7 +21,7 @@ export default function FloatingNav() {
 
   const handleMyPageClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    router.push('/mypage/profile')
+    router.push('/mypage/post')
   }
 
   const isHomeActive = pathname === '/' || HOME_PATHS.some((p) => pathname.startsWith(p))
