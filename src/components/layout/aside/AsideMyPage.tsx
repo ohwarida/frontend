@@ -1,7 +1,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import Link from 'next/link'
-import { ClipboardList, MessageCircle, Heart, UserCog, Trash2 } from 'lucide-react'
+import { MessageCircle, Heart, UserCog, Trash2, NotepadText } from 'lucide-react'
 import AsideMyPageSelector from '@/components/layout/aside/AsideMyPageSelector'
 import WithdrawMember from '@/features/(authenticated)/mypage/components/WithdrawMember'
 import { Avatar } from '@/components/ui/Avatar'
@@ -36,10 +36,10 @@ export async function AsideMyPage() {
               </AsideMyPageSelector>
             </Link>
 
-            <Link href="/mypage" className="w-full">
-              <AsideMyPageSelector pathname="/mypage">
-                <ClipboardList size={16} />
-                <span> 내가 쓴 글</span>
+            <Link href="/mypage/post" className="w-full">
+              <AsideMyPageSelector pathname="/mypage/post">
+                <NotepadText size={16} />
+                <span>내가 쓴 글</span>
               </AsideMyPageSelector>
             </Link>
 
@@ -53,7 +53,7 @@ export async function AsideMyPage() {
             <Link href="/mypage/like" className="w-full">
               <AsideMyPageSelector pathname="/mypage/like">
                 <Heart size={16} />
-                <span>내가 좋아요 한 글</span>
+                <span>좋아요 한 글</span>
               </AsideMyPageSelector>
             </Link>
 
