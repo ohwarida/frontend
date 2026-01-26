@@ -1,7 +1,7 @@
 import React from 'react'
 import AppShell from '@/components/layout/header/AppShell'
 import Main from '@/components/layout/Main'
-import AsideMyPage from '@/components/layout/aside/AsideMyPage'
+import { AsideMyPage } from '@/components/layout/aside/AsideMyPage'
 
 export default async function MyPageLayout({ children }: { children: React.ReactNode }) {
   return (
