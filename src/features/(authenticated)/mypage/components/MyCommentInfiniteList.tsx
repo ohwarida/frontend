@@ -8,7 +8,7 @@ import { useGetMyCommentsQuery } from '@/features/(authenticated)/mypage/queries
 export function MyCommentInfiniteList({ size = 20 }: { size?: number }) {
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status, error } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useGetMyCommentsQuery(size)
 
   const items = data?.pages.flatMap((p) => p.contents) ?? []
@@ -43,7 +43,7 @@ export function MyCommentInfiniteList({ size = 20 }: { size?: number }) {
   if (isEmpty) return <EmptyMyComment />
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {items.map((comment) => (
         <CommentCard key={comment.commentId} comment={comment} />
       ))}
@@ -55,6 +55,6 @@ export function MyCommentInfiniteList({ size = 20 }: { size?: number }) {
       {!isEmpty && isEnd && !isFetchingNextPage && (
         <p className="py-6 text-center text-sm text-[rgba(55,56,60,0.61)]">마지막 페이지입니다</p>
       )}
-    </>
+    </div>
   )
 }

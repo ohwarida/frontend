@@ -1,40 +1,50 @@
 'use client'
 
-import React from 'react'
 import clsx from 'clsx'
-import { Comment } from '@/features/(authenticated)/mypage/types/getMyCommentsResponse'
 import Link from 'next/link'
-import { toRelativeTimeLabel } from '@/utils/toRelativeTimeLabel'
-import { RelativeTime } from '@/components/RelativeTime'
+import { Comment } from '@/features/(authenticated)/mypage/types/getMyCommentsResponse'
+import { formatDateDot } from '@/utils/formatDateDot'
 
-export default function CommentCard({ comment }: { comment: Comment }) {
+type CommentCardProps = {
+  comment: Comment
+  isActive?: boolean
+}
+
+export default function CommentCard({ comment, isActive = false }: CommentCardProps) {
   const createdAt = comment?.createdAt ?? ''
-  const createdAtLabel = createdAt ? toRelativeTimeLabel(createdAt) : ''
+  const createdAtLabel = formatDateDot(createdAt)
+
+  const repliesCount = typeof comment.replies?.length === 'number' ? comment.replies.length : null
+  const likeCount =
+    typeof comment.commentReactionStats?.totalCount === 'number'
+      ? comment.commentReactionStats.totalCount
+      : null
 
   return (
     <Link
       href={`/post/${comment.postId}`}
       className={clsx(
-        'block w-full border-b border-[rgba(0,0,0,0.06)] bg-white p-3',
-        'md:box-border md:max-w-[1045px] md:overflow-hidden md:rounded-[8px] md:border-b-0 md:bg-white',
-        'relative hover:bg-blue-50',
+        'flex w-full items-center justify-between',
+        'h-[82px] px-4',
+        'rounded-[10px] bg-white',
+        isActive ? 'border-2 border-[#155DFC]' : 'border border-[#E5E7EB]',
+        isActive ? '' : 'hover:border-[#155DFC] hover:bg-blue-50/20',
+        'md:max-w-[1045px]',
       )}
     >
-      <article className="flex flex-col gap-1">
-        <p className="font-medium">{comment.content}</p>
-        <RelativeTime
-          dateTime={createdAt}
-          initialLabel={createdAtLabel}
-          className="text-[14px] leading-[20px] text-[rgba(55,56,60,0.61)]"
-        />
-      </article>
-      <div className="absolute inset-y-0 right-4 flex items-center gap-3 text-xs">
-        <p>
-          {typeof comment.replies?.length === 'number' ? `대댓글 수 ${comment.replies.length}` : ''}
+      <div className="min-w-0">
+        <p className="truncate text-[16px] leading-[24px] font-medium text-[#000000]">
+          {comment.content}
         </p>
-        {typeof comment.commentReactionStats?.totalCount === 'number'
-          ? `좋아요 ${comment.commentReactionStats.totalCount}`
-          : ''}
+
+        <p className="mt-1 text-[14px] leading-[20px] text-[rgba(55,56,60,0.61)]">
+          {createdAtLabel}
+        </p>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-4 text-[14px] leading-[20px] text-[#171719]">
+        {repliesCount !== null && <span>대댓글 {repliesCount}</span>}
+        {likeCount !== null && <span>좋아요 {likeCount}</span>}
       </div>
     </Link>
   )
