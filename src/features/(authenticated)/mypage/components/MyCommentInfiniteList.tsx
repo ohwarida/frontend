@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { EmptyMyComment } from '@/features/(authenticated)/mypage/components/EmptyMyComment'
-import CommentCard from '@/components/CommentCard'
+import { CommentCard } from '@/components/CommentCard'
 import { useGetMyCommentsQuery } from '@/features/(authenticated)/mypage/queries/useGetMyComments'
 
 export function MyCommentInfiniteList({ size = 20 }: { size?: number }) {
@@ -43,7 +43,11 @@ export function MyCommentInfiniteList({ size = 20 }: { size?: number }) {
   if (isEmpty) return <EmptyMyComment />
 
   return (
-    <div className="flex flex-col gap-4">
+    <div
+      className={['flex flex-col gap-2 px-4 pt-2 pb-24', 'lg:gap-4 lg:px-0 lg:pt-0 lg:pb-0'].join(
+        ' ',
+      )}
+    >
       {items.map((comment) => (
         <CommentCard key={comment.commentId} comment={comment} />
       ))}
