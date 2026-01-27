@@ -19,6 +19,5 @@ export async function decisionUser(params: params): Promise<void> {
     method: 'PUT',
     body: JSON.stringify(body),
   })
-  console.log(res)
   revalidatePath(`/admin/${trackId}`)
 }

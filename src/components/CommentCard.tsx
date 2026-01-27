@@ -2,8 +2,10 @@
 
 import clsx from 'clsx'
 import Link from 'next/link'
+
 import { Comment } from '@/features/(authenticated)/mypage/types/getMyCommentsResponse'
 import { formatDateDot } from '@/utils/formatDateDot'
+import { renderMentionText } from '@/utils/renderMentionText'
 
 type CommentCardProps = {
   comment: Comment
@@ -21,7 +23,7 @@ export function CommentCard({ comment, isActive = false }: CommentCardProps) {
 
   return (
     <Link
-      href={`/post/${comment.postId}`}
+      href={`/post/${comment.postId}#comment-${comment.commentId}`}
       className={clsx(
         'block w-full',
         'rounded-[12px] border border-[#F3F4F6] bg-white',
@@ -45,17 +47,17 @@ export function CommentCard({ comment, isActive = false }: CommentCardProps) {
           <span className="font-normal">{createdAtLabel}</span>
         </div>
 
-        <p className="line-clamp-2 text-[16px] leading-[24px] text-[#1E2939]">{comment.content}</p>
+        <p className="line-clamp-2 text-[16px] leading-[24px] text-[#1E2939]">
+          {renderMentionText(comment.content)}
+        </p>
       </div>
 
       {/* 데스크탑: 기존 구조 */}
       <div className="hidden min-w-0 lg:block">
         <p className="truncate text-[16px] leading-[24px] font-medium text-[#000000]">
-          {comment.content}
+          {renderMentionText(comment.content)}
         </p>
-        <p className="mt-1 text-[14px] leading-[20px] text-[rgba(55,56,60,0.61)]">
-          {createdAtLabel}
-        </p>
+        <p className="mt-1 text-[14px] leading-[20px] text-[rgba(55,56,60,0.61)]">{createdAtLabel}</p>
       </div>
 
       {/* 데스크탑: 우측 메타 */}

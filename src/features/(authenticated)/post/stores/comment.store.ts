@@ -5,8 +5,16 @@ import { create } from 'zustand'
 export type CommentsActions = {
   postId: number
   currentUserId: number
-  onCreate: (input: { parentId: number | null; content: string }) => Promise<unknown>
-  onUpdate: (input: { commentId: number; content: string }) => Promise<unknown>
+  onCreate: (input: {
+    parentId: number | null
+    content: string
+    mentionUserIds?: number[]
+  }) => Promise<unknown>
+  onUpdate: (input: {
+    commentId: number
+    content: string
+    mentionUserIds?: number[]
+  }) => Promise<unknown>
   onDelete: (commentId: number) => Promise<unknown>
 }
 
