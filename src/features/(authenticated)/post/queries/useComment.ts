@@ -18,8 +18,18 @@ export function useGetCommentsQuery(postId: number) {
 export function useCreateCommentMutation(postId: number) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (input: { parentId: number | null; content: string }) =>
-      createComment({ postId, parentId: input.parentId, content: input.content }),
+    mutationFn: async (input: {
+      parentId: number | null
+      content: string
+      mentionUserIds?: number[]
+    }) => {
+      await createComment({
+        postId,
+        parentId: input.parentId,
+        content: input.content,
+        mentionUserIds: input.mentionUserIds,
+      })
+    },
     onSuccess: () => qc.invalidateQueries({ queryKey: commentKey(postId) }),
   })
 }

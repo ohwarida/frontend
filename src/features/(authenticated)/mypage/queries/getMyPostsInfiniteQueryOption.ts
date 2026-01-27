@@ -1,10 +1,8 @@
 import { getMyPosts } from '@/features/(authenticated)/mypage/apis/getMyPosts'
 import { getMyLikes } from '@/features/(authenticated)/mypage/apis/getMyLike'
-import { GetPostsResponse } from '@/features/(authenticated)/post/types/Post.types'
 import { DEFAULT_PAGE_SIZE } from '@/constants/pageSize'
-import { MyPostTopic } from '@/features/(authenticated)/mypage/types/MyPostsTopic'
-
-export type Cursor = number | null
+import type { MyPostTopic } from '@/features/(authenticated)/mypage/types/MyPostsTopic'
+import { GetPostsResponse } from '../../post/types/Post.types'
 
 export const postKeys = {
   all: ['my-post'] as const,
@@ -24,13 +22,12 @@ export function getMyPostsInfiniteQueryOption(params: { topic?: MyPostTopic; siz
       // 내 글 목록
       if (topic === 'MY-POST') {
         return getMyPosts({ page: pageParam, size })
-      } else {
-        return getMyLikes({ page: pageParam, size })
       }
+      return getMyLikes({ page: pageParam, size })
     },
-    getNextPageParam: (lastPage: GetPostsResponse): Cursor => {
-      if (!lastPage.hasNext) return null
-      return lastPage.nextPage
+    getNextPageParam: (lastPage: GetPostsResponse) => {
+      if (!lastPage.hasNext) return undefined
+      return lastPage.nextPage ?? undefined
     },
   }
 }

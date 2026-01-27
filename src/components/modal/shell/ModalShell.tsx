@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import clsx from 'clsx'
 import { useCloseModal } from '@/hooks/useCloseModal'
+import { useLockBodyScroll } from '@/hooks/useScrollBox'
 
 export function ModalShell({
   children,
@@ -22,6 +23,8 @@ export function ModalShell({
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [close])
+
+  useLockBodyScroll()
 
   return (
     <div className="fixed inset-0 z-[9999]">

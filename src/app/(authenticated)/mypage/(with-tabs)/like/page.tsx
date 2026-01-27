@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: '내가 좋아요한 게시글을 확인합니다.',
 }
 
-export default async function LikePage() {
+export default async function MyLikePage() {
   const qc = nqc()
 
   await qc.prefetchInfiniteQuery(getMyPostsInfiniteQueryOption({ topic: 'MY-POST-LIKED' }))

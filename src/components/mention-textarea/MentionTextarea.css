@@ -1,0 +1,38 @@
+.mention-textarea {
+  width: 100%;
+  min-height: 100px;
+  height: auto;
+  resize: none;
+
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 8px; /* rounded-lg */
+  background: #f9fafb;
+
+  padding: 8px 12px; /* py-2 px-3 */
+
+  font-size: 14px;
+  line-height: 20px;
+  color: #171719;
+
+  outline: none;
+}
+
+.mention-textarea:focus {
+  box-shadow: 0 0 0 1px rgba(21, 93, 252, 0.3);
+}
+
+.mention {
+  height: 100%;
+  min-height: 100px;
+}
+
+.mention__input,
+.mention__highlighter {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* 네가 쓰는 visible hack 쓰는 경우 */
+.mention__highlighter__substring {
+  visibility: visible !important;
+}

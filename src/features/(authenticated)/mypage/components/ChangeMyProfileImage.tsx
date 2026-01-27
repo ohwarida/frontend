@@ -4,7 +4,7 @@ import React, { useRef, useState } from 'react'
 import { Camera } from 'lucide-react'
 import { changeProfileAction } from '@/features/(authenticated)/mypage/actions/changeProfile.action'
 
-export default function ChangeMyProfileImage() {
+export function ChangeMyProfileImage() {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const [failUpload, setFailUpload] = useState<string | undefined>()
 

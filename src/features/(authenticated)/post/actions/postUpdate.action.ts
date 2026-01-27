@@ -2,10 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { type TopicType } from '@/types/Topic.types'
-import { HighlightType, PostFormState } from '../types/Post.types'
-import { validatePost } from '../create/utils/validatePost'
-import { updatePost } from '../apis/post.api'
-import { HREF_BY_TOPIC } from '../constants/topic'
+import { HighlightType, PostFormState } from '@/features/(authenticated)/post/types/Post.types'
+import { updatePost } from '@/features/(authenticated)/post/apis/post.api'
+import { HREF_BY_TOPIC } from '@/features/(authenticated)/post/constants/topic'
+import { validatePost } from '@/features/(authenticated)/post/utils/validatePost'
 
 export async function updatePostAction(
   _prevState: PostFormState,

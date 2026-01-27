@@ -2,7 +2,7 @@
 
 import type { MouseEvent } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import clsx from 'clsx'
 import { House, PencilLine, User } from 'lucide-react'
 import { TABS } from '@/features/(authenticated)/post/constants/tabs'
@@ -12,15 +12,16 @@ const HOME_PATHS = TABS.map((t) => t.href).filter(Boolean)
 const items = [
   { href: '/', label: '홈', icon: House },
   { href: '/post/create', label: '글쓰기', icon: PencilLine },
-  { href: '/mypage', label: '마이', icon: User, comingSoon: true },
+  { href: '/mypage/post', label: '마이', icon: User, comingSoon: true },
 ] as const
 
 export default function FloatingNav() {
   const pathname = usePathname()
+  const router = useRouter()
 
   const handleMyPageClick = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    alert('서비스 준비중입니다') // TODO: 토스트 교체
+    router.push('/mypage/post')
   }
 
   const isHomeActive = pathname === '/' || HOME_PATHS.some((p) => pathname.startsWith(p))

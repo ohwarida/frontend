@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: '내가 작성한 댓글을 확인하고 관리합니다.',
 }
 
-export default async function CommentPage() {
+export default async function MyCommentPage() {
   const qc = nqc()
 
   await qc.prefetchInfiniteQuery(getMyCommentsInfiniteQueryOption())
