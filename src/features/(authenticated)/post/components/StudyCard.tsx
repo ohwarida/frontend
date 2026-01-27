@@ -1,0 +1,171 @@
+'use client'
+
+import { CircleCheckBig, Users } from 'lucide-react'
+import type { StudyCardItem, StudyStatus } from '../types/study.type'
+import { useRouter } from 'next/navigation'
+
+export function StudyCard({
+  item,
+  myRecruitmentStatus,
+}: {
+  item: StudyCardItem
+  myRecruitmentStatus?: StudyStatus | null
+}) {
+  const router = useRouter()
+
+  const cohortLabel = item.schedule?.month ? `${item.schedule.month}개월차` : '-'
+
+  // 모집글 상태 (스터디 자체)
+  const isClosed = item.status === 'CLOSED' || item.isRecruitmentClosed
+
+  // 내 신청 상태 (Recruitment.status)
+  const isApplyPending = myRecruitmentStatus === 'PENDING'
+  const isRejected = myRecruitmentStatus === 'REJECTED'
+  const isApproved = myRecruitmentStatus === 'APPROVED'
+
+  const ctaDisabled = isClosed || isApplyPending || isRejected
+  const ctaLabel = isClosed
+    ? '모집 마감'
+    : isApplyPending
+      ? '신청 완료'
+      : isRejected
+        ? '신청 반려'
+        : '참여 신청하기'
+
+  const handleApply = () => {
+    if (ctaDisabled) return
+    router.push(`/study/apply/${item.id}`)
+  }
+
+  return (
+    <article
+      className={[
+        'box-border rounded-[10px] border border-[#E5E7EB] bg-white',
+        'w-full md:w-[510px]',
+        'min-h-[320px] md:h-[360px]',
+        'flex flex-col gap-3',
+        'p-4 md:p-6',
+      ].join(' ')}
+    >
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-2">
+          <StatusBadge status={item.status} />
+          <span className="text-[14px] leading-5 font-medium text-[#6A7282]">{item.track}</span>
+          <CohortChip text={cohortLabel} />
+        </div>
+        <MemberCount current={item.currentMemberCount} max={item.capacity} />
+      </div>
+
+      <h3 className="w-full text-[18px] leading-7 font-bold text-[#101828]">{item.name}</h3>
+
+      <p className="w-full flex-1 overflow-hidden text-[14px] leading-5 font-normal text-[#4A5565]">
+        {item.description}
+      </p>
+
+      <div className="mt-auto flex w-full flex-col gap-4">
+        <div className="flex flex-wrap gap-2">
+          {item.tags.slice(0, 10).map((t) => (
+            <span
+              key={t}
+              className="inline-flex h-6 items-center rounded-[4px] bg-[#F9FAFB] px-2 text-[12px] leading-4 font-normal text-[#6A7282]"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+
+        {isApproved ? (
+          <ApprovedBox chatUrl={item.chatUrl} />
+        ) : (
+          <PrimaryButton disabled={ctaDisabled} label={ctaLabel} onClick={handleApply} />
+        )}
+      </div>
+    </article>
+  )
+}
+
+function StatusBadge({ status }: { status: StudyStatus }) {
+  if (status === 'PENDING') {
+    return (
+      <span className="rounded-[8px] bg-[#DBEAFE] px-2 py-[2px] text-[12px] leading-4 font-medium text-[#1447E6]">
+        모집중
+      </span>
+    )
+  }
+  if (status === 'CLOSED') {
+    return (
+      <span className="rounded-[8px] bg-[#ECEEF2] px-2 py-[2px] text-[12px] leading-4 font-medium text-[#030213]">
+        마감
+      </span>
+    )
+  }
+  return (
+    <span className="rounded-[8px] bg-[#DBEAFE] px-2 py-[2px] text-[12px] leading-4 font-medium text-[#1447E6]">
+      모집완료
+    </span>
+  )
+}
+
+function CohortChip({ text }: { text: string }) {
+  return (
+    <span className="inline-flex h-5 items-center rounded-[4px] bg-[#F3F4F6] px-2 text-[12px] leading-4 font-normal text-[#4A5565]">
+      {text}
+    </span>
+  )
+}
+
+function MemberCount({ current, max }: { current: number; max: number }) {
+  return (
+    <span className="inline-flex items-center gap-1 text-[14px] leading-5 font-normal text-[#6A7282]">
+      <Users size={16} />
+      {current}/{max}
+    </span>
+  )
+}
+
+function PrimaryButton({
+  disabled,
+  label,
+  onClick,
+}: {
+  disabled?: boolean
+  label: string
+  onClick?: () => void
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={[
+        'h-9 w-full rounded-[8px] text-[14px] leading-5 font-medium text-white',
+        disabled
+          ? 'cursor-not-allowed bg-[#155DFC] opacity-50'
+          : 'bg-[#155DFC] hover:brightness-[0.97] active:translate-y-[1px]',
+      ].join(' ')}
+    >
+      {label}
+    </button>
+  )
+}
+
+function ApprovedBox({ chatUrl }: { chatUrl: string }) {
+  return (
+    <div className="box-border w-full rounded-[4px] border border-[#DCFCE7] bg-[#F0FDF4] px-[13px] pt-[13px] pb-[9px]">
+      <div className="flex items-center gap-2 text-[14px] leading-5 font-normal text-[#016630]">
+        <CircleCheckBig size={16} />
+        참여 승인됨
+      </div>
+
+      <a
+        href={chatUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-2 inline-flex h-8 w-full items-center justify-center gap-2 rounded-[8px] border border-[rgba(0,0,0,0.1)] bg-white text-[12px] leading-4 font-medium text-[#0A0A0A] hover:bg-[#FAFAFA] active:translate-y-[1px]"
+      >
+        <span aria-hidden>💬</span>
+        오픈채팅
+      </a>
+    </div>
+  )
+}
