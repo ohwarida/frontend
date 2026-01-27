@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect } from 'react'
 import clsx from 'clsx'
-import { useRouter } from 'next/navigation'
+import { useLockBodyScroll } from '@/hooks/useScrollBox'
 
 export function ModalShell({
   children,
@@ -13,8 +13,10 @@ export function ModalShell({
   backdropClassName?: string
   returnTo?: string
 }) {
+  useLockBodyScroll()
+
   return (
-    <div className="fixed inset-0 z-[9999]">
+    <div className="fixed inset-0 z-[9999] overflow-hidden">
       <div className={clsx('absolute inset-0 bg-black/40', backdropClassName)} />
       {children}
     </div>
