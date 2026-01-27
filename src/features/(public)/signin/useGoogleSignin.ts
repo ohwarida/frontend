@@ -17,7 +17,7 @@ export function useGoogleSignin() {
 
   const signinMutation = useMutation({
     mutationFn: async (code: string) => {
-      const res = await client('/api/signin', {
+      const res = await client('/api/auth/signin', {
         method: 'POST',
         body: { code },
         cache: 'no-store',

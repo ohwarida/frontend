@@ -27,6 +27,7 @@ export type CreateCommentRequest = {
   postId: number
   parentId: null | number // null일 경우 댓글, parentId가 있을 경우 대댓글
   content: string // string, 2000자
+  mentionUserIds?: number[]
 }
 
 export type UpdateCommentRequest = {
