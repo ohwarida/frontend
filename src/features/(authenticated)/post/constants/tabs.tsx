@@ -1,5 +1,5 @@
 import { TOPIC_TYPE, TOPIC_LABEL } from '@/types/Topic.types'
-import { Briefcase, House, FileText, MessageCircle, TrendingUp } from 'lucide-react'
+import { Briefcase, House, FileText, MessageCircle, TrendingUp, Users } from 'lucide-react'
 
 export const TABS = [
   { id: TOPIC_TYPE.ALL, label: TOPIC_LABEL.ALL, href: '/', icon: <House /> },
@@ -21,5 +21,11 @@ export const TABS = [
     label: TOPIC_LABEL.KNOWLEDGE,
     href: '/knowledge',
     icon: <TrendingUp />,
+  },
+  {
+    id: TOPIC_TYPE.STUDY,
+    label: TOPIC_LABEL.STUDY,
+    href: '/study',
+    icon: <Users />,
   },
 ]

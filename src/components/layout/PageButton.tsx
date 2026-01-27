@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useEffect } from 'react'
 
-export default function PageButton({
+export function PageButton({
   TABS,
 }: {
   TABS: { id: string; label: string; href?: string; onClick?: () => void; icon?: React.ReactNode }[]
