@@ -1,8 +1,8 @@
 'use client'
 
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import clsx from 'clsx'
-import { useRouter } from 'next/navigation'
+import { useCloseModal } from '@/hooks/useCloseModal'
 
 export function ModalShell({
   children,
@@ -13,9 +13,25 @@ export function ModalShell({
   backdropClassName?: string
   returnTo?: string
 }) {
+  const close = useCloseModal(returnTo)
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [close])
+
   return (
     <div className="fixed inset-0 z-[9999]">
-      <div className={clsx('absolute inset-0 bg-black/40', backdropClassName)} />
+      {/* backdrop */}
+      <button
+        type="button"
+        aria-label="닫기"
+        onClick={close}
+        className={clsx('absolute inset-0 bg-black/40', backdropClassName)}
+      />
       {children}
     </div>
   )
