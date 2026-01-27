@@ -20,7 +20,9 @@ export function StudyListHeader({
 
   return (
     <section className="flex w-full flex-col gap-6">
-      <HeroBanner />
+      <div className="relative z-0">
+        <HeroBanner />
+      </div>
       <Toolbar
         recruitingCount={recruitingCount}
         selectedTrackLabel={selectedTrackLabel}
