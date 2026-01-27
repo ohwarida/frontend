@@ -1,19 +1,30 @@
 'use client'
 
-import { CircleCheckBig, Users } from 'lucide-react'
+import React from 'react'
+import { CircleCheckBig, Pencil, Trash2, Users } from 'lucide-react'
 import type { StudyCardItem, StudyStatus } from '../types/study.type'
 import { useRouter } from 'next/navigation'
 
 export function StudyCard({
   item,
   myRecruitmentStatus,
+  onDelete,
 }: {
   item: StudyCardItem
   myRecruitmentStatus?: StudyStatus | null
+  onDelete?: (studyId: number) => void
 }) {
   const router = useRouter()
 
-  const cohortLabel = item.schedule?.month ? `${item.schedule.month}개월차` : '-'
+  const isLeader = Boolean(item.isLeader)
+
+  const cohortLabel = (() => {
+    const m = item.schedule?.month
+    if (!m) return '-'
+    const s = String(m)
+    if (s.includes('차') || s.includes('개월')) return s
+    return `${s}개월차`
+  })()
 
   // 모집글 상태 (스터디 자체)
   const isClosed = item.status === 'CLOSED' || item.isRecruitmentClosed
@@ -23,18 +34,52 @@ export function StudyCard({
   const isRejected = myRecruitmentStatus === 'REJECTED'
   const isApproved = myRecruitmentStatus === 'APPROVED'
 
-  const ctaDisabled = isClosed || isApplyPending || isRejected
-  const ctaLabel = isClosed
-    ? '모집 마감'
-    : isApplyPending
-      ? '신청 완료'
-      : isRejected
-        ? '신청 반려'
-        : '참여 신청하기'
+  const ctaDisabled = isLeader ? false : isClosed || isApplyPending || isRejected
 
-  const handleApply = () => {
+  const ctaLabel = isLeader
+    ? isClosed
+      ? '모집 마감됨'
+      : '신청자 관리하기'
+    : isClosed
+      ? '모집 마감'
+      : isApplyPending
+        ? '신청 완료'
+        : isRejected
+          ? '신청 반려'
+          : '참여 신청하기'
+
+  const notReady = (feature: string) => {
+    alert(`서비스 준비중입니다. (${feature})`)
+  }
+
+  const handlePrimary = () => {
     if (ctaDisabled) return
-    router.push(`/study/apply/${item.id}`)
+
+    if (isLeader) {
+      // TODO: 신청자 관리 페이지 연동
+      // router.push(`/study/${item.id}/recruitments`)
+      notReady('신청자 관리')
+      return
+    }
+
+    // TODO: 스터디 신청 모달/페이지 연동
+    // router.push(`/study/apply/${item.id}`)
+    notReady('스터디 신청')
+  }
+
+  const handleEdit = () => {
+    // TODO: 스터디 수정 모달/페이지 연동
+    // router.push(`/study/edit/${item.id}`)
+    notReady('스터디 수정')
+  }
+
+  const handleDelete = () => {
+    // TODO: 스터디 삭제 서버 액션 연동
+    // const ok = window.confirm('정말 삭제할까요? 삭제 후에는 되돌릴 수 없어요.')
+    // if (!ok) return
+    // onDelete?.(item.id)
+
+    notReady('스터디 삭제')
   }
 
   return (
@@ -47,13 +92,28 @@ export function StudyCard({
         'p-4 md:p-6',
       ].join(' ')}
     >
-      <div className="flex w-full items-center justify-between">
+      <div className="flex w-full items-start justify-between">
         <div className="flex items-center gap-2">
           <StatusBadge status={item.status} />
           <span className="text-[14px] leading-5 font-medium text-[#6A7282]">{item.track}</span>
           <CohortChip text={cohortLabel} />
         </div>
-        <MemberCount current={item.currentMemberCount} max={item.capacity} />
+
+        <div className="flex items-center gap-3">
+          <MemberCount current={item.currentMemberCount} max={item.capacity} />
+
+          {/* 리더면 우측 상단 액션 */}
+          {isLeader && (
+            <div className="flex items-center gap-1">
+              <IconButton label="수정" onClick={handleEdit}>
+                <Pencil size={16} />
+              </IconButton>
+              <IconButton label="삭제" onClick={handleDelete}>
+                <Trash2 size={16} />
+              </IconButton>
+            </div>
+          )}
+        </div>
       </div>
 
       <h3 className="w-full text-[18px] leading-7 font-bold text-[#101828]">{item.name}</h3>
@@ -74,13 +134,36 @@ export function StudyCard({
           ))}
         </div>
 
-        {isApproved ? (
+        {/* 승인된 참여자면 기존 ApprovedBox 유지 */}
+        {!isLeader && isApproved ? (
           <ApprovedBox chatUrl={item.chatUrl} />
         ) : (
-          <PrimaryButton disabled={ctaDisabled} label={ctaLabel} onClick={handleApply} />
+          <PrimaryButton disabled={ctaDisabled} label={ctaLabel} onClick={handlePrimary} />
         )}
       </div>
     </article>
+  )
+}
+
+function IconButton({
+  label,
+  onClick,
+  children,
+}: {
+  label: string
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="inline-flex h-8 w-8 items-center justify-center rounded-[8px] border border-black/10 bg-white text-[#0A0A0A] opacity-80 hover:bg-black/5"
+    >
+      {children}
+    </button>
   )
 }
 
