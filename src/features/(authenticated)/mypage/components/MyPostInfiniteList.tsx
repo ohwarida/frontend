@@ -38,8 +38,8 @@ export function MyPostInfiniteList({ topic, size = 20 }: { topic: MyPostTopic; s
   }, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
   if (isInitialLoading) return <p className="py-6 text-center">불러오는 중…</p>
-  // if (status === 'error')
-  //   return <p className="py-6 text-center">에러: {(error as Error).message}</p>
+  if (status === 'error')
+    return <p className="py-6 text-center">에러: {(error as Error).message}</p>
 
   if (isEmpty) return <EmptyPost />
 
