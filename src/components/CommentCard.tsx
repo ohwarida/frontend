@@ -47,17 +47,19 @@ export function CommentCard({ comment, isActive = false }: CommentCardProps) {
           <span className="font-normal">{createdAtLabel}</span>
         </div>
 
-        <p className="line-clamp-2 text-[16px] leading-[24px] text-[#1E2939]">
+        <p className="line-clamp-2 text-[16px] leading-[24px] wrap-break-word whitespace-pre-wrap text-[#1E2939]">
           {renderMentionText(comment.content)}
         </p>
       </div>
 
       {/* 데스크탑: 기존 구조 */}
       <div className="hidden min-w-0 lg:block">
-        <p className="truncate text-[16px] leading-[24px] font-medium text-[#000000]">
+        <p className="text-[#000000]wrap-break-word truncate text-[16px] leading-[24px] font-medium whitespace-pre-wrap">
           {renderMentionText(comment.content)}
         </p>
-        <p className="mt-1 text-[14px] leading-[20px] text-[rgba(55,56,60,0.61)]">{createdAtLabel}</p>
+        <p className="mt-1 text-[14px] leading-[20px] text-[rgba(55,56,60,0.61)]">
+          {createdAtLabel}
+        </p>
       </div>
 
       {/* 데스크탑: 우측 메타 */}

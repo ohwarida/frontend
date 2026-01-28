@@ -106,7 +106,7 @@ export function CommentItem({
             </header>
 
             {!safeEditOpen ? (
-              <p className="text-[16px] leading-[24px] text-[#171719]">
+              <p className="text-[16px] leading-[24px] wrap-break-word whitespace-pre-wrap text-[#171719]">
                 {isDeleted ? '삭제된 댓글입니다.' : renderMentionText(comment.content)}
               </p>
             ) : (
