@@ -1,3 +1,5 @@
+'use server'
+
 import { GetPostsResponse } from '@/features/(authenticated)/post/types/Post.types'
 import { safeJson, server } from '@/lib/api/server'
 
