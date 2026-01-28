@@ -1,5 +1,3 @@
-'use client'
-
 const rtf = new Intl.RelativeTimeFormat('ko', { numeric: 'auto' })
 
 export function toRelativeTimeLabel(iso: string, now = new Date()) {
