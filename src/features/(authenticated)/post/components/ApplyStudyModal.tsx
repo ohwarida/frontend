@@ -20,8 +20,8 @@ export function ApplyStudyModal({
   const router = useRouter()
 
   const close = useCallback(() => {
-    router.back()
-    if (returnTo) setTimeout(() => router.replace(returnTo), 0)
+    router.replace(returnTo)
+    router.refresh()
   }, [router, returnTo])
 
   const [appeal, setAppeal] = useState('')
@@ -43,7 +43,7 @@ export function ApplyStudyModal({
         'relative w-[512px]',
         'rounded-[10px] border border-black/10 bg-white',
         'shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-4px_rgba(0,0,0,0.1)]',
-        'flex flex-col', // ✅
+        'flex flex-col',
       ].join(' ')}
     >
       <form action={formAction} className="flex flex-col">
@@ -91,7 +91,6 @@ export function ApplyStudyModal({
               <p className="text-[12px] leading-4 text-red-600">{state.fieldErrors.appeal}</p>
             )}
 
-            {/* ✅ 에러 배너가 생겨도 footer랑 안 겹침 */}
             {state?.message && !state.success && (
               <div className="rounded-[8px] border border-red-200 bg-red-50 px-3 py-2 text-[13px] leading-5 text-red-700">
                 {state.message}

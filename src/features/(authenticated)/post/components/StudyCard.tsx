@@ -62,9 +62,7 @@ export function StudyCard({
       return
     }
 
-    // TODO: 스터디 신청 모달/페이지 연동
-    // router.push(`/study/apply/${item.id}`)
-    notReady('스터디 신청')
+    router.push(`/study/apply/${item.id}`)
   }
 
   const handleEdit = () => {
