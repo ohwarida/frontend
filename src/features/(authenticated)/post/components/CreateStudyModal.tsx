@@ -34,11 +34,6 @@ export function CreateStudyModal({ returnTo = '/study', fixedTrack }: CreateStud
     success: false,
   })
 
-  useEffect(() => {
-    if (!state?.success) return
-    router.replace(returnTo)
-  }, [state?.success, router, returnTo])
-
   const [tags, setTags] = useState<string[]>([])
   const [budget, setBudget] = useState<StudyBudget | ''>('')
   const [form, setForm] = useState<FormState>({
@@ -50,9 +45,14 @@ export function CreateStudyModal({ returnTo = '/study', fixedTrack }: CreateStud
   })
 
   const close = useCallback(() => {
-    router.back()
-    if (returnTo) setTimeout(() => router.replace(returnTo), 0)
+    router.replace(returnTo)
+    router.refresh()
   }, [router, returnTo])
+
+  useEffect(() => {
+    if (!state?.success) return
+    close()
+  }, [state?.success, close])
 
   const capacityNum = useMemo(() => {
     const n = Number(form.capacity)
@@ -226,7 +226,7 @@ export function CreateStudyModal({ returnTo = '/study', fixedTrack }: CreateStud
           </div>
         </div>
 
-        {/* Footer (fixed, scroll 밖) */}
+        {/* Footer */}
         <div className="shrink-0 px-[25px] py-[16px]">
           <div className="flex justify-end gap-2">
             <button
@@ -466,7 +466,6 @@ function TagInput({
 
     const withHash = v.startsWith('#') ? v : `#${v}`
 
-    // 중복 방지(대소문자 무시)
     if (tags.some((t) => t.toLowerCase() === withHash.toLowerCase())) return
 
     onChange([...tags, withHash])
