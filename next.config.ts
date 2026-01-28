@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'epencephalic-iris-unswaying.ngrok-free.dev',
-        pathname: '/images/profiles/**',
+        pathname: '/api/v1/images/profiles/**',
       },
     ],
   },
