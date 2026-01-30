@@ -26,8 +26,8 @@ export function getMyPostsInfiniteQueryOption(params: { topic?: MyPostTopic; siz
       return getMyLikes({ page: pageParam, size })
     },
     getNextPageParam: (lastPage: GetPostsResponse) => {
-      if (!lastPage.hasNext) return undefined
-      return lastPage.nextPage ?? undefined
+      if (!lastPage.hasNext) return null
+      return lastPage.nextPage
     },
   }
 }

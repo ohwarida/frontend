@@ -31,6 +31,7 @@ type MentionDataItem = {
   trackName: string
 }
 
+const THRESHOLD = 5
 export function MentionTextarea({
   id,
   value,
@@ -49,6 +50,8 @@ export function MentionTextarea({
     20,
     mentionActive,
   )
+  const [search, setSearch] = useState('')
+  const lowTriggeredRef = useRef<{ key: string; triggered: boolean }>({ key: '', triggered: false })
   const members = useMemo(() => data?.pages.flatMap((p) => p) ?? [], [data])
   const lastSearchRef = useRef('')
   const suggestionsCbRef = useRef<((items: MentionDataItem[]) => void) | null>(null)
@@ -65,13 +68,48 @@ export function MentionTextarea({
   )
 
   useEffect(() => {
+    if (mentionActive) return
+    lowTriggeredRef.current = { key: '', triggered: false }
+  }, [mentionActive])
+
+  useEffect(() => {
     mentionDataRef.current = mentionData
   }, [mentionData])
 
-  function filterBySearch(q: string, list: MentionDataItem[]) {
-    const s = (q ?? '').trim()
-    return !s ? list : list.filter((u) => u.display.startsWith(s))
-  }
+  useEffect(() => {
+    if (!mentionActive) return
+    if (isLoading) return
+    if (isFetchingNextPage) return
+
+    const filteredLen = filterBySearch(search, mentionDataRef.current).length
+
+    if (lowTriggeredRef.current.key !== search) {
+      lowTriggeredRef.current = { key: search, triggered: false }
+    }
+
+    if (filteredLen > THRESHOLD) {
+      lowTriggeredRef.current.triggered = false
+      return
+    }
+
+    if (lowTriggeredRef.current.triggered) return
+    if (!hasNextPage) return
+
+    lowTriggeredRef.current.triggered = true
+
+    fetchNextPage().then(() => {
+      const cb = suggestionsCbRef.current
+      if (cb) cb(filterBySearch(search, mentionDataRef.current))
+    })
+  }, [
+    mentionActive,
+    search,
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    members.length,
+  ])
 
   return (
     <div className={clsx('mention-textarea')}>
@@ -158,14 +196,16 @@ export function MentionTextarea({
       >
         <Mention
           trigger="@"
-          data={(search, callback) => {
+          data={(q, callback) => {
             setMentionActive(true)
 
-            const q = (search ?? '').trim()
-            lastSearchRef.current = q
+            const nextQ = (q ?? '').trim()
+            lastSearchRef.current = nextQ
             suggestionsCbRef.current = callback
 
-            callback(filterBySearch(q, mentionDataRef.current))
+            setSearch((prev) => (prev === nextQ ? prev : nextQ))
+
+            callback(filterBySearch(nextQ, mentionDataRef.current))
           }}
           appendSpaceOnAdd
           markup={MENTION}
@@ -214,6 +254,11 @@ export function MentionTextarea({
       </MentionsInput>
     </div>
   )
+}
+
+function filterBySearch(q: string, list: MentionDataItem[]) {
+  const s = (q ?? '').trim()
+  return !s ? list : list.filter((u) => u.display.startsWith(s))
 }
 
 function isNearBottom(el: HTMLElement, offset = 24) {
